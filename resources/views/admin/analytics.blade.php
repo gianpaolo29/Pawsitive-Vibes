@@ -1,4 +1,5 @@
 <x-admin-layout>
+    boobo
 </x-admin-layout>
 
 
