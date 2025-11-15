@@ -11,6 +11,7 @@
         return [
             'link' => $isActive ? $activeClasses : $inactiveClasses,
             'icon' => $isActive ? $iconActiveColor : $iconInactiveColor,
+            'is_active' => $isActive,
         ];
     }
     $user = Auth::user();
@@ -18,25 +19,46 @@
     $nav_items = [
         'Dashboard'  => ['route' => 'admin/dashboard',  'icon' => 'M2.25 12 8.954-8.955c.44-.44 1.152-.44 1.591 0L21.75 12M6 10v10h4v-5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v5h4V10'],
         'Products'   => ['route' => 'admin/products',   'icon' => 'M3 7.5h18M3 12h18M3 16.5h18'],
-        'Orders'     => ['route' => 'admin/orders',     'icon' => 'M4.5 6.75h15l-1.5 10.5a2.25 2.25 0 0 1-2.25 1.95H8.25A2.25 2.25 0 0 1 6 17.25L4.5 6.75z'],
         'Customers'  => ['route' => 'admin/customers',  'icon' => 'M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM21 8.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0ZM8.624 21A12.3 12.3 0 0 1 3 19.234a6.375 6.375 0 0 1 11.964-3.07M15 19.234a9.5 9.5 0 0 0 7.5-.734 4.125 4.125 0 0 0-7.533-2.493'],
         'Analytics'  => ['route' => 'admin/analytics',  'icon' => 'M4.5 19.5h15M6 16.5V9m6 7.5V6m6 13.5V12'],
-        'Loyalty Redemptions' => ['route' => 'admin/loyalty-redemptions', 'icon' => 'M20 13 12 21l-8-8V4h9l7 9ZM7.5 7.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z'],
-        'Loyalty Card'   => ['route' => 'admin/loyalty-cards',   'icon' => 'M9.6 3.94c.09-.54.56-.94 1.1-.94h2.6c.55 0 1.02.4 1.11.94l.21 1.28a1.2 1.2 0 0 0 .87.74l1.22.46a1.13 1.13 0 0 1 .61 1.62l-1 1a1.2 1.2 0 0 0 0 1.74l1 1c.36.36.45.92.22 1.38l-1.3 2.25a1.12 1.12 0 0 1-1.37.49l-1.22-.46a1.2 1.2 0 0 0-.87.74l-.21 1.28c-.09.54-.56.94-1.11.94h-2.6c-.54 0-1.01-.4-1.1-.94l-.21-1.28ZM12 12a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z'],
     ];
+
+    $order_group = [
+        'Orders' => [
+            'route' => 'admin/orders', // Parent route pattern
+            'icon' => 'M4.5 6.75h15l-1.5 10.5a2.25 2.25 0 0 1-2.25 1.95H8.25A2.25 2.25 0 0 1 6 17.25L4.5 6.75z',
+            'children' => [
+                'All Orders'     => ['route' => 'admin/orders',            'icon' => 'M4.5 6.75h15M4.5 12h15M4.5 17.25h15'],
+                'Pending Orders' => ['route' => 'admin/orders/pending',    'icon' => 'M12 8v4l3 3'],
+                'Completed' => ['route' => 'admin/orders/completed',    'icon' => 'M3 16.5c0 .28.22.5.5.5h1.5a.5.5 0 0 0 .5-.5V10c0-.28-.22-.5-.5-.5H3.5a.5.5 0 0 0-.5.5v6.5z'],
+            ]
+        ]
+    ];
+
+    // Loyalty remains separate
+    $loyalty_items = [
+        'Promotions' => ['route' => 'admin/promotions', 'icon' => 'M20 13 12 21l-8-8V4h9l7 9ZM7.5 7.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z'],
+    ];
+
 @endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Pawsitive VIbes</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/flowbite@2.3.0/dist/flowbite.min.js"></script>
+    @stack('scripts')
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -114,20 +136,111 @@
         </div>
 
         <nav class="mt-4 space-y-1 px-3 flex-grow">
-            @foreach($nav_items as $name => $item)
-                @php $nav = nav_active($item['route'].'*'); @endphp
-                <a href="{{ url($item['route']) }}"
-                   :title="sidebarCollapsed ? '{{ $name }}' : null"
-                   class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 {{ $nav['link'] }}">
-                    <svg class="h-5 w-5 shrink-0 transition-colors {{ $nav['icon'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                        <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    {{-- STANDARD NAV ITEMS --}}
+    @foreach($nav_items as $name => $item)
+        @php $nav = nav_active($item['route'].'*'); @endphp
+        <a href="{{ url($item['route']) }}"
+           :title="sidebarCollapsed ? '{{ $name }}' : null"
+           class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 {{ $nav['link'] }}">
+            <svg class="h-5 w-5 shrink-0 transition-colors {{ $nav['icon'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate">{{ $name }}</span>
+            <span x-show="sidebarCollapsed" class="sr-only">{{ $name }}</span>
+        </a>
+    @endforeach
+
+    {{-- ORDERS EXPANDABLE GROUP (USING ALPINE.JS FOR COLLAPSE) --}}
+    @foreach($order_group as $groupName => $group)
+        @php
+            $nav = nav_active($group['route']);
+            $isGroupActive = $nav['is_active'];
+            // Check if any child route is active to determine if the parent should be active/open
+            foreach ($group['children'] as $childItem) {
+                if (nav_active($childItem['route'].'*')['is_active']) { // Added '*' to child routes for flexibility
+                    $isGroupActive = true;
+                    break;
+                }
+            }
+            $parentLinkClasses = $isGroupActive
+                ? 'bg-violet-50 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300 font-semibold'
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-100';
+            $parentIconClasses = $isGroupActive
+                ? 'text-violet-600 dark:text-violet-400'
+                : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300';
+        @endphp
+
+        <div x-data="{ ordersOpen: {{ $isGroupActive ? 'true' : 'false' }} }" :class="sidebarCollapsed ? 'relative' : ''">
+            {{-- Parent Toggle Button --}}
+            <button
+                @click="ordersOpen = !ordersOpen"
+                :title="sidebarCollapsed ? '{{ $groupName }}' : null"
+                class="group flex w-full items-center rounded-xl px-3 py-2.5 text-sm transition-all duration-300 {{ $parentLinkClasses }}"
+                :class="sidebarCollapsed ? 'justify-center' : 'justify-between'"
+                :aria-expanded="ordersOpen.toString()"
+            >
+                <div class="flex items-center gap-3">
+                    {{-- Parent Icon --}}
+                    <svg class="h-5 w-5 shrink-0 transition-colors {{ $parentIconClasses }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <path d="{{ $group['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
 
-                    <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate">{{ $name }}</span>
-                    <span x-show="sidebarCollapsed" class="sr-only">{{ $name }}</span>
-                </a>
-            @endforeach
-        </nav>
+                    {{-- Parent Name --}}
+                    <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate">{{ $groupName }}</span>
+                </div>
+
+                {{-- Chevron Icon --}}
+                <svg x-show="!sidebarCollapsed" class="h-5 w-5 shrink-0 transition-transform" :class="ordersOpen ? 'rotate-90' : 'rotate-0'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+                {{-- Screen reader text for collapsed state --}}
+                <span x-show="sidebarCollapsed" class="sr-only">{{ $groupName }}</span>
+            </button>
+
+            {{-- Collapsible Child Menu (smooth transition with x-collapse) --}}
+            <div x-cloak
+                x-show="ordersOpen"
+                x-collapse.duration.300ms
+                class="mt-1 space-y-1 overflow-hidden"
+                :class="sidebarCollapsed ? 'absolute left-[var(--sidebar-mini)] top-0 w-64 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-20' : ''"
+                @click.outside="sidebarCollapsed ? ordersOpen = false : null"
+            >
+                <div :class="sidebarCollapsed ? 'space-y-1' : 'ml-4 space-y-1 border-l border-gray-200 dark:border-gray-700 pl-3'">
+                    @foreach($group['children'] as $childName => $childItem)
+                        @php $childNav = nav_active($childItem['route']); @endphp
+                        <a href="{{ url($childItem['route']) }}"
+                           class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-300 {{ $childNav['link'] }}"
+                           :class="sidebarCollapsed ? 'bg-white dark:bg-gray-800' : ''"
+                           :title="sidebarCollapsed ? '{{ $childName }}' : null"
+                        >
+                            <svg class="h-5 w-5 shrink-0 transition-colors" :class="{{ $childNav['is_active'] ? $parentIconClasses : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                                <path d="{{ $childItem['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="truncate">{{ $childName }}</span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+    {{-- REMAINING SIMPLE NAV ITEMS (Loyalty) --}}
+    @foreach($loyalty_items as $name => $item)
+        @php $nav = nav_active($item['route'].'*'); @endphp
+        <a href="{{ url($item['route']) }}"
+           :title="sidebarCollapsed ? '{{ $name }}' : null"
+           class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-300 {{ $nav['link'] }}">
+            <svg class="h-5 w-5 shrink-0 transition-colors {{ $nav['icon'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate">{{ $name }}</span>
+            <span x-show="sidebarCollapsed" class="sr-only">{{ $name }}</span>
+        </a>
+    @endforeach
+
+</nav>
 
     </aside>
 
@@ -256,20 +369,151 @@
         </div>
 
         <nav class="space-y-1">
-            @foreach($nav_items as $name => $item)
-                @php $nav = nav_active($item['route'].'*'); @endphp
-                <a href="{{ url($item['route']) }}"
-                    class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm {{ $nav['link'] }}"
-                    @click="mobileOpen=false">
-                    <svg class="h-5 w-5 shrink-0 transition-colors {{ $nav['icon'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                        <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    {{ $name }}
-                </a>
-            @endforeach
+    
+    {{-- STANDARD NAV ITEMS --}}
+    @foreach($nav_items as $name => $item)
+        @php $nav = nav_active($item['route'].'*'); @endphp
+        <a href="{{ url($item['route']) }}"
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm {{ $nav['link'] }}"
+            @click="mobileOpen=false">
+            <svg class="h-5 w-5 shrink-0 transition-colors {{ $nav['icon'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            {{ $name }}
+        </a>
+    @endforeach
 
-        </nav>
+    {{-- ORDERS EXPANDABLE GROUP (MOBILE) --}}
+    @foreach($order_group as $groupName => $group)
+        @php
+            $nav = nav_active($group['route']);
+            $isGroupActive = $nav['is_active'];
+            foreach ($group['children'] as $childItem) {
+                if (nav_active($childItem['route'].'*')['is_active']) {
+                    $isGroupActive = true;
+                    break;
+                }
+            }
+            $parentLinkClasses = $isGroupActive
+                ? 'bg-violet-50 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300 font-semibold'
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-100';
+            $parentIconClasses = $isGroupActive
+                ? 'text-violet-600 dark:text-violet-400'
+                : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300';
+        @endphp
+        
+        <div x-data="{ mobileOrdersOpen: {{ $isGroupActive ? 'true' : 'false' }} }">
+            {{-- Parent Toggle Button --}}
+            <button
+                @click="mobileOrdersOpen = !mobileOrdersOpen"
+                class="group flex w-full items-center rounded-xl px-3 py-2.5 text-sm transition-all duration-200 {{ $parentLinkClasses }} justify-between"
+                :aria-expanded="mobileOrdersOpen.toString()"
+            >
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 shrink-0 transition-colors {{ $parentIconClasses }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <path d="{{ $group['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>{{ $groupName }}</span>
+                </div>
+                {{-- Chevron Icon --}}
+                <svg class="h-5 w-5 shrink-0 transition-transform" :class="mobileOrdersOpen ? 'rotate-90' : 'rotate-0'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            {{-- Collapsible Child Menu (smooth transition with x-collapse) --}}
+            <div x-cloak
+                x-show="mobileOrdersOpen"
+                x-collapse.duration.300ms
+                class="mt-1 space-y-1 overflow-hidden ml-4 border-l border-gray-200 dark:border-gray-700 pl-3"
+            >
+                @foreach($group['children'] as $childName => $childItem)
+                    @php $childNav = nav_active($childItem['route']); @endphp
+                    <a href="{{ url($childItem['route']) }}"
+                       class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 {{ $childNav['link'] }}"
+                       @click="mobileOpen=false"> {{-- Close mobile menu upon child click --}}
+                        <svg class="h-5 w-5 shrink-0 transition-colors" :class="{{ $childNav['is_active'] ? $parentIconClasses : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                            <path d="{{ $childItem['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>{{ $childName }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endforeach
+
+    {{-- REMAINING SIMPLE NAV ITEMS (Loyalty) --}}
+    @foreach($loyalty_items as $name => $item)
+        @php $nav = nav_active($item['route'].'*'); @endphp
+        <a href="{{ url($item['route']) }}"
+            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm {{ $nav['link'] }}"
+            @click="mobileOpen=false">
+            <svg class="h-5 w-5 shrink-0 transition-colors {{ $nav['icon'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            {{ $name }}
+        </a>
+    @endforeach
+</nav>
     </aside>
+
+        <div x-data="toast()" x-init="init()" class="fixed top-4 right-4 z-[9999]">
+      <template x-if="show">
+        <div
+          x-transition.opacity.duration.200ms
+          class="rounded-lg shadow-lg px-4 py-3 text-sm flex items-start gap-3"
+          :class="type === 'success'
+                  ? 'bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200'
+                  : 'bg-rose-50 text-rose-800 ring-1 ring-rose-200'">
+          <svg x-show="type==='success'" class="h-5 w-5 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+          <svg x-show="type==='error'" class="h-5 w-5 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          <div x-text="message"></div>
+          <button class="ml-2 text-xs underline" @click="hide()">Close</button>
+        </div>
+      </template>
+    </div>
+
+    <script>
+      function toast() {
+        return {
+          show: false,
+          message: '',
+          type: 'success',
+          timer: null,
+          fire(msg, type = 'success', ms = 3000) {
+            this.message = msg;
+            this.type = type;
+            this.show = true;
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => this.show = false, ms);
+          },
+          hide() { this.show = false; },
+          init() {
+            // Listen to manual dispatches anywhere
+            window.addEventListener('toast', e => this.fire(e.detail.message, e.detail.type ?? 'success'));
+
+            // Auto-fire from Laravel flash
+            @if (session('success'))
+              this.fire(@js(session('success')), 'success');
+            @endif
+
+            @if (session('error'))
+              this.fire(@js(session('error')), 'error');
+            @endif
+
+            // (Optional) show validation error count
+            @if ($errors->any())
+              this.fire('There were {{ $errors->count() }} validation error(s).', 'error', 5000);
+            @endif
+          }
+        }
+      }
+    </script>
+    
 
     <main class="layout-main transition-all duration-300 ease-out min-h-[calc(100vh_-_var(--header-h))]">
         <div class="p-4 sm:p-6 lg:p-8">

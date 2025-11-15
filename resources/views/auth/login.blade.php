@@ -198,10 +198,12 @@
             <div class="divider">or continue with</div>
 
             <div class="social-login">
-                <button type="button" class="social-btn google" aria-label="Continue with Google">
+                <a href="{{ route('auth.google.redirect') }}"
+                class="social-btn google" aria-label="Continue with Google">
                     <i class="fab fa-google"></i>
-                </button>
+                </a>
             </div>
+
 
             <div class="signup-link">
                 Don’t have an account?
@@ -217,7 +219,7 @@
     <div class="footer">
         <div class="footer-content">
             <div class="footer-logo">
-                <img src="{{ asset('icons/logo.png') }}" alt="Pawsitive Vibes Logo" class="footer-logo-img">
+                <img src="{{ asset('images/logo.png') }}" alt="Pawsitive Vibes Logo" class="footer-logo-img">
                 <span>Pawsitive Vibes</span>
             </div>
             <ul class="footer-links">

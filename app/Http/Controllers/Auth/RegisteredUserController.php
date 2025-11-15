@@ -29,22 +29,28 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        $data = $request->validate([
+            'first_name' => ['required','string','max:100'],
+            'last_name'  => ['required','string','max:100'],
+            'username'   => ['required','string','max:50','unique:users,username'],
+            'email'      => ['required','string','lowercase','email','max:255','unique:users,email'],
+            'password'   => ['required','confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        $user = \App\Models\User::create([
+            'fname'    => $data['first_name'],
+            'lname'    => $data['last_name'],
+            'username' => $data['username'],
+            'name'     => trim($data['first_name'].' '.$data['last_name']),
+            'email'    => $data['email'],
+            'password' => bcrypt($data['password']),
+            'role'     => 'customer', 
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('customer.home', absolute: false));
     }
 }
