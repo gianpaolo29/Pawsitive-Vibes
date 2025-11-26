@@ -16,10 +16,10 @@ class AdminUserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@pawsitive.com'],
             [
-                'fname' => 'Pawsitive',
-                'lname' => 'Admin',
-                'username' => "admin",
-                'password' => Hash::make('password123'),
+                'fname' => 'Gian Paolo',
+                'lname' => 'Mulingbayan',
+                'username' => "Admin",
+                'password' => Hash::make('Computer_29'),
                 'role' => 'admin', 
                 'email_verified_at' => now(),
             ]

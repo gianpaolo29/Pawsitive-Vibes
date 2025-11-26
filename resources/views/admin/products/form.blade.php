@@ -13,12 +13,18 @@
                 {{ $product->exists ? 'Save Changes' : 'Save Product' }}
             </button>
         </div>
-    </div>
+</div>
+
+    @php
+        $existingImageUrl = $product->exists && $product->image_url ? Storage::url($product->image_url) : null;
+    @endphp
+
+    
     
     <form
         id="product-form"
         x-data="{
-            preview: '{{ $product->image_url }}',
+            preview: @js($existingImageUrl),
             onFile(e) {
                 const [f] = e.target.files || [];
                 if (!f) return;
@@ -59,7 +65,7 @@
 
                 <div>
                     <label for="description" class="block text-sm font-semibold text-gray-700">Full Description <span class="text-rose-600">*</span></label>
-                    <textarea name="description" id="description" rows="5" required placeholder="Enter detailed product description..."
+                    <textarea name="description" id="description" rows="5" required placeholder="Manufactured by:"
                             class="mt-1 w-full rounded-lg border-gray-300 focus:ring-violet-500 focus:border-violet-500">{{ old('description',$product->description) }}</textarea>
                     @error('description')<div class="text-rose-600 text-sm mt-1">{{ $message }}</div>@enderror
                 </div>
@@ -68,7 +74,7 @@
             <div class="bg-white rounded-xl shadow-sm p-6 space-y-5 border-t-4 border-violet-600">
                 <h3 class="text-lg font-bold text-gray-900 border-b pb-3 -mx-6 px-6">Pricing & Inventory</h3>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             
                     <div>
                         <label for="price" class="block text-sm font-semibold text-gray-700">Price <span class="text-rose-600">*</span></label>
@@ -80,16 +86,29 @@
                                 class="block w-full pl-7 pr-3 rounded-lg border-gray-300 focus:ring-violet-500 focus:border-violet-500" />
                         </div>
                     </div>
+
+                    <div>
+                        <label for="cost_price" class="block text-sm font-semibold text-gray-700">Cost Price <span class="text-rose-600">*</span></label>
+                        <div class="mt-1 relative rounded-lg shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">₱</span>
+                            </div>
+                            <input type="number" step="0.01" min="0" name="cost_price" id="cost_price" value="{{ old('cost_price',$product->cost_price) }}" required placeholder="0.00"
+                                class="block w-full pl-7 pr-3 rounded-lg border-gray-300 focus:ring-violet-500 focus:border-violet-500" />
+                        </div>
+                    </div>
+
+                    
                     
                     <div>
                         <label for="unit" class="block text-sm font-semibold text-gray-700">Unit <span class="text-rose-600">*</span></label>
-                        <input type="text" name="unit" id="unit" value="{{ old('unit', $product->exists ? $product->unit : '1') }}" required placeholder="e.g., each, kg, liter"
+                        <input type="text" name="unit" id="unit" value="{{ old('unit', $product->exists ? $product->unit : '1kg') }}" required placeholder="e.g., each, kg, liter"
                             class="mt-1 w-full rounded-lg border-gray-300 focus:ring-violet-500 focus:border-violet-500" />
                     </div>
                     
                     <div>
                         <label for="stock" class="block text-sm font-semibold text-gray-700">Stock Quantity <span class="text-rose-600">*</span></label>
-                        <input type="number" min="0" name="stock" id="stock" value="{{ old('stock',$product->stock) }}" required placeholder="0"
+                        <input type="number" min="0" name="stock" id="stock" value="{{ old('stock', $product->exists ? $product->stock : 1) }}"  required placeholder="1"
                             class="mt-1 w-full rounded-lg border-gray-300 focus:ring-violet-500 focus:border-violet-500" />
                     </div>
                 </div>
@@ -120,16 +139,18 @@
                     <input id="image_upload" type="file" name="image" accept="image/*" @change="onFile" class="hidden" {{ $product->exists ? '' : 'required' }} />
                 </label>
 
-                <div class="flex items-center gap-3">
-                    <div class="h-16 w-16 rounded-lg bg-gray-100 overflow-hidden grid place-content-center border border-gray-200">
-                        <template x-if="preview">
-                            <img :src="preview" class="h-16 w-16 object-cover" alt="preview">
-                        </template>
-                        <template x-if="!preview">
-                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v14H4zM4 15l4-4 4 4 4-3 4 3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </template>
-                    </div>
+               <div class="flex items-center justify-center mt-3">
+                <div class="h-48 w-48 rounded-xl bg-gray-100 overflow-hidden grid place-content-center border border-gray-300 shadow-sm">
+                    <template x-if="preview">
+                        <img :src="preview" class="h-48 w-48 object-cover" alt="preview">
+                    </template>
+                    <template x-if="!preview">
+                        <svg class="h-8 w-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                            <path d="M4 5h16v14H4zM4 15l4-4 4 4 4-3 4 3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </template>
                 </div>
+            </div>
             </div>
             
         </div>

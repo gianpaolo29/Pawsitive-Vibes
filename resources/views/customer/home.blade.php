@@ -3,413 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pawsitive Vibes - Pet Store</title>
-    <link rel="icon" type="image/png" href="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png">
+    <title>Pawsitive Vibes | Pet Supply Shop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         :root {
-            --primary-violet: #8a2be2;
-            --light-violet: #b19cd9;
-            --dark-violet: #6a0dad;
-            --violet-blue: #6c63ff;
-            --light-violet-blue: #a5a1ff;
-            --dark-violet-blue: #5651d4;
-            --vibrant-violet: #7b68ee;
-            --bright-violet: #9370db;
-            --yellow: #F9DF71;
-            --light-yellow: #fff9e6;
-            --soft-white: #fefefe;
-            --light-gray: #f8f7ff;
-            --medium-gray: #e0ddf5;
-            --text-gray: #666;
-            --dark-gray: #444;
-            --card-shadow: 0 5px 15px rgba(138, 43, 226, 0.08);
-            --hover-shadow: 0 8px 25px rgba(138, 43, 226, 0.15);
+            --main-color: #FFFFFF;
+            --secondary-color: #8259E2;
+            --accent-color: #F9DF97;
+            --text-color: #333333;
+            --light-text: #666666;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --transition: all 0.3s ease;
+            --footer-bg: #1a1a2e;
+            --footer-text: #e6e6e6;
+            --vibrant-violet: #8259E2;
+            --bright-violet: #9d7cf0;
         }
 
         body {
-            background: #ffffff;
-            min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-gray);
-            line-height: 1.5;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Navigation Bar Styles - Compact */
-        .glass-navbar {
+        .container {
             width: 100%;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            color: var(--primary-violet);
-            font-weight: 700;
-            font-size: 1.3rem;
-            font-family: 'Quicksand', sans-serif;
-        }
-
-        .logo-img {
-            width: 35px;
-            height: 35px;
-            margin-right: 10px;
-            object-fit: contain;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin: 0 8px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark-gray);
-            font-weight: 500;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a i {
-            font-size: 1.1rem;
-            margin-bottom: 3px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a span {
-            font-size: 0.75rem;
-        }
-
-        .nav-links a:hover {
-            background: rgba(138, 43, 226, 0.05);
-            color: var(--primary-violet);
-            transform: translateY(-2px);
-        }
-
-        .nav-links a:hover i {
-            color: var(--primary-violet);
-            transform: scale(1.1);
-        }
-
-        .nav-links a.active {
-            background: rgba(138, 43, 226, 0.08);
-            color: var(--primary-violet);
-        }
-
-        .nav-links a.active i {
-            color: var(--primary-violet);
-        }
-
-        .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px;
-            height: 5px;
-            background: var(--yellow);
-            border-radius: 50%;
-        }
-
-        .nav-hamburger {
-            display: none;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: var(--dark-gray);
-            font-size: 1.3rem;
-        }
-
-        /* Search Bar Styles - Compact */
-        .search-container {
             max-width: 1200px;
-            margin: 0 auto 20px;
+            margin: 0 auto;
             padding: 0 20px;
         }
 
-        .search-bar {
+        /* Header Styles */
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
             display: flex;
-            background: white;
-            border-radius: 40px;
-            padding: 6px;
-            box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
         }
 
-        .search-bar:focus-within {
-            box-shadow: var(--hover-shadow);
-            transform: translateY(-2px);
-        }
-
-        .search-input {
-            flex: 1;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-family: 'Poppins', sans-serif;
-            outline: none;
-            color: var(--dark-gray);
-        }
-
-        .search-input::placeholder {
-            color: var(--text-gray);
-        }
-
-        .search-btn {
-            background: var(--primary-violet);
-            color: white;
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-decoration: none;
             display: flex;
             align-items: center;
-            justify-content: center;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+            margin-right: 10px;
+            border-radius: 8px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
+            transition: var(--transition);
+            border: none;
+            font-size: 14px;
         }
 
-        .search-btn:hover {
-            background: var(--dark-violet);
-            transform: scale(1.05);
+        .btn-login {
+            background: transparent;
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
         }
 
-        /* Main Content Styles - Compact */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 15px;
+        .btn-login:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(130, 89, 226, 0.3);
         }
 
-        .page-title {
-            text-align: center;
-            margin: 25px 0 15px;
-            font-size: 2.2rem;
-            color: var(--dark-gray);
-            font-weight: 700;
-            font-family: 'Quicksand', sans-serif;
+        .btn-signup {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-signup:hover {
+            background: #6a46c4;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(130, 89, 226, 0.3);
+        }
+
+        /* Hero Section with Integrated Card */
+        .hero {
+            padding: 150px 0 80px;
+            display: flex;
+            align-items: center;
+            min-height: 80vh;
             position: relative;
+            overflow: hidden;
         }
 
-        .page-title::after {
+        .hero::before {
             content: '';
             position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: var(--yellow);
-            border-radius: 2px;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
         }
 
-        .page-subtitle {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 1rem;
-            color: var(--text-gray);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.5;
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -80px;
+            left: -80px;
         }
 
-        /* Categories Section - Centered */
-        .categories-section {
-            margin-bottom: 30px;
-        }
-
-        .categories-container {
+        .hero-content {
             display: flex;
-            justify-content: center;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            transition: var(--transition);
             width: 100%;
         }
 
-        .categories-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 15px;
-            justify-content: center;
-            max-width: 100%;
+        .hero-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.2);
         }
 
-        .category-card {
-            background: white;
-            border-radius: 12px;
-            padding: 15px 12px;
-            text-align: center;
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .hero-image img:hover {
+            transform: scale(1.03);
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: var(--light-text);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Glass Morphism Buttons */
+        .btn-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
             cursor: pointer;
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: var(--transition);
+            font-size: 16px;
+            box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
-            flex-shrink: 0;
-            min-width: 100px;
         }
 
-        .category-card::before {
+        .btn-shop {
+            color: #333;
+            background: rgba(249, 223, 151, 0.7);
+            border: 1px solid rgba(249, 223, 151, 0.5);
+        }
+
+        .btn-shop:hover {
+            background: rgba(249, 223, 151, 0.9);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(249, 223, 151, 0.4);
+        }
+
+        .btn-donate-hero {
+            color: white;
+            background: rgba(130, 89, 226, 0.7);
+            border: 1px solid rgba(130, 89, 226, 0.5);
+        }
+
+        .btn-donate-hero:hover {
+            background: rgba(130, 89, 226, 0.9);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(130, 89, 226, 0.4);
+        }
+
+        .btn-glass::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
+            left: -100%;
             width: 100%;
-            height: 3px;
-            background: var(--yellow);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.7s;
         }
 
-        .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
+        .btn-glass:hover::before {
+            left: 100%;
         }
 
-        .category-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .category-card.active {
-            background: rgba(138, 43, 226, 0.05);
-            border: 1px solid rgba(138, 43, 226, 0.1);
-        }
-
-        .category-card.active::before {
-            transform: scaleX(1);
-        }
-
-        .category-icon {
-            font-size: 1.8rem;
-            color: var(--primary-violet);
-            margin-bottom: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .category-card:hover .category-icon {
-            transform: scale(1.1);
-            color: var(--dark-violet);
-        }
-
-        .category-card h3 {
-            font-size: 0.85rem;
-            color: var(--dark-gray);
-            font-weight: 600;
-            font-family: 'Quicksand', sans-serif;
-        }
-
-        /* Enhanced Donation Section - Compact */
-        .donation-section {
-            background: linear-gradient(135deg, var(--vibrant-violet), var(--bright-violet));
-            color: white;
-            border-radius: 16px;
-            padding: 35px 30px;
-            margin-bottom: 35px;
-            box-shadow: 0 10px 25px rgba(123, 104, 238, 0.2);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .donation-section::before {
-            content: '';
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            top: -60px;
-            right: -60px;
-        }
-
-        .donation-section::after {
-            content: '';
-            position: absolute;
-            width: 140px;
-            height: 140px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            bottom: -50px;
-            left: -50px;
-        }
-
-        .donation-icon {
-            font-size: 45px;
-            margin-bottom: 18px;
-            color: white;
-            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .donation-content h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            font-family: 'Quicksand', sans-serif;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .donation-content p {
-            font-size: 14px;
-            margin-bottom: 20px;
-            opacity: 0.95;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.5;
-        }
-
+        /* Enhanced donation button with better visibility */
         .btn-donate {
-            background: var(--yellow);
-            color: var(--dark-gray);
-            font-size: 14px;
+            background: var(--accent-color);
+            color: #333;
+            font-size: 18px;
             font-weight: 700;
-            padding: 12px 28px;
-            border-radius: 40px;
-            box-shadow: 0 6px 15px rgba(249, 223, 113, 0.4);
+            padding: 16px 35px;
+            box-shadow: 0 8px 20px rgba(249, 223, 151, 0.4);
             border: 2px solid white;
             position: relative;
             overflow: hidden;
             z-index: 1;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .btn-donate:hover {
-            background: #f8da5e;
-            box-shadow: 0 8px 20px rgba(249, 223, 113, 0.6);
-            transform: translateY(-3px);
+            background: #f5d57a;
+            box-shadow: 0 12px 25px rgba(249, 223, 151, 0.6);
+            transform: translateY(-5px) scale(1.05);
         }
 
         .btn-donate::before {
@@ -428,696 +320,783 @@
             left: 100%;
         }
 
-        /* Featured Products Section - Special Layout */
-        .featured-section {
-            margin: 40px 0;
+        /* Categories Section */
+        .categories {
+            padding: 80px 0;
         }
 
-        .featured-products {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
+        .categories-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0;
         }
 
-        .featured-product-card {
-            background: linear-gradient(135deg, #ffffff, #f8f7ff);
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.1);
-            border: 2px solid rgba(138, 43, 226, 0.1);
-            position: relative;
+        .category-item {
             display: flex;
             flex-direction: column;
-        }
-
-        .featured-product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(138, 43, 226, 0.2);
-            border-color: rgba(138, 43, 226, 0.3);
-        }
-
-        .featured-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: var(--yellow);
-            color: var(--dark-gray);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            z-index: 2;
-            box-shadow: 0 3px 10px rgba(249, 223, 113, 0.4);
-        }
-
-        .featured-product-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, var(--light-violet), var(--vibrant-violet));
-            display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3.5rem;
+            padding: 15px 20px;
             position: relative;
-            overflow: hidden;
-        }
-
-        .featured-product-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(249, 223, 113, 0.1));
-        }
-
-        .featured-product-info {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .featured-product-name {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: var(--dark-gray);
-            font-family: 'Quicksand', sans-serif;
-        }
-
-        .featured-product-description {
-            font-size: 0.9rem;
-            color: var(--text-gray);
-            margin-bottom: 15px;
-            line-height: 1.5;
-            flex-grow: 1;
-        }
-
-        .featured-product-price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-violet);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .featured-product-price::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--yellow);
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .featured-product-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: auto;
-        }
-
-        .featured-action-btn {
-            background: var(--primary-violet);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 600;
+            transition: var(--transition);
             cursor: pointer;
-            transition: all 0.3s ease;
+        }
+
+        .category-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 40px;
+            background: rgba(130, 89, 226, 0.2);
+        }
+
+        .category-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .category-item:hover .category-icon {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .category-name {
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-color);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .category-item:hover .category-name {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        /* Donation Section */
+        .donation-section {
+            background: rgba(130, 89, 226, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin: 80px auto;
+            max-width: 900px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+            transition: var(--transition);
+            color: white;
+        }
+
+        .donation-section:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.4);
+        }
+
+        .donation-icon {
+            font-size: 60px;
+            color: var(--accent-color);
+            flex-shrink: 0;
+        }
+
+        .donation-content {
             flex: 1;
-            margin: 0 5px;
         }
 
-        .featured-action-btn i {
-            margin-right: 8px;
+        .donation-content h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: white;
         }
 
-        .featured-action-btn:hover {
-            background: var(--dark-violet);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        .donation-content p {
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
         }
 
-        .featured-favorite-btn {
-            background: #ff4757;
+        /* Featured Products */
+        .featured-products {
+            padding: 80px 0;
         }
 
-        .featured-favorite-btn:hover {
-            background: #ff3742;
-            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 36px;
+            color: var(--secondary-color);
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
-        /* Regular Products Grid - Compact */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
         }
 
         .product-card {
-            background: #fff;
-            border-radius: 14px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
             overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
             position: relative;
         }
 
         .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--hover-shadow);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.2);
         }
 
-        .product-image {
-            width: 100%;
-            height: 160px;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-violet);
-            font-size: 2.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-image::before {
-            content: '';
+        .best-selling {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(138, 43, 226, 0.03), rgba(249, 223, 113, 0.05));
-        }
-
-        .product-info {
-            padding: 16px;
-        }
-
-        .product-name {
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark-gray);
-            font-family: 'Quicksand', sans-serif;
-        }
-
-        .product-price {
-            font-size: 1.2rem;
+            top: 15px;
+            left: 15px;
+            background: var(--accent-color);
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 700;
-            color: var(--primary-violet);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-        }
-
-        .product-price::before {
-            content: '';
-            width: 5px;
-            height: 5px;
-            background: var(--yellow);
-            border-radius: 50%;
-            margin-right: 6px;
-        }
-
-        .product-actions {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .action-btn {
-            background: #f8f9fa;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-gray);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(249, 223, 113, 0.1);
-            border-radius: 50%;
-            transform: scale(0);
-            transition: transform 0.3s ease;
-        }
-
-        .favorite-btn:hover {
-            background: #ff4757;
-            color: white;
-        }
-
-        .favorite-btn:hover::before {
-            transform: scale(1);
-        }
-
-        .cart-btn:hover {
-            background: var(--primary-violet);
-            color: white;
-        }
-
-        .cart-btn:hover::before {
-            transform: scale(1);
-        }
-
-        .favorite-btn.active {
-            background: #ff4757;
-            color: white;
-        }
-
-        .cart-btn.active {
-            background: var(--primary-violet);
-            color: white;
-        }
-
-        /* Section Title - Compact */
-        .section-title {
-            font-size: 1.6rem;
-            margin: 40px 0 20px;
-            color: var(--dark-gray);
-            font-weight: 600;
-            text-align: center;
-            font-family: 'Quicksand', sans-serif;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 35px;
-            height: 3px;
-            background: var(--yellow);
-            border-radius: 2px;
-        }
-
-        /* Updated Footer with #8259E2 background - Compact */
-        .footer {
-            background: #8259E2;
-            padding: 35px 20px 20px;
-            margin-top: 60px;
-            text-align: center;
-            color: white;
-            position: relative;
-        }
-
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--yellow);
-        }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 15px;
-            font-family: 'Quicksand', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .footer-logo-img {
-            width: 30px;
-            height: 30px;
-            object-fit: contain;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            margin: 20px 0;
-        }
-
-        .footer-links li {
-            margin: 0 15px;
-            position: relative;
-        }
-
-        .footer-links li:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            right: -15px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 3px;
-            background: var(--yellow);
-            border-radius: 50%;
-        }
-
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            transition: all 0.3s;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .footer-links a:hover {
-            color: var(--yellow);
-            transform: translateY(-2px);
-        }
-
-        .copyright {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            opacity: 0.8;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* New subtle yellow accents */
-        .highlight-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: var(--yellow);
-            color: var(--dark-gray);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
             z-index: 2;
         }
 
-        .product-card:nth-child(2n) .product-image::before {
-            background: linear-gradient(135deg, rgba(138, 43, 226, 0.03), rgba(249, 223, 113, 0.08));
+        .product-image {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
         }
 
-        .nav-logo::after {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: var(--yellow);
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        /* Featured Product Reviews - Carousel */
+        .reviews {
+            padding: 80px 0;
+        }
+
+        .reviews-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .reviews-slider {
+            display: flex;
+            transition: transform 0.5s ease;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .review-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            flex: 0 0 calc(33.333% - 14px);
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .review-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.2);
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .review-profile {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            margin-left: 6px;
-            animation: pulse 2s infinite;
+            object-fit: cover;
+            margin-right: 12px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
+        .reviewer-info {
+            flex: 1;
         }
 
-        /* Mobile Bottom Navigation - Hidden on Desktop */
-        .mobile-bottom-nav {
-            display: none;
+        .reviewer-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
         }
 
-        /* Mobile Styles */
+        .product-details {
+            font-size: 12px;
+            color: var(--light-text);
+            margin-bottom: 3px;
+        }
+
+        .stars {
+            color: var(--accent-color);
+            font-size: 12px;
+        }
+
+        .review-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .review-comment {
+            font-size: 13px;
+            color: var(--text-color);
+            line-height: 1.4;
+            flex: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+
+        .reviews-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--secondary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+            font-size: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .reviews-nav:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .reviews-prev {
+            left: 10px;
+        }
+
+        .reviews-next {
+            right: 10px;
+        }
+
+        .reviews-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 25px;
+        }
+
+        .review-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(130, 89, 226, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .review-dot.active {
+            background: var(--secondary-color);
+            transform: scale(1.2);
+        }
+
+        .review-dot:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 80px 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: rgba(130, 89, 226, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: var(--transition);
+            color: white;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.4);
+        }
+
+        .service-icon {
+            font-size: 60px;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Gallery Section - 3 Images at a Time */
+        .gallery {
+            padding: 80px 0;
+        }
+
+        .gallery-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .gallery-slider {
+            display: flex;
+            transition: transform 0.5s ease;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .gallery-slide {
+            flex: 0 0 calc(33.333% - 14px);
+            height: 350px;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: var(--transition);
+            opacity: 0.7;
+            transform: scale(0.9);
+        }
+
+        .gallery-slide.active {
+            opacity: 1;
+            transform: scale(1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--secondary-color);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+            font-size: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .gallery-nav:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .gallery-prev {
+            left: 20px;
+        }
+
+        .gallery-next {
+            right: 20px;
+        }
+
+        /* Gallery Navigation Dots */
+        .gallery-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .gallery-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(130, 89, 226, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gallery-dot.active {
+            background: var(--secondary-color);
+            transform: scale(1.2);
+        }
+
+        .gallery-dot:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 60px 0 30px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--footer-text);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+            padding-left: 5px;
+        }
+
+        .contact-info {
+            color: var(--footer-text);
+        }
+
+        .social-icon {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background: #6a46c4;
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--footer-text);
+            font-size: 14px;
+        }
+
+        .footer-bottom p {
+            margin-bottom: 5px;
+        }
+
+        /* New UI Improvements */
+        .floating-paw {
+            position: absolute;
+            font-size: 20px;
+            color: var(--secondary-color);
+            opacity: 0.7;
+            z-index: -1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--secondary-color), transparent);
+            margin: 40px auto;
+            width: 80%;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            /* Add padding to body for mobile bottom nav */
-            body {
-                padding-bottom: 70px;
+            .hero-content {
+                flex-direction: column;
             }
             
-            /* Centered Categories for Mobile */
-            .categories-container {
-                display: flex;
-                justify-content: center;
+            .hero-card {
+                flex-direction: column;
+                text-align: center;
             }
             
-            .categories-grid {
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 8px;
+            .hero h1 {
+                font-size: 36px;
             }
             
-            /* Stadium-Shaped Categories for Mobile */
-            .category-card {
-                border-radius: 50px;
-                padding: 8px 16px;
-                min-width: auto;
-                flex: 0 0 auto;
-            }
-            
-            .category-icon {
-                font-size: 1.2rem;
-                margin-bottom: 4px;
-            }
-            
-            .category-card h3 {
-                font-size: 0.7rem;
-            }
-            
-            /* Featured Products Mobile Layout */
-            .featured-products {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .featured-product-image {
-                height: 180px;
-            }
-            
-            .featured-product-name {
-                font-size: 1.2rem;
-            }
-            
-            /* Removed Yellow Periods */
-            .nav-links a.active::after {
-                display: none;
-            }
-            
-            .footer-links li:not(:last-child)::after {
-                display: none;
-            }
-            
-            /* Smaller Footer for Mobile */
-            .footer {
-                padding: 20px 15px 15px;
-                margin-top: 40px;
-            }
-            
-            .footer-logo {
-                font-size: 1.3rem;
-                margin-bottom: 10px;
-            }
-            
-            .footer-links {
-                margin: 15px 0;
-                flex-wrap: wrap;
-            }
-            
-            .footer-links a {
-                font-size: 0.8rem;
-            }
-            
-            .copyright {
-                font-size: 0.7rem;
-                margin-top: 15px;
-            }
-            
-            /* Mobile Bottom Navigation */
-            .mobile-bottom-nav {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                background: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(15px);
-                -webkit-backdrop-filter: blur(15px);
-                display: flex;
-                justify-content: space-around;
-                padding: 10px 0;
-                box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
-                border-top: 1px solid rgba(0, 0, 0, 0.05);
-                z-index: 1000;
-            }
-            
-            .mobile-nav-item {
-                display: flex;
+            .hero-buttons {
                 flex-direction: column;
                 align-items: center;
-                text-decoration: none;
-                color: var(--dark-gray);
-                font-size: 0.7rem;
-                padding: 5px 10px;
-                border-radius: 10px;
-                transition: all 0.3s ease;
             }
             
-            .mobile-nav-item i {
-                font-size: 1.2rem;
-                margin-bottom: 3px;
-                transition: all 0.3s ease;
+            .btn-glass, .btn-donate {
+                width: 100%;
+                text-align: center;
             }
             
-            .mobile-nav-item.active {
-                color: var(--primary-violet);
-                background: rgba(138, 43, 226, 0.08);
-            }
-            
-            .mobile-nav-item.active i {
-                color: var(--primary-violet);
-            }
-            
-            .mobile-nav-item:hover {
-                color: var(--primary-violet);
-            }
-            
-            .nav-links {
-                display: none;
-            }
-
-            .nav-hamburger {
-                display: none; /* Remove hamburger menu */
-            }
-
-            .page-title {
-                font-size: 1.8rem;
-            }
-
-            .donation-section {
-                padding: 25px 20px;
-            }
-
-            .donation-content h3 {
-                font-size: 20px;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            .header-content {
+                flex-direction: column;
                 gap: 15px;
             }
-
-            .footer-links {
-                flex-direction: row;
-                flex-wrap: wrap;
+            
+            .auth-buttons {
+                width: 100%;
                 justify-content: center;
             }
-
-            .footer-links li {
-                margin: 5px 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .products-grid {
-                grid-template-columns: 1fr 1fr;
-            }
             
-            .page-title {
-                font-size: 1.6rem;
-            }
-            
-            .section-title {
-                font-size: 1.4rem;
-            }
-
-            .category-card {
-                padding: 6px 12px;
-            }
-
-            .category-icon {
-                font-size: 1rem;
-            }
-
-            .category-card h3 {
-                font-size: 0.65rem;
-            }
-            
-            .footer-links {
+            .donation-section {
                 flex-direction: column;
+                text-align: center;
             }
             
-            .footer-links li {
-                margin: 3px 0;
+            .categories-container {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .category-item:not(:last-child)::after {
+                display: none;
+            }
+            
+            .gallery-slide, .review-card {
+                flex: 0 0 calc(100% - 20px);
+                height: 250px;
+            }
+            
+            .gallery-nav, .reviews-nav {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="glass-navbar">
-        <div class="nav-logo">
-            <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="Pawsitive Vibes Logo" class="logo-img">
-            <span>Pawsitive Vibes</span>
-        </div>
-        
-        <ul class="nav-links">
-            <li><a href="home.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a></li>
-            <li><a href="favorites.html"><i class="fas fa-heart"></i> <span>Favorites</span></a></li>
-            <li><a href="donation.html"><i class="fas fa-hand-holding-usd"></i> <span>Donate</span></a></li>
-            <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> <span>Cart</span></a></li>
-            <li><a href="profile.html"><i class="fas fa-user"></i> <span>Profile</span></a></li>
-        </ul>
-        
-        <button class="nav-hamburger" id="navHamburger">
-            <i class="fas fa-bars"></i>
-        </button>
-    </nav>
-
-    <!-- Search Bar -->
-    <div class="search-container">
-        <div class="search-bar">
-            <input type="text" class="search-input" placeholder="Search for pet products, toys, food..." id="searchInput">
-            <button class="search-btn" id="searchBtn">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container">
-        <h1 class="page-title">Welcome to Pawsitive Vibes</h1>
-        <p class="page-subtitle">Discover premium pet products that bring joy to your furry friends and create pawsitive moments every day.</p>
-        
-        <!-- Categories Section -->
-        <section class="categories-section">
-            <h2 class="section-title">Shop by Category</h2>
-            <div class="categories-container">
-                <div class="categories-grid" id="categoriesGrid">
-                    <!-- Categories will be dynamically added here -->
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\pawsitive-logo.jpg" alt="Pawsitive Vibes" class="logo-img">
+                     Pawsitive Vibes
+                </a>
+                <div class="auth-buttons">
+                    <button class="btn btn-login">Login</button>
+                    <button class="btn btn-signup">Sign Up</button>
                 </div>
             </div>
-        </section>
-        
-        <!-- Enhanced Donation Banner -->
-        <section class="donation-section">
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-card">
+                    <div class="hero-text">
+                        <h1>Premium Pet Supplies for Happy Pets</h1>
+                        <p>At Pawsitive Vibes, we believe every pet deserves the best. From nutritious food to fun toys and cozy beds, we've got everything to keep your furry friends healthy and happy.</p>
+                        <div class="hero-buttons">
+                            <button class="btn-glass btn-shop">View Shop</button>
+                            <button class="btn-glass btn-donate-hero">Donate Now</button>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\temp-cover2.jpg" alt="Happy pets with toys">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories">
+        <div class="container">
+            <h2 class="section-title">Our Products</h2>
+            <div class="categories-container">
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-bone"></i>
+                    </div>
+                    <div class="category-name">Dry Dog Food</div>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-drumstick-bite"></i>
+                    </div>
+                    <div class="category-name">Wet Dog Food</div>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-dog"></i>
+                    </div>
+                    <div class="category-name">For Puppies</div>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-fish"></i>
+                    </div>
+                    <div class="category-name">Dry Cat Food</div>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="category-name">Wet Cat Food</div>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-cat"></i>
+                    </div>
+                    <div class="category-name">For Kittens</div>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-cookie"></i>
+                    </div>
+                    <div class="category-name">Treats</div>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="category-name">Vitamins</div>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <div class="category-name">Other Supplies</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donation Section -->
+    <section class="container">
+        <div class="donation-section">
             <div class="donation-icon">
                 <i class="fas fa-hand-holding-heart"></i>
             </div>
@@ -1128,420 +1107,528 @@
                     <i class="fas fa-heart"></i> Donate Now
                 </button>
             </div>
-        </section>
-        
-        <!-- Featured Products Section -->
-        <section class="featured-section">
-            <h2 class="section-title">Featured Products</h2>
-            <div class="featured-products" id="featuredProductsGrid">
-                <!-- Featured products will be dynamically added here -->
-            </div>
-        </section>
-        
-        <!-- All Products Section -->
-        <section class="all-products-section">
-            <h2 class="section-title">All Products</h2>
-            <div class="products-grid" id="productsGrid">
-                <!-- All products will be dynamically added here -->
-            </div>
-        </section>
-    </div>
-
-    <!-- Updated Footer with #8259E2 background -->
-    <div class="footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="Pawsitive Vibes Logo" class="footer-logo-img">
-                <span>Pawsitive Vibes</span>
-            </div>
-            <ul class="footer-links">
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Shipping Policy</a></li>
-                <li><a href="#">Returns</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-            </ul>
-            <p class="copyright">© 2023 Pawsitive Vibes. All rights reserved.</p>
         </div>
-    </div>
+    </section>
 
-    <!-- Mobile Bottom Navigation -->
-    <div class="mobile-bottom-nav">
-        <a href="home.html" class="mobile-nav-item active">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="favorites.html" class="mobile-nav-item">
-            <i class="fas fa-heart"></i>
-            <span>Favorites</span>
-        </a>
-        <a href="donation.html" class="mobile-nav-item">
-            <i class="fas fa-hand-holding-usd"></i>
-            <span>Donate</span>
-        </a>
-        <a href="cart.html" class="mobile-nav-item">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Cart</span>
-        </a>
-        <a href="profile.html" class="mobile-nav-item">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-    </div>
+    <!-- Featured Products -->
+    <section class="featured-products">
+        <div class="container">
+            <h2 class="section-title">Best Selling Products</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="best-selling">Best Seller</div>
+                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80" alt="Premium Dog Food" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Premium Dog Food</h3>
+                        <p class="product-price">₱1,250</p>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="best-selling">Best Seller</div>
+                    <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Cat Tree" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Multi-Level Cat Tree</h3>
+                        <p class="product-price">₱2,800</p>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="best-selling">Best Seller</div>
+                    <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Pet Toys" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Assorted Pet Toys</h3>
+                        <p class="product-price">₱350</p>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="best-selling">Best Seller</div>
+                    <img src="https://images.unsplash.com/photo-1591946614720-90c6a604b7be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Pet Bed" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Orthopedic Pet Bed</h3>
+                        <p class="product-price">₱1,750</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="gallery">
+        <div class="container">
+            <h2 class="section-title">Store Gallery</h2>
+            <div class="gallery-container">
+                <div class="gallery-slider">
+                    <div class="gallery-slide">
+                        <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\img2.jpg" alt="Store Image 2">
+                    </div>
+                    <div class="gallery-slide active">
+                        <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\img3.jpg" alt="Store Image 3">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\img4.jpg" alt="Store Image 4">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\img5.jpg" alt="Store Image 5">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\img6.jpg" alt="Store Image 6">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\img7.jpg" alt="Store Image 7">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="C:\Users\Theresa\Pawsitive Vibes Pet Supplies Shop\Pawsitive-Vibes\public\images\img8.jpg" alt="Store Image 8">
+                    </div>
+                </div>
+                <button class="gallery-nav gallery-prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="gallery-nav gallery-next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <!-- Gallery Navigation Dots -->
+            <div class="gallery-dots">
+                <!-- Dots will be generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3 class="service-title">Online Ordering</h3>
+                    <p class="service-description">Order anytime, anywhere & pay your way! Smooth pickup, zero hassle.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 class="service-title">In-store Pickup</h3>
+                    <p class="service-description">Pickup your order within 24 hours! Hassle-free and convenient.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Product Reviews -->
+    <section class="reviews">
+        <div class="container">
+            <h2 class="section-title">Featured Product Reviews</h2>
+            <div class="reviews-container">
+                <div class="reviews-slider">
+                    <!-- Review 1 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Sarah Johnson" class="review-profile">
+                            <div class="reviewer-info">
+                                <div class="reviewer-name">Sarah Johnson</div>
+                                <div class="product-details">Premium Dog Food • Large Bag</div>
+                                <div class="stars">★★★★★</div>
+                            </div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80" alt="Product Review" class="review-image">
+                        <p class="review-comment">My golden retriever absolutely loves this food! His coat has never been shinier and he has so much more energy. Will definitely purchase again!</p>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Michael Chen" class="review-profile">
+                            <div class="reviewer-info">
+                                <div class="reviewer-name">Michael Chen</div>
+                                <div class="product-details">Multi-Level Cat Tree • Large</div>
+                                <div class="stars">★★★★★</div>
+                            </div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Product Review" class="review-image">
+                        <p class="review-comment">This cat tree is amazing! My three cats fight over who gets to sleep on the top level. Very sturdy and well-made. Worth every penny!</p>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Emily Rodriguez" class="review-profile">
+                            <div class="reviewer-info">
+                                <div class="reviewer-name">Emily Rodriguez</div>
+                                <div class="product-details">Assorted Pet Toys • Mixed Set</div>
+                                <div class="stars">★★★★☆</div>
+                            </div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Product Review" class="review-image">
+                        <p class="review-comment">Great variety of toys! My puppy loves the squeaky balls the most. Some toys are more durable than others, but overall good value.</p>
+                    </div>
+
+                    <!-- Review 4 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="David Kim" class="review-profile">
+                            <div class="reviewer-info">
+                                <div class="reviewer-name">David Kim</div>
+                                <div class="product-details">Orthopedic Pet Bed • Medium</div>
+                                <div class="stars">★★★★★</div>
+                            </div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1591946614720-90c6a604b7be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Product Review" class="review-image">
+                        <p class="review-comment">My senior dog with arthritis sleeps so much better on this bed. It provides excellent support and is easy to clean. Highly recommend!</p>
+                    </div>
+
+                    <!-- Review 5 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1167&q=80" alt="Lisa Thompson" class="review-profile">
+                            <div class="reviewer-info">
+                                <div class="reviewer-name">Lisa Thompson</div>
+                                <div class="product-details">Wet Cat Food • Chicken Flavor</div>
+                                <div class="stars">★★★★★</div>
+                            </div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1574231164645-d6f0e8553590?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80" alt="Product Review" class="review-image">
+                        <p class="review-comment">My picky eater finally found a wet food she loves! The ingredients are high quality and she's maintaining a healthy weight. Great product!</p>
+                    </div>
+
+                    <!-- Review 6 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Robert Garcia" class="review-profile">
+                            <div class="reviewer-info">
+                                <div class="reviewer-name">Robert Garcia</div>
+                                <div class="product-details">Dog Vitamins • Joint Support</div>
+                                <div class="stars">★★★★☆</div>
+                            </div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1130&q=80" alt="Product Review" class="review-image">
+                        <p class="review-comment">Noticed improvement in my dog's mobility after a month. Easy to administer with food. Would give 5 stars if the tablets were smaller.</p>
+                    </div>
+
+                    <!-- Review 7 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Maria Santos" class="review-profile">
+                            <div class="reviewer-info">
+                                <div class="reviewer-name">Maria Santos</div>
+                                <div class="product-details">Puppy Training Treats • Chicken</div>
+                                <div class="stars">★★★★★</div>
+                            </div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1559056199-5ef0f86b53a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Product Review" class="review-image">
+                        <p class="review-comment">Perfect size for training! My puppy responds well to these treats and they don't upset his stomach. We're making great progress with obedience training!</p>
+                    </div>
+
+                    <!-- Review 8 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="James Wilson" class="review-profile">
+                            <div class="reviewer-info">
+                                <div class="reviewer-name">James Wilson</div>
+                                <div class="product-details">Cat Scratching Post • Tall</div>
+                                <div class="stars">★★★★☆</div>
+                            </div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1143&q=80" alt="Product Review" class="review-image">
+                        <p class="review-comment">Saved my furniture! My cats prefer this over the couch now. Sturdy construction and the included catnip really attracted them to it initially.</p>
+                    </div>
+                </div>
+                <button class="reviews-nav reviews-prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="reviews-nav reviews-next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <!-- Reviews Navigation Dots -->
+            <div class="reviews-dots">
+                <!-- Dots will be generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>About Us</h3>
+                    <ul class="footer-links">
+                        <li><a href="aboutus.html">Our Story</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Policies</h3>
+                    <ul class="footer-links">
+                        <li><a href="userpolicy.html">User Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Info</h3>
+                    <div class="contact-info">
+                        <p>0917 828 0994</p>
+                        <p>pawsitivevibes@gmail.com</p>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/profile.php?id=61575048088417" class="social-icon">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Learn More</h3>
+                    <ul class="footer-links">
+                        <li><a href="donationinformation.html">About Donations</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Location: 122 JP Laurel St., Brgy. 2-Poblacion, Nasugbu, Batangas</p>
+                <p>Pawsitive Vibes | Pet Supplies Shop</p>
+                <p>by Ivory Studio (2025)</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Categories data (removed Grooming)
-        const categories = [
-            { id: 1, name: "Dog Food", icon: "fas fa-bone" },
-            { id: 2, name: "Cat Food", icon: "fas fa-fish" },
-            { id: 3, name: "Toys", icon: "fas fa-paw" },
-            { id: 4, name: "Accessories", icon: "fas fa-vest" },
-            { id: 5, name: "Health Care", icon: "fas fa-shield-alt" },
-            { id: 6, name: "Beds", icon: "fas fa-bed" },
-            { id: 7, name: "Treats", icon: "fas fa-cookie" }
-        ];
-
-        // Sample product data for Pawsitive Vibes
-        const products = [
-            { id: 1, name: "Premium Dog Food", price: 34.99, icon: "fas fa-bone", badge: "Popular", category: "Dog Food", description: "Nutritionally balanced food for all dog breeds with natural ingredients." },
-            { id: 2, name: "Cat Scratching Post", price: 42.99, icon: "fas fa-cat", category: "Cat Food", description: "Durable scratching post to keep your cat's claws healthy and your furniture safe." },
-            { id: 3, name: "Pet Carrier", price: 59.99, icon: "fas fa-suitcase", badge: "New", category: "Accessories", description: "Comfortable and secure carrier for safe pet transportation." },
-            { id: 4, name: "Interactive Toy", price: 18.99, icon: "fas fa-gamepad", category: "Toys", description: "Engaging toy that stimulates your pet's mind and keeps them active." },
-            { id: 5, name: "Comfy Pet Bed", price: 49.99, icon: "fas fa-bed", badge: "Sale", category: "Beds", description: "Orthopedic pet bed with memory foam for ultimate comfort." },
-            { id: 6, name: "Automatic Feeder", price: 64.99, icon: "fas fa-utensils", category: "Accessories", description: "Programmable automatic feeder for consistent feeding schedules." },
-            { id: 7, name: "Pet GPS Tracker", price: 89.99, icon: "fas fa-map-marker-alt", badge: "Popular", category: "Accessories", description: "Real-time GPS tracking for your pet's safety and your peace of mind." },
-            { id: 8, name: "Organic Cat Treats", price: 12.99, icon: "fas fa-cookie", category: "Treats", description: "All-natural, grain-free treats that cats love." },
-            { id: 9, name: "Dog Training Leash", price: 24.99, icon: "fas fa-dog", category: "Accessories", description: "Durable training leash with comfortable handle." },
-            { id: 10, name: "Pet First Aid Kit", price: 32.99, icon: "fas fa-first-aid", category: "Health Care", description: "Comprehensive first aid kit for pet emergencies." },
-            { id: 11, name: "Water Fountain", price: 39.99, icon: "fas fa-tint", category: "Accessories", description: "Continuous fresh water circulation to encourage hydration." },
-            { id: 12, name: "Litter Box", price: 32.99, icon: "fas fa-box", category: "Cat Food", description: "Odor-control litter box with privacy hood." }
-        ];
-
-        // Featured products (first 4 products)
-        const featuredProducts = products.slice(0, 4);
-
-        // Initialize favorites and cart from localStorage or empty arrays
-        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let activeCategory = 'all';
-
-        // Function to render categories
-        function renderCategories() {
-            const categoriesGrid = document.getElementById('categoriesGrid');
-            categoriesGrid.innerHTML = '';
-
-            // Add "All" category
-            const allCategory = document.createElement('div');
-            allCategory.className = `category-card ${activeCategory === 'all' ? 'active' : ''}`;
-            allCategory.setAttribute('data-category', 'all');
-            allCategory.innerHTML = `
-                <i class="fas fa-th-large category-icon"></i>
-                <h3>All Products</h3>
-            `;
-            categoriesGrid.appendChild(allCategory);
-
-            // Add other categories
-            categories.forEach(category => {
-                const categoryCard = document.createElement('div');
-                categoryCard.className = `category-card ${activeCategory === category.name ? 'active' : ''}`;
-                categoryCard.setAttribute('data-category', category.name);
-                categoryCard.innerHTML = `
-                    <i class="${category.icon} category-icon"></i>
-                    <h3>${category.name}</h3>
-                `;
-                categoriesGrid.appendChild(categoryCard);
-            });
-
-            // Add event listeners to category cards
-            document.querySelectorAll('.category-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const category = this.getAttribute('data-category');
-                    filterProductsByCategory(category);
-                    
-                    // Update active state
-                    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
+        // Simple interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effect to buttons
+            const buttons = document.querySelectorAll('.btn, .btn-glass, .btn-donate');
+            
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
                 });
             });
-        }
-
-        // Function to filter products by category
-        function filterProductsByCategory(category) {
-            activeCategory = category;
             
-            if (category === 'all') {
-                renderFeaturedProducts();
-                renderProducts(products, 'productsGrid');
-            } else {
-                const filteredProducts = products.filter(product => product.category === category);
-                const filteredFeatured = featuredProducts.filter(product => product.category === category);
-                
-                renderFeaturedProducts(filteredFeatured);
-                renderProducts(filteredProducts, 'productsGrid');
-            }
-        }
-
-        // Function to render featured products
-        function renderFeaturedProducts(featuredArray = featuredProducts) {
-            const featuredProductsGrid = document.getElementById('featuredProductsGrid');
-            featuredProductsGrid.innerHTML = '';
-
-            if (featuredArray.length === 0) {
-                featuredProductsGrid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: var(--text-gray);">
-                        <i class="fas fa-search" style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                        <h3>No featured products found</h3>
-                        <p>Try adjusting your filter criteria</p>
-                    </div>
-                `;
-                return;
-            }
-
-            featuredArray.forEach(product => {
-                const isFavorite = favorites.includes(product.id);
-                const inCart = cart.includes(product.id);
-
-                const featuredProductCard = document.createElement('div');
-                featuredProductCard.className = 'featured-product-card';
-                featuredProductCard.innerHTML = `
-                    ${product.badge ? `<div class="featured-badge">${product.badge}</div>` : ''}
-                    <div class="featured-product-image">
-                        <i class="${product.icon}"></i>
-                    </div>
-                    <div class="featured-product-info">
-                        <h3 class="featured-product-name">${product.name}</h3>
-                        <p class="featured-product-description">${product.description}</p>
-                        <div class="featured-product-price">$${product.price.toFixed(2)}</div>
-                        <div class="featured-product-actions">
-                            <button class="featured-action-btn featured-favorite-btn ${isFavorite ? 'active' : ''}" data-id="${product.id}">
-                                <i class="fas fa-heart"></i> ${isFavorite ? 'Liked' : 'Like'}
-                            </button>
-                            <button class="featured-action-btn ${inCart ? 'active' : ''}" data-id="${product.id}">
-                                <i class="fas fa-shopping-cart"></i> ${inCart ? 'In Cart' : 'Add to Cart'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-                featuredProductsGrid.appendChild(featuredProductCard);
+            // Add click effect to cards
+            const cards = document.querySelectorAll('.product-card, .donation-section, .category-item, .review-card, .service-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
             });
-
-            // Add event listeners to featured product buttons
-            document.querySelectorAll('.featured-favorite-btn').forEach(btn => {
-                btn.addEventListener('click', toggleFeaturedFavorite);
-            });
-
-            document.querySelectorAll('.featured-action-btn:not(.featured-favorite-btn)').forEach(btn => {
-                btn.addEventListener('click', toggleFeaturedCart);
-            });
-        }
-
-        // Function to render regular products
-        function renderProducts(productsArray, containerId) {
-            const productsGrid = document.getElementById(containerId);
-            productsGrid.innerHTML = '';
-
-            if (productsArray.length === 0) {
-                productsGrid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: var(--text-gray);">
-                        <i class="fas fa-search" style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                        <h3>No products found</h3>
-                        <p>Try adjusting your search or filter criteria</p>
-                    </div>
-                `;
-                return;
+            
+            // Create floating paw elements
+            const heroSection = document.querySelector('.hero');
+            for (let i = 0; i < 10; i++) {
+                const paw = document.createElement('div');
+                paw.classList.add('floating-paw');
+                paw.innerHTML = '<i class="fas fa-paw"></i>';
+                paw.style.left = `${Math.random() * 100}%`;
+                paw.style.top = `${Math.random() * 100}%`;
+                paw.style.animationDelay = `${Math.random() * 5}s`;
+                heroSection.appendChild(paw);
             }
 
-            productsArray.forEach(product => {
-                const isFavorite = favorites.includes(product.id);
-                const inCart = cart.includes(product.id);
+            // Gallery slider functionality - 3 images at a time
+            const gallerySlider = document.querySelector('.gallery-slider');
+            const gallerySlides = document.querySelectorAll('.gallery-slide');
+            const galleryPrevBtn = document.querySelector('.gallery-prev');
+            const galleryNextBtn = document.querySelector('.gallery-next');
+            const galleryDotsContainer = document.querySelector('.gallery-dots');
+            let currentGallerySlide = 1; // Start with center slide
+            const totalGallerySlides = gallerySlides.length;
+            const visibleGallerySlides = 3;
+            let galleryAutoSlideInterval;
+            let galleryUserInteracted = false;
 
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.innerHTML = `
-                    ${product.badge ? `<div class="highlight-badge">${product.badge}</div>` : ''}
-                    <div class="product-image">
-                        <i class="${product.icon}"></i>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">${product.name}</h3>
-                        <div class="product-price">$${product.price.toFixed(2)}</div>
-                        <div class="product-actions">
-                            <button class="action-btn favorite-btn ${isFavorite ? 'active' : ''}" data-id="${product.id}">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn cart-btn ${inCart ? 'active' : ''}" data-id="${product.id}">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                productsGrid.appendChild(productCard);
-            });
-
-            // Add event listeners to buttons
-            document.querySelectorAll('.favorite-btn').forEach(btn => {
-                btn.addEventListener('click', toggleFavorite);
-            });
-
-            document.querySelectorAll('.cart-btn').forEach(btn => {
-                btn.addEventListener('click', toggleCart);
-            });
-        }
-
-        // Toggle favorite status for regular products
-        function toggleFavorite(e) {
-            const productId = parseInt(e.currentTarget.getAttribute('data-id'));
-            const index = favorites.indexOf(productId);
-            
-            if (index === -1) {
-                favorites.push(productId);
-                e.currentTarget.classList.add('active');
-            } else {
-                favorites.splice(index, 1);
-                e.currentTarget.classList.remove('active');
-            }
-            
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            
-            // Update featured products if needed
-            renderFeaturedProducts();
-            
-            // Reset the button size after click
-            e.currentTarget.style.transform = 'scale(1)';
-        }
-
-        // Toggle favorite status for featured products
-        function toggleFeaturedFavorite(e) {
-            const productId = parseInt(e.currentTarget.getAttribute('data-id'));
-            const index = favorites.indexOf(productId);
-            
-            if (index === -1) {
-                favorites.push(productId);
-                e.currentTarget.classList.add('active');
-                e.currentTarget.innerHTML = '<i class="fas fa-heart"></i> Liked';
-            } else {
-                favorites.splice(index, 1);
-                e.currentTarget.classList.remove('active');
-                e.currentTarget.innerHTML = '<i class="fas fa-heart"></i> Like';
-            }
-            
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            
-            // Update regular products if needed
-            renderProducts(products, 'productsGrid');
-        }
-
-        // Toggle cart status for regular products
-        function toggleCart(e) {
-            const productId = parseInt(e.currentTarget.getAttribute('data-id'));
-            const index = cart.indexOf(productId);
-            
-            if (index === -1) {
-                cart.push(productId);
-                e.currentTarget.classList.add('active');
-            } else {
-                cart.splice(index, 1);
-                e.currentTarget.classList.remove('active');
-            }
-            
-            localStorage.setItem('cart', JSON.stringify(cart));
-            
-            // Update featured products if needed
-            renderFeaturedProducts();
-            
-            // Reset the button size after click
-            e.currentTarget.style.transform = 'scale(1)';
-        }
-
-        // Toggle cart status for featured products
-        function toggleFeaturedCart(e) {
-            const productId = parseInt(e.currentTarget.getAttribute('data-id'));
-            const index = cart.indexOf(productId);
-            
-            if (index === -1) {
-                cart.push(productId);
-                e.currentTarget.classList.add('active');
-                e.currentTarget.innerHTML = '<i class="fas fa-shopping-cart"></i> In Cart';
-            } else {
-                cart.splice(index, 1);
-                e.currentTarget.classList.remove('active');
-                e.currentTarget.innerHTML = '<i class="fas fa-shopping-cart"></i> Add to Cart';
-            }
-            
-            localStorage.setItem('cart', JSON.stringify(cart));
-            
-            // Update regular products if needed
-            renderProducts(products, 'productsGrid');
-        }
-
-        // Search functionality
-        function handleSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            if (searchTerm === '') {
-                filterProductsByCategory(activeCategory);
-                return;
-            }
-
-            const searchResults = products.filter(product => 
-                product.name.toLowerCase().includes(searchTerm) || 
-                product.category.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm)
-            );
-
-            const featuredSearchResults = featuredProducts.filter(product => 
-                product.name.toLowerCase().includes(searchTerm) || 
-                product.category.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm)
-            );
-
-            // Clear both product grids and show search results
-            document.getElementById('featuredProductsGrid').innerHTML = '';
-            document.getElementById('productsGrid').innerHTML = '';
-            
-            if (searchResults.length > 0) {
-                renderFeaturedProducts(featuredSearchResults);
-                renderProducts(searchResults, 'productsGrid');
-                document.querySelector('.section-title').textContent = 'Search Results';
-            } else {
-                document.getElementById('featuredProductsGrid').innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: var(--text-gray);">
-                        <i class="fas fa-search" style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                        <h3>No products found for "${searchTerm}"</h3>
-                        <p>Try adjusting your search terms</p>
-                    </div>
-                `;
-                document.querySelector('.section-title').textContent = 'Search Results';
-            }
-        }
-
-        // Donate button functionality
-        document.querySelector('.btn-donate').addEventListener('click', function() {
-            alert('Thank you for your willingness to support animal shelters! You will be redirected to our donation page.');
-            // In a real application, you would redirect to a donation page
-        });
-
-        // Mobile bottom nav functionality
-        document.querySelectorAll('.mobile-nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.mobile-nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            renderCategories();
-            renderFeaturedProducts();
-            renderProducts(products, 'productsGrid');
-
-            // Search event listeners
-            document.getElementById('searchBtn').addEventListener('click', handleSearch);
-            document.getElementById('searchInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    handleSearch();
+            // Create gallery navigation dots
+            function createGalleryDots() {
+                for (let i = 0; i < totalGallerySlides; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('gallery-dot');
+                    if (i === currentGallerySlide) {
+                        dot.classList.add('active');
+                    }
+                    dot.addEventListener('click', () => {
+                        galleryUserInteracted = true;
+                        goToGallerySlide(i);
+                        resetGalleryAutoSlide();
+                    });
+                    galleryDotsContainer.appendChild(dot);
                 }
+            }
+
+            function updateGallery() {
+                // Remove active class from all slides
+                gallerySlides.forEach(slide => slide.classList.remove('active'));
+                
+                // Add active class to current slide and adjacent slides
+                for (let i = -1; i <= 1; i++) {
+                    const index = (currentGallerySlide + i + totalGallerySlides) % totalGallerySlides;
+                    gallerySlides[index].classList.add('active');
+                }
+                
+                // Calculate transform for smooth sliding
+                const slideWidth = 100 / visibleGallerySlides;
+                const offset = -(currentGallerySlide - 1) * slideWidth;
+                gallerySlider.style.transform = `translateX(${offset}%)`;
+                
+                // Update dots
+                const dots = document.querySelectorAll('.gallery-dot');
+                dots.forEach((dot, index) => {
+                    if (index === currentGallerySlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            function goToGallerySlide(slideIndex) {
+                currentGallerySlide = slideIndex;
+                updateGallery();
+            }
+
+            function nextGallerySlide() {
+                currentGallerySlide = (currentGallerySlide + 1) % totalGallerySlides;
+                updateGallery();
+            }
+
+            function prevGallerySlide() {
+                currentGallerySlide = (currentGallerySlide - 1 + totalGallerySlides) % totalGallerySlides;
+                updateGallery();
+            }
+
+            function startGalleryAutoSlide() {
+                if (!galleryUserInteracted) {
+                    galleryAutoSlideInterval = setInterval(nextGallerySlide, 5000);
+                }
+            }
+
+            function resetGalleryAutoSlide() {
+                clearInterval(galleryAutoSlideInterval);
+                if (!galleryUserInteracted) {
+                    startGalleryAutoSlide();
+                }
+            }
+
+            function handleGalleryUserInteraction() {
+                if (!galleryUserInteracted) {
+                    galleryUserInteracted = true;
+                    clearInterval(galleryAutoSlideInterval);
+                }
+            }
+
+            galleryPrevBtn.addEventListener('click', () => {
+                handleGalleryUserInteraction();
+                prevGallerySlide();
             });
+
+            galleryNextBtn.addEventListener('click', () => {
+                handleGalleryUserInteraction();
+                nextGallerySlide();
+            });
+
+            // Initialize gallery
+            createGalleryDots();
+            updateGallery();
+            startGalleryAutoSlide();
+
+            // Reviews slider functionality - 3 reviews at a time
+            const reviewsSlider = document.querySelector('.reviews-slider');
+            const reviewCards = document.querySelectorAll('.review-card');
+            const reviewsPrevBtn = document.querySelector('.reviews-prev');
+            const reviewsNextBtn = document.querySelector('.reviews-next');
+            const reviewsDotsContainer = document.querySelector('.reviews-dots');
+            let currentReviewSlide = 0; // Start with first slide
+            const totalReviewSlides = Math.ceil(reviewCards.length / 3);
+            let reviewsAutoSlideInterval;
+            let reviewsUserInteracted = false;
+
+            // Create reviews navigation dots
+            function createReviewsDots() {
+                for (let i = 0; i < totalReviewSlides; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('review-dot');
+                    if (i === currentReviewSlide) {
+                        dot.classList.add('active');
+                    }
+                    dot.addEventListener('click', () => {
+                        reviewsUserInteracted = true;
+                        goToReviewSlide(i);
+                        resetReviewsAutoSlide();
+                    });
+                    reviewsDotsContainer.appendChild(dot);
+                }
+            }
+
+            function updateReviews() {
+                // Calculate transform for smooth sliding
+                const slideWidth = 100 / 3;
+                const offset = -(currentReviewSlide) * slideWidth * 3;
+                reviewsSlider.style.transform = `translateX(${offset}%)`;
+                
+                // Update dots
+                const dots = document.querySelectorAll('.review-dot');
+                dots.forEach((dot, index) => {
+                    if (index === currentReviewSlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            function goToReviewSlide(slideIndex) {
+                currentReviewSlide = slideIndex;
+                updateReviews();
+            }
+
+            function nextReviewSlide() {
+                currentReviewSlide = (currentReviewSlide + 1) % totalReviewSlides;
+                updateReviews();
+            }
+
+            function prevReviewSlide() {
+                currentReviewSlide = (currentReviewSlide - 1 + totalReviewSlides) % totalReviewSlides;
+                updateReviews();
+            }
+
+            function startReviewsAutoSlide() {
+                if (!reviewsUserInteracted) {
+                    reviewsAutoSlideInterval = setInterval(nextReviewSlide, 5000);
+                }
+            }
+
+            function resetReviewsAutoSlide() {
+                clearInterval(reviewsAutoSlideInterval);
+                if (!reviewsUserInteracted) {
+                    startReviewsAutoSlide();
+                }
+            }
+
+            function handleReviewsUserInteraction() {
+                if (!reviewsUserInteracted) {
+                    reviewsUserInteracted = true;
+                    clearInterval(reviewsAutoSlideInterval);
+                }
+            }
+
+            reviewsPrevBtn.addEventListener('click', () => {
+                handleReviewsUserInteraction();
+                prevReviewSlide();
+            });
+
+            reviewsNextBtn.addEventListener('click', () => {
+                handleReviewsUserInteraction();
+                nextReviewSlide();
+            });
+
+            // Initialize reviews
+            createReviewsDots();
+            updateReviews();
+            startReviewsAutoSlide();
         });
     </script>
 </body>

@@ -16,7 +16,7 @@ return new class extends Migration
                 $t->foreignId('loyalty_card_id')->constrained('loyalty_cards')->cascadeOnDelete();
                 $t->foreignId('transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
                 $t->enum('type', ['earn','redeem','adjust']);
-                $t->integer('stickers'); // +1, -9, etc.
+                $t->integer('stickers'); 
                 $t->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
                 $t->timestamps();
 

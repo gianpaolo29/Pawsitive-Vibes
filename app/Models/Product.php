@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Product extends Model
 {
     protected $fillable = [
-        'category_id', 'name', 'description', 'price',
+        'category_id', 'name', 'description', 'price', 'cost_price',
         'unit', 'stock', 'image_url', 'is_active',
     ];
 
@@ -45,4 +45,13 @@ class Product extends Model
     {
         return $this->hasMany(TransactionItem::class);
     }
-}
+
+    protected static function booted()
+    {
+        static::saving(function ($product) {
+            if ($product->stock <= 0) {
+                $product->is_active = false;
+            }
+        });
+    }
+    }
