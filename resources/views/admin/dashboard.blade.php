@@ -5,7 +5,6 @@
     {{-- TOP KPI CARDS --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
-        {{-- Revenue + Profit --}}
         <div class="bg-white p-6 rounded-xl shadow-lg flex items-start justify-between border-t-4 border-purple-500">
             <div>
                 <p class="text-sm font-medium text-gray-500 mb-1">This Month Revenue</p>
@@ -28,9 +27,9 @@
                     <span class="font-semibold text-sm {{ $revUp ? 'text-green-500' : 'text-red-500' }}">
                         {{ $revUp ? '+' : '' }}{{ $revenueChange }}%
                     </span>
-                @else
-                    <span class="text-xs text-gray-400">No data</span>
-                @endif>
+                @else  
+                    
+                @endif
                 <svg class="h-8 w-8 text-purple-500 opacity-70 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round"
                           d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 7v1m-5 0h1m-1-4h1m8-4h1m-1 4h1m-2.599-4C10.92 6.402 10 5.42 10 4.5 10 3.58 10.92 3 12 3s2 .58 2 1.5c0 .92-.92 1.901-2.599 2.599z"/>
@@ -52,7 +51,7 @@
                         {{ $ordUp ? '+' : '' }}{{ $ordersChange }}%
                     </span>
                 @else
-                    <span class="text-xs text-gray-400">No data</span>
+                   
                 @endif
                 <svg class="h-8 w-8 text-green-500 opacity-70 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -75,7 +74,7 @@
                         {{ $custUp ? '+' : '' }}{{ $newCustomersChange }}%
                     </span>
                 @else
-                    <span class="text-xs text-gray-400">No data</span>
+                    
                 @endif
                 <svg class="h-8 w-8 text-indigo-500 opacity-70 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -119,9 +118,9 @@
                     Total: ₱{{ number_format(array_sum($salesChart['data']), 2) }}
                 </p>
             </div>
-            <div class="w-full h-64">
-                <canvas id="sales-line-chart"></canvas>
-            </div>
+            <div class="w-full h-64 max-w-3xl mx-auto">
+    <canvas id="sales-line-chart"></canvas>
+</div>
         </div>
 
         {{-- Orders by status + payment method --}}
@@ -318,6 +317,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
                             scales: {
                                 y: { beginAtZero: true },
@@ -342,6 +342,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: { position: 'bottom' }
                             }
@@ -371,6 +372,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: { position: 'bottom' },
                                 tooltip: { mode: 'index', intersect: false },

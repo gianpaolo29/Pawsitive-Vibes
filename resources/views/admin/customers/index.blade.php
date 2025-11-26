@@ -1,4 +1,7 @@
 <x-admin-layout>
+    {{-- SweetAlert2 CDN (Include this in your <head> or layout file if not already global) --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <div class="flex flex-col gap-6">
 
         <div class="flex flex-wrap items-center justify-between gap-3">
@@ -12,7 +15,7 @@
             </div>
         </div>
 
-        <div class="grid sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="bg-white rounded-xl shadow-sm p-4 flex items-start gap-4 border-t-4 border-blue-400">
                 <div class="p-3 rounded-xl bg-blue-50 text-blue-600">
                     <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l10 5.5v11L12 22 2 17.5v-11L12 2z"/></svg>
@@ -32,7 +35,6 @@
                     <p class="text-2xl font-bold text-gray-900">{{ number_format($stats['new_this_month'] ?? 0) }}</p>
                 </div>
             </div>
-            
         </div>
 
         <form method="GET" class="flex flex-col sm:flex-row items-center gap-3">
@@ -85,10 +87,14 @@
                             <td class="px-4 py-3 text-right whitespace-nowrap">
                                 <div class="inline-flex items-center gap-3">
                                     <a href="{{ route('admin.customers.edit', $c) }}" class="text-violet-600 hover:text-violet-700 font-medium">Edit</a>
-                                    <form method="POST" action="{{ route('admin.customers.destroy', $c) }}" onsubmit="return confirm('Are you sure you want to delete this customer?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="text-rose-600 hover:text-rose-700 font-medium">Delete</button>
-                                    </form>
+                                    
+                                    {{-- MODIFIED: Replaced inline confirm with SweetAlert trigger --}}
+                                    <button 
+                                        type="button" 
+                                        onclick="confirmDelete('{{ route('admin.customers.destroy', $c) }}', '{{ $c->fname }} {{ $c->lname }}')" 
+                                        class="text-rose-600 hover:text-rose-700 font-medium"
+                                    >Delete</button>
+
                                 </div>
                             </td>
                         </tr>
@@ -104,4 +110,73 @@
             </div>
         </div>
     </div>
+
+    {{-- ---------------------------------------------------------------- --}}
+    {{-- CLIENT-SIDE JAVASCRIPT FOR SWEETALERT AND FLASH MESSAGES           --}}
+    {{-- ---------------------------------------------------------------- --}}
+    <script>
+        /**
+         * Function to confirm deletion using SweetAlert2
+         * @param {string} deleteUrl - The Laravel route for the DELETE action.
+         * @param {string} customerName - The name of the customer being deleted.
+         */
+        function confirmDelete(deleteUrl, customerName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This account will be deleted and cannot be undone",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626', // rose-600
+                cancelButtonColor: '#6b7280', // gray-500
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Create a temporary form to submit the DELETE request
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = deleteUrl;
+                    
+                    // Add CSRF token (works whether it's in a meta tag or needs to be injected)
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = '{{ csrf_token() }}'; // Use Blade helper to ensure token is available
+                    form.appendChild(csrfInput);
+
+                    // Add DELETE method spoofing
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'DELETE';
+                    form.appendChild(methodInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            })
+        }
+        
+        // SweetAlert Flash Message Handling for Success/Error/Info
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for success message flash
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            @endif
+
+            // Check for error message flash
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                });
+            @endif
+        });
+    </script>
 </x-admin-layout>

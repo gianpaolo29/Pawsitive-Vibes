@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use App\Notifications\LowStockNotification;
+use App\Notifications\GcashPaymentPendingNotification;
+use Illuminate\Support\Facades\Notification;
 
 class TransactionController extends Controller
 {
@@ -33,10 +36,10 @@ class TransactionController extends Controller
         if ($search) {
             $ordersQuery->where(function ($q) use ($search) {
                 $q->where('order_number', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('username', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('username', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -86,7 +89,6 @@ class TransactionController extends Controller
 
     public function pending(Request $request)
     {
-
         $orders = Transaction::with(['user:id,username,email', 'items', 'payment'])
             ->where('status', 'pending')
             ->latest('created_at')
@@ -96,13 +98,12 @@ class TransactionController extends Controller
         return view('admin.orders.pending-orders', compact('orders'));
     }
 
-
     public function completed(Request $request)
     {
         $orders = Transaction::with(['user:id,username,email', 'items', 'payment'])
             ->where(function ($q) {
                 $q->where('status', 'paid')
-                  ->orWhere('status', 'completed');
+                    ->orWhere('status', 'completed');
             })
             ->latest('created_at')
             ->paginate(15)
@@ -113,18 +114,7 @@ class TransactionController extends Controller
 
     public function create()
     {
-    
-        $walkInUser = User::firstOrCreate(
-            ['email' => 'walkin@pawsitive-vibes.local'],
-            [
-                'fname'    => 'Walk-in',
-                'lname'    => 'Customer',
-                'username' => 'walkin',
-                'password' => bcrypt(Str::random(32)),
-                'role'     => 'customer',
-            ]
-        );
-
+        $walkInUserId = null;
 
         $products = Product::select('id', 'name', 'price', 'unit', 'stock', 'image_url')
             ->where('is_active', 1)
@@ -137,9 +127,14 @@ class TransactionController extends Controller
                 return $p;
             });
 
+        $registeredCustomers = User::where('role', 'customer')
+            ->orderBy('fname')
+            ->get(['id', 'fname', 'lname', 'email']);
+
         return view('admin.orders.form', [
-            'walkInUserId' => $walkInUser->id,
-            'products'     => $products,
+            'walkInUserId'        => $walkInUserId,
+            'products'            => $products,
+            'registeredCustomers' => $registeredCustomers,
         ]);
     }
 
@@ -147,17 +142,17 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'user_id'           => ['required', 'integer', 'exists:users,id'],
-            'subtotal'          => ['required', 'numeric', 'min:0'],
-            'grand_total'       => ['required', 'numeric', 'min:0'],
-            'payment.method'    => ['required', Rule::in(['cash', 'gcash'])],
-            'items'             => ['required', 'array', 'min:1'],
-            'items.*.product_id'=> ['required', 'integer', 'exists:products,id'],
-            'items.*.quantity'  => ['required', 'integer', 'min:1'],
+            'user_id'            => ['nullable', 'integer', 'exists:users,id'],
+            'subtotal'           => ['required', 'numeric', 'min:0'],
+            'grand_total'        => ['required', 'numeric', 'min:0'],
+            'payment.method'     => ['required', Rule::in(['cash', 'gcash'])],
+            'items'              => ['required', 'array', 'min:1'],
+            'items.*.product_id' => ['required', 'integer', 'exists:products,id'],
+            'items.*.quantity'   => ['required', 'integer', 'min:1'],
         ]);
 
         return DB::transaction(function () use ($data) {
-            $itemsInput    = $data['items'];
+            $itemsInput     = $data['items'];
             $recalcSubtotal = 0;
             $lineItems      = [];
 
@@ -187,17 +182,20 @@ class TransactionController extends Controller
 
             $grand = $recalcSubtotal;
 
-            // Create Transaction
+
             $order = new Transaction();
-            $order->user_id       = $data['user_id'];
-            $order->order_number  = $this->generateOrderNo();
-            $order->subtotal      = $recalcSubtotal;
-            $order->grand_total   = $grand;
-            $order->status        = 'pending';  // default
-            $order->payment_status= 'unpaid';   // default
+            $order->user_id        = $data['user_id'] ?? null;
+            $order->order_number   = $this->generateOrderNo();
+            $order->subtotal       = $recalcSubtotal;
+            $order->grand_total    = $grand;
+            $order->status         = 'pending';
+            $order->payment_status = 'unpaid';
             $order->save();
 
-            // Items + stock decrement
+            // 🔔 collect admins once for notifications
+            $admins = User::where('role', 'admin')->get();
+
+            // Items + stock decrement + low-stock notifications
             foreach ($lineItems as $li) {
                 TransactionItem::create([
                     'transaction_id' => $order->id,
@@ -209,17 +207,22 @@ class TransactionController extends Controller
                     'line_total'     => $li['line_total'],
                 ]);
 
-                // Decrement stock
+                // Decrement stock & handle low stock notification
                 $product = Product::lockForUpdate()->find($li['product_id']);
                 if ($product) {
                     $product->stock = max(0, $product->stock - $li['quantity']);
 
-                    // 🔥 Auto-inactivate if stock is now 0
+                    // Auto-inactivate if stock is now 0
                     if ($product->stock <= 0) {
                         $product->is_active = false;
                     }
 
                     $product->save();
+
+                    // 🔔 LOW STOCK NOTIFICATION (threshold = 5)
+                    if ($product->stock <= 5 && $admins->isNotEmpty()) {
+                        Notification::send($admins, new LowStockNotification($product));
+                    }
                 }
             }
 
@@ -232,12 +235,18 @@ class TransactionController extends Controller
             $payment->amount         = $grand;
 
             if ($method === 'cash') {
-                $payment->status         = 'accepted';
-                $order->status           = 'completed';
-                $order->payment_status   = 'paid';
+                $payment->status       = 'accepted';
+                $order->status         = 'completed';
+                $order->payment_status = 'paid';
                 $order->save();
             } else {
+                // GCash → pending validation
                 $payment->status = 'pending';
+
+                // 🔔 NEW PENDING GCASH PAYMENT – notify admins
+                if ($admins->isNotEmpty()) {
+                    Notification::send($admins, new GcashPaymentPendingNotification($order));
+                }
             }
 
             $payment->save();
@@ -258,17 +267,15 @@ class TransactionController extends Controller
         return view('admin.orders.show', compact('order'));
     }
 
-
     public function edit(Transaction $order)
     {
         $order->load(['items', 'payment', 'user']);
 
         return view('admin.orders.edit', compact('order'));
     }
- 
+
     public function update(Request $request, Transaction $order)
     {
-
         $data = $request->validate([
             'status'         => ['required', Rule::in(['pending', 'paid', 'cancelled', 'refunded'])],
             'payment_status' => ['required', Rule::in(['unpaid', 'paid', 'refunded'])],
@@ -355,18 +362,17 @@ class TransactionController extends Controller
         return back()->with('ok', "GCash payment for #{$order->order_number} rejected.");
     }
 
-
     public function cancel(Transaction $order, Request $request)
     {
         $reason = $request->input('reason');
 
         DB::transaction(function () use ($order, $reason) {
-        
+
             foreach ($order->items as $item) {
                 $product = Product::find($item->product_id);
                 if ($product) {
                     $product->stock += (int) $item->quantity;
-                
+
                     if ($product->stock > 0 && !$product->is_active) {
                         $product->is_active = true;
                     }
@@ -385,7 +391,6 @@ class TransactionController extends Controller
 
         return back()->with('ok', "Transaction #{$order->order_number} cancelled.");
     }
-
 
     protected function generateOrderNo(): string
     {

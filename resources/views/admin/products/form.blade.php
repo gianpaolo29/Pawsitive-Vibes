@@ -65,7 +65,7 @@
 
                 <div>
                     <label for="description" class="block text-sm font-semibold text-gray-700">Full Description <span class="text-rose-600">*</span></label>
-                    <textarea name="description" id="description" rows="5" required placeholder="Enter detailed product description..."
+                    <textarea name="description" id="description" rows="5" required placeholder="Manufactured by:"
                             class="mt-1 w-full rounded-lg border-gray-300 focus:ring-violet-500 focus:border-violet-500">{{ old('description',$product->description) }}</textarea>
                     @error('description')<div class="text-rose-600 text-sm mt-1">{{ $message }}</div>@enderror
                 </div>

@@ -1,8 +1,48 @@
 <x-admin-layout>
+    {{-- SweetAlert2 CDN (Include this in your <head> or layout file if not already global) --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <div x-data="{
         openModal: false,
         modalData: {},
-        expandedRow: null
+        expandedRow: null,
+
+        // Function to handle cancel confirmation
+        confirmCancel(cancelUrl, orderNumber) {
+            Swal.fire({
+                title: 'Confirm Cancellation',
+                text: 'Are you sure you want to cancel order ' + orderNumber + '? This action cannot be reversed.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626', // Red
+                cancelButtonColor: '#6b7280', // Gray
+                confirmButtonText: 'Yes, Cancel It!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Create a temporary form to submit the PATCH request (or whatever method your route uses)
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = cancelUrl;
+                    
+                    // Add CSRF token
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfInput);
+
+                    // Add PATCH method spoofing for Laravel
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'PATCH'; 
+                    form.appendChild(methodInput); // Assuming your cancel route uses PATCH
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            })
+        }
     }" class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -17,15 +57,8 @@
             </div>
         </div>
 
-        @if(session('ok'))
-            <div class="mb-6 p-4 bg-green-100 text-green-800 rounded-xl shadow-md border border-green-200" role="alert">
-                <div class="flex items-center">
-                    <svg class="h-5 w-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                    {{ session('ok') }}
-                </div>
-            </div>
-        @endif
-
+        {{-- Removed the old session('ok') alert box --}}
+        
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-2xl shadow-lg p-5 flex items-center gap-4 border-b-4 border-blue-500 hover:shadow-xl">
                 <div class="p-3 rounded-full bg-blue-100 text-blue-600 flex-shrink-0">
@@ -155,8 +188,8 @@
                                             'bg-red-100 text-red-800 border border-red-200'        => $o->status==='cancelled',
                                             'bg-gray-100 text-gray-800 border border-gray-200'      => $o->status==='refunded',
                                         ])">
-                                        {{ ucfirst($o->status) }}
-                                    </span>
+                                            {{ ucfirst($o->status) }}
+                                        </span>
                                 </td>
                                 <td class="px-5 py-3 font-bold text-gray-900 whitespace-nowrap">₱{{ number_format((float)$o->grand_total, 2) }}</td>
                                 <td class="px-5 py-3 whitespace-nowrap flex items-center gap-2">
@@ -180,8 +213,8 @@
                                                 'bg-green-100 text-green-800 border border-green-200' => $o->payment_status==='paid',
                                                 'bg-yellow-100 text-yellow-800 border border-yellow-200' => $o->payment_status==='refunded',
                                             ])">
-                                            {{ ucfirst($o->payment_status) }}
-                                        </span>
+                                                {{ ucfirst($o->payment_status) }}
+                                            </span>
                                     @endif
                                 </td>
                                 <td class="px-5 py-3 whitespace-nowrap text-gray-600">{{ optional($o->created_at)->format('M j, Y') }}</td>
@@ -192,14 +225,14 @@
                                             <button type="button"
                                                 @click.stop="
                                                     modalData = {
-                                                        id: '{{ $o->payment?->id ?? $o->id }}',
-                                                        order_number: '{{ $o->order_number }}',
-                                                        customer: '{{ $o->user?->username ?? '—' }}',
-                                                        amount: '{{ number_format((float)$o->grand_total, 2) }}',
-                                                        reference: '{{ $o->payment?->provider_ref ?? 'N/A' }}',
-                                                        image_url: '{{ $o->payment?->receipt_image_url ?? '' }}'
-                                                    };
-                                                    openModal = true;
+                                                         id: '{{ $o->payment?->id ?? $o->id }}',
+                                                         order_number: '{{ $o->order_number }}',
+                                                         customer: '{{ $o->user?->username ?? '—' }}',
+                                                         amount: '{{ number_format((float)$o->grand_total, 2) }}',
+                                                         reference: '{{ $o->payment?->provider_ref ?? 'N/A' }}',
+                                                         image_url: '{{ $o->payment?->receipt_image_url ?? '' }}'
+                                                     };
+                                                     openModal = true;
                                                 "
                                                 title="Validate GCash Payment"
                                                 class="text-amber-600 hover:text-amber-800 p-2 rounded-full hover:bg-amber-50">
@@ -211,7 +244,11 @@
                                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
                                         </button>
 
-                                        <button class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50" title="Cancel Order" @click.stop="">
+                                        {{-- MODIFIED: Added SweetAlert for Cancel confirmation --}}
+                                        <button type="button" 
+                                            @click.stop="confirmCancel('{{ route('admin.orders.cancel', $o) }}', '{{ $o->order_number }}')" 
+                                            class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50" 
+                                            title="Cancel Order">
                                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                                         </button>
                                     </div>
@@ -259,4 +296,28 @@
     </div>
 
     @include('admin.partials.payment-validation-modal')
+
+    {{-- SWEETALERT FLASH MESSAGE HANDLING --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check for Laravel session flash messages: 'ok', 'success', or 'error'
+            @if (session('ok') || session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('ok') ?? session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                });
+            @endif
+        });
+    </script>
 </x-admin-layout>

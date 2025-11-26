@@ -19,47 +19,42 @@ class CategoryController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.categories.index', compact('categories', 'q'));
-    }
-
-    public function create()
-    {
-        $category = new Category();
-        return view('admin.categories.form', compact('category'));
+        return view('admin.categories.index', [
+            'categories' => $categories,
+            'q'          => $q
+        ]);
     }
 
     public function store(Request $req)
     {
         $validated = $req->validate([
-            'name' => ['required','string','max:150','unique:categories,name'],
+            'name' => ['required', 'string', 'max:150', 'unique:categories,name'],
         ]);
 
         Category::create($validated);
-        return redirect()->route('admin.categories.index')->with('ok','Category created.');
-    }
 
-    public function edit(Category $category)
-    {
-        return view('admin.categories.form', compact('category'));
+        return back()->with('success', 'Category created successfully!');
     }
 
     public function update(Request $req, Category $category)
     {
         $validated = $req->validate([
-            'name' => ['required','string','max:150','unique:categories,name,'.$category->id],
+            'name' => ['required', 'string', 'max:150', 'unique:categories,name,' . $category->id],
         ]);
 
         $category->update($validated);
-        return redirect()->route('admin.categories.index')->with('ok','Category updated.');
+
+        return back()->with('success', 'Category updated successfully!');
     }
 
     public function destroy(Category $category)
     {
         if ($category->products()->exists()) {
-            return back()->with('err','Cannot delete: category still has products.');
+            return back()->with('error', 'Cannot delete: category still has products assigned.');
         }
 
         $category->delete();
-        return back()->with('ok','Category deleted.');
+
+        return back()->with('success', 'Category deleted successfully!');
     }
 }

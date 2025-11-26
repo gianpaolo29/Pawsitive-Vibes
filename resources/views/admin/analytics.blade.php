@@ -247,7 +247,7 @@
         <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">Top Customers (by Spend)</h2>
-                <p class="text-xs text-gray-500">Useful for loyalty, VIPs and remarketing</p>
+                <p class="text-xs text-gray-500">Based on total amount spent</p>
             </div>
 
             <div class="overflow-x-auto">
@@ -326,6 +326,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: { position: 'top' }
                             },
@@ -387,6 +388,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: { display: false }
                             },
@@ -397,9 +399,6 @@
                     });
                 }
 
-                // -------------------------------
-                // Payment Methods (Doughnut)
-                // -------------------------------
                 const paymentCtx = document.getElementById('payment-chart');
                 if (paymentCtx) {
                     const payLabels = @json($payments->pluck('method'));
@@ -415,6 +414,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: { position: 'bottom' }
                             }
