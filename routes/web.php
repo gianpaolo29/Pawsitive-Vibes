@@ -19,6 +19,9 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\Customer\OrderController;
 
 
+
+
+
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::get('google/redirect', [GoogleController::class, 'redirect'])->name('google.redirect');
     Route::get('google/callback', [GoogleController::class, 'callback'])->name('google.callback');
@@ -43,21 +46,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-
-
-
-
-
-
-
     Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
-
-
-
-
-
-
-
 
 
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -70,6 +59,10 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])
+    ->name('notifications.mark-all-read');
+    Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markRead'])
+        ->name('notifications.markRead');
 
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');

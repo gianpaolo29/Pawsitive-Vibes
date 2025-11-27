@@ -15,6 +15,14 @@
         ];
     }
     $user = Auth::user();
+    $unreadNotificationsCount = $user
+        ? $user->unreadNotifications()->count()
+        : 0;
+
+    // Get latest 7 notifications (read + unread)
+    $recentNotifications = $user
+        ? $user->notifications()->latest()->take(7)->get()
+        : collect();
 
     $nav_items = [
         'Dashboard'  => ['route' => 'admin/dashboard',  'icon' => 'M2.25 12 8.954-8.955c.44-.44 1.152-.44 1.591 0L21.75 12M6 10v10h4v-5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v5h4V10'],
@@ -399,10 +407,99 @@
                         @endif
                     </button>
 
-                    {{-- Notifications dropdown --}}
-                    <div x-cloak x-show="open" @click.outside="open = false" class="absolute right-0 mt-2 w-80 origin-top-right rounded-2xl bg-white/95 dark:bg-gray-800/95 shadow-2xl ring-1 ring-black/5 backdrop-smooth z-50 overflow-hidden">
-                        {{-- Notifications content remains the same --}}
+                        {{-- Notifications dropdown --}}
+                    <div
+                        x-cloak
+                        x-show="open"
+                        @click.outside="open = false"
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                        class="absolute right-0 mt-2 w-80 origin-top-right rounded-2xl bg-white/95 dark:bg-gray-800/95 shadow-2xl ring-1 ring-black/5 backdrop-smooth z-50 overflow-hidden"
+                    >
+                        {{-- Header --}}
+                        <div class="px-4 py-3 border-b border-violet-200/30 dark:border-violet-700/30 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Notifications</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ $unreadNotificationsCount }} unread
+                                </p>
+                            </div>
+
+                            @if($unreadNotificationsCount > 0)
+                            <form
+                                method="POST"
+                                action="{{ route('admin.notifications.mark-all-read') }}"
+                                @click.stop
+                            >
+                                @csrf
+                                @method('PATCH')
+                                <button
+                                    type="submit"
+                                    class="text-xs font-medium text-violet-600 hover:text-violet-800 dark:text-violet-400 dark:hover:text-violet-200"
+                                >
+                                    Mark all as read
+                                </button>
+                            </form>
+                        @endif
+                        </div>
+
+                        {{-- List --}}
+                        <div class="max-h-80 overflow-y-auto thin-scrollbar divide-y divide-violet-50 dark:divide-gray-700">
+                            @forelse($recentNotifications as $notification)
+                                @php
+                                    $isUnread = is_null($notification->read_at);
+                                    $data = $notification->data ?? [];
+                                    $title = $data['title'] ?? class_basename($notification->type);
+                                    $message = $data['message'] ?? ($data['body'] ?? 'You have a new notification.');
+                                    $link = $data['url'] ?? null;
+                                @endphp
+
+                                @if($link)
+                                    <a href="{{ $link }}"
+                                    class="block px-4 py-3 hover:bg-violet-50/70 dark:hover:bg-violet-900/30 transition-colors">
+                                @else
+                                    <div class="px-4 py-3">
+                                @endif
+                                    <div class="flex items-start gap-3">
+                                        {{-- Unread dot --}}
+                                        <div class="mt-1">
+                                            @if($isUnread)
+                                                <span class="h-2.5 w-2.5 rounded-full bg-violet-500 inline-block"></span>
+                                            @else
+                                                <span class="h-2.5 w-2.5 rounded-full bg-gray-300 inline-block"></span>
+                                            @endif
+                                        </div>
+
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">
+                                                {{ $title }}
+                                            </p>
+                                            <p class="mt-0.5 text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
+                                                {{ $message }}
+                                            </p>
+                                            <p class="mt-1 text-[11px] text-gray-400 dark:text-gray-500">
+                                                {{ $notification->created_at?->diffForHumans() }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @if($link)
+                                    </a>
+                                @else
+                                    </div>
+                                @endif
+                            @empty
+                                <div class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                                    No notifications yet.
+                                </div>
+                            @endforelse
+                        </div>
+
                     </div>
+
                 </div>
 
                 {{-- User menu --}}
