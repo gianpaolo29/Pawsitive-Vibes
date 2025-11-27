@@ -42,7 +42,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
     // Remove item
     Route::delete('/cart/item/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
-    http://127.0.0.1:8000/customer/cart/item/2
+ 
 
 
 
@@ -84,6 +84,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::patch('products/{product}/toggle', [ProductController::class, 'toggle'])->name('products.toggle');
 
+    Route::get('customers',                [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('customers/create',         [CustomerController::class, 'create'])->name('customers.create');
+    Route::post('customers',               [CustomerController::class, 'store'])->name('customers.store');
+    Route::get('customers/edit/{customer}',[CustomerController::class, 'edit'])->name('customers.edit');
+    Route::put('customers/{customer}',     [CustomerController::class, 'update'])->name('customers.update');
+    Route::delete('customers/{customer}',  [CustomerController::class, 'destroy'])->name('customers.destroy');
+
     Route::get('orders', [TransactionController::class, 'index'])->name('orders.index');
     Route::post('orders', [TransactionController::class, 'store'])->name('orders.store');
     Route::get('orders/pending', [TransactionController::class, 'pending'])->name('orders.pending');
@@ -98,22 +105,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::post('orders/{order}/reject-payment', [TransactionController::class, 'rejectPayment'])->name('orders.rejectPayment');
     Route::post('orders/{order}/cancel',         [TransactionController::class, 'cancel'])->name('orders.cancel');
 
-    Route::get('customers',                [CustomerController::class, 'index'])->name('customers.index');
-    Route::get('customers/create',         [CustomerController::class, 'create'])->name('customers.create');
-    Route::post('customers',               [CustomerController::class, 'store'])->name('customers.store');
-    Route::get('customers/{customer}/edit',[CustomerController::class, 'edit'])->name('customers.edit');
-    Route::put('customers/{customer}',     [CustomerController::class, 'update'])->name('customers.update');
-    Route::delete('customers/{customer}',  [CustomerController::class, 'destroy'])->name('customers.destroy');
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
-
-    Route::get('promotions',                [PromotionController::class, 'index'])->name('promotions.index');
-    Route::get('promotions/create',         [PromotionController::class, 'create'])->name('promotions.create');
-    Route::post('promotions',               [PromotionController::class, 'store'])->name('promotions.store');
-    Route::get('promotions/{promotion}/edit', [PromotionController::class, 'edit'])->name('promotions.edit');
-    Route::put('promotions/{promotion}',    [PromotionController::class, 'update'])->name('promotions.update');
-    Route::delete('promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
-    Route::patch('promotions/{promotion}/toggle', [PromotionController::class, 'toggle'])->name('promotions.toggle');
 
 
     

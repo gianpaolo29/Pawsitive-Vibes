@@ -22,7 +22,7 @@ class CustomerController extends Controller
         if (!in_array($sort, $sortable, true)) $sort = 'created_at';
         if (!in_array($dir, ['asc', 'desc'], true)) $dir = 'desc';
 
-        $qbase = User::where('role', 'customer');
+        $qbase = User::where('role', 'CUSTOMER');
 
         if ($q !== '') {
             $qbase->where(function ($qq) use ($q) {
@@ -37,8 +37,8 @@ class CustomerController extends Controller
         $customers = $qbase->orderBy($sort, $dir)->paginate($perPage)->withQueryString();
 
         $stats = [
-            'total_customers'  => User::where('role', 'customer')->count(),
-            'new_this_month'   => User::where('role', 'customer')
+            'total_customers'  => User::where('role', 'CUSTOMER')->count(),
+            'new_this_month'   => User::where('role', 'CUSTOMER')
                                 ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
                                 ->count(),
         ];
@@ -68,7 +68,7 @@ class CustomerController extends Controller
                 'username' => $validated['username'],
                 'email'    => $validated['email'],
                 'password' => Hash::make($validated['password']),
-                'role'     => 'customer',
+                'role'     => 'CUSTOMER',
             ]);
         });
 
@@ -78,13 +78,13 @@ class CustomerController extends Controller
 
     public function edit(User $customer)
     {
-        abort_unless($customer->role === 'customer', 404);
+        abort_unless($customer->role === 'CUSTOMER', 404);
         return view('admin.customers.form', compact('customer'));
     }
 
     public function update(Request $request, User $customer)
     {
-        abort_unless($customer->role === 'customer', 404);
+        abort_unless($customer->role === 'CUSTOMER', 404);
 
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
@@ -113,7 +113,7 @@ class CustomerController extends Controller
 
     public function destroy(User $customer)
     {
-        abort_unless($customer->role === 'customer', 404);
+        abort_unless($customer->role === 'CUSTOMER', 404);
         $customer->delete();
 
         return redirect()->route('admin.customers.index')
