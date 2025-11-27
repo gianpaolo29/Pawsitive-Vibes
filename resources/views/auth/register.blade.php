@@ -112,11 +112,7 @@
                 <div class="pet-icon" data-pet="bone"><i class="fas fa-bone"></i></div>
             </div>
 
-            @if ($errors->any())
-                <div class="error-message show" role="alert" style="margin-bottom:12px">
-                    <strong>Oops!</strong> Please fix the highlighted fields below.
-                </div>
-            @endif
+    
 
             <form id="signupForm" method="POST" action="{{ route('register') }}">
                 @csrf
