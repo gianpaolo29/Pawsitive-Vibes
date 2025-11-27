@@ -78,7 +78,7 @@ class TransactionController extends Controller
         // For now, treat "ready for pickup" as status = 'paid'
         $readyForPickupCount = Transaction::where('status', 'paid')->count();
 
-        
+
 
         return view('admin.orders.index', compact(
             'orders',
@@ -239,7 +239,7 @@ class TransactionController extends Controller
             if ($method === 'cash') {
                 $payment->status       = 'accepted';
                 $order->status         = 'completed';
-                $order->payment_status = 'paid';
+                $order->payment_status = 'accepted';
                 $order->save();
             } else {
                 // GCash → pending validation
@@ -307,8 +307,8 @@ class TransactionController extends Controller
             if (!$payment) {
                 $payment = new Payment();
                 $payment->transaction_id = $order->id;
-                $payment->method         = 'cash';
-                $payment->amount         = $order->grand_total;
+                $payment->method = 'cash';
+                $payment->amount = $order->grand_total;
             }
 
             $payment->method = 'cash';
@@ -335,7 +335,7 @@ class TransactionController extends Controller
             $payment->status = 'accepted';
             $payment->save();
 
-            $order->status         = 'paid';
+            $order->status         = 'completed';
             $order->payment_status = 'paid';
             $order->save();
         });
@@ -352,12 +352,11 @@ class TransactionController extends Controller
 
             if ($payment) {
                 $payment->status  = 'rejected';
-                $payment->remarks = $reason ?? null; // if you have this column
                 $payment->save();
             }
 
             $order->payment_status = 'unpaid';
-            $order->status         = 'pending';
+            $order->status         = 'cancelled';
             $order->save();
         });
 
