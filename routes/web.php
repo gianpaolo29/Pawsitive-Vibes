@@ -16,6 +16,7 @@ use App\Http\Controllers\Customer\DonateController;
 use App\Http\Controllers\Customer\FavoriteController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\Customer\OrderController;
 
 
 Route::prefix('auth')->name('auth.')->group(function () {
@@ -31,18 +32,17 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorite');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::get('/donate', [DonateController::class, 'index'])->name('donate');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
-    Route::get('/cart', [CartController::class, 'index'])->name('customer.cart.index');
-
-    // Add to cart
     Route::post('/cart/{product}', [CartController::class, 'store'])->name('cart.store');
-
-    // Update quantity
     Route::patch('/cart/item/{item}', [CartController::class, 'update'])->name('cart.update');
-
-    // Remove item
     Route::delete('/cart/item/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
- 
+
+    Route::get('/orders/{transaction}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
 
 
 

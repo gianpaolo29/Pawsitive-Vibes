@@ -78,6 +78,8 @@ class TransactionController extends Controller
         // For now, treat "ready for pickup" as status = 'paid'
         $readyForPickupCount = Transaction::where('status', 'paid')->count();
 
+        
+
         return view('admin.orders.index', compact(
             'orders',
             'totalOrders',

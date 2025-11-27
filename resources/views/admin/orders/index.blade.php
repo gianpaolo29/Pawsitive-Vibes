@@ -268,7 +268,7 @@
                                         <p class="font-semibold text-violet-800 mb-2">Order Items ({{ $o->items->count() }}):</p>
                                         @forelse($o->items as $item)
                                             <div class="flex justify-between py-1 text-gray-700 border-b border-violet-100 last:border-b-0">
-                                                <span class="truncate">{{ $item->product_name ?? 'Product Unavailable' }}</span>
+                                                <span class="truncate">{{ $item->product->name ?? 'Product Unavailable' }}</span>
                                                 <span class="font-medium whitespace-nowrap">x{{ (int)$item->quantity }}</span>
                                             </div>
                                         @empty

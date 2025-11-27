@@ -73,7 +73,7 @@
                                     <p class="font-semibold text-emerald-800 mb-2">Order Items:</p>
                                     @foreach($o->items as $item)
                                         <div class="flex justify-between py-1">
-                                            <span>{{ $item->product_name }}</span>
+                                            <span class="truncate">{{ $item->product->name ?? 'Product Unavailable' }}</span>
                                             <span>x{{ $item->quantity }}</span>
                                         </div>
                                     @endforeach

@@ -6,8 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\Transaction;
+use App\Models\TransactionItem;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CartController extends Controller
 {
@@ -58,7 +64,7 @@ class CartController extends Controller
         $user = Auth::user();
 
         // Still respect is_active, pero hindi na tinitingnan ang stock
-        $product = Product::findOrFail($productId);
+        $product = Product::where('is_active', 1)->findOrFail($productId);
 
         $quantity = (int) $request->input('quantity', 1);
 
@@ -113,6 +119,7 @@ class CartController extends Controller
 
         $product  = $item->product;
         $quantity = (int) $request->input('quantity');
+
         $item->quantity   = $quantity;
         $item->unit_price = $product->price;
         $item->save();
@@ -140,4 +147,108 @@ class CartController extends Controller
 
         return back()->with('success', 'Item removed from cart.');
     }
+
+
+   
+    public function checkout(Request $request)
+    {
+        // Validate request
+        $request->validate([
+            'items' => 'required|array',
+            'payment_method' => 'required|string',
+            'receipt_image' => 'nullable|image|max:2048',
+        ]);
+
+        $orderNumber = 'POS-' . now()->format('Ymd') . '-' . Str::upper(Str::random(6));
+        $subTotal = 0;
+
+        // Start a transaction to ensure atomicity
+        DB::beginTransaction();
+
+        try {
+            // 1️⃣ Validate stock before creating transaction
+            foreach ($request->items as $item) {
+                $product = Product::find($item['product_id']);
+                if (!$product) {
+                    throw new \Exception("Product ID {$item['product_id']} not found.");
+                }
+                if ($item['qty'] > $product->stock) {
+                    throw new \Exception("Not enough stock for product {$product->name}. Available: {$product->stock}");
+                }
+            }
+
+            // 2️⃣ Compute subtotal
+            foreach ($request->items as $item) {
+                $subTotal += $item['price'] * $item['qty'];
+            }
+
+            $grandTotal = $subTotal; // add taxes, discounts, shipping if needed
+
+            // 3️⃣ Create Transaction
+            $transaction = Transaction::create([
+                'user_id'      => auth()->id(),
+                'order_number' => $orderNumber,
+                'subtotal'     => $subTotal,
+                'grand_total'  => $grandTotal,
+                'payment_method'=> $request->payment_method,
+                'status'       => 'completed',
+            ]);
+
+
+
+            // 4️⃣ Insert Transaction Items and reduce stock
+            foreach ($request->items as $item) {
+                $product = Product::find($item['product_id']);
+
+                $lineTotal = $item['qty'] * $item['price'];
+
+                TransactionItem::create([
+                    'transaction_id' => $transaction->id,
+                    'product_id'     => $item['product_id'],
+                    'quantity'       => $item['qty'],
+                    'line_total'     => $lineTotal,
+                ]);
+
+                // Reduce stock
+                $product->decrement('stock', $item['qty']);
+            }
+
+        $paymentStatus = strtolower($request->payment_method) === 'gcash' ? 'pending' : 'accepted';
+
+        // Handle optional receipt image
+        $receiptUrl = null;
+        if ($request->hasFile('receipt_image')) {
+            $path = $request->file('receipt_image')->store('receipts', 'public');
+            $receiptUrl = '/storage/' . $path;
+        }
+
+        // 6️⃣ Create Payment record
+        Payment::create([
+            'transaction_id'    => $transaction->id,
+            'method'            => $request->payment_method,
+            'amount'            => $grandTotal,
+            'status'            => $paymentStatus,
+            'receipt_image_url' => $receiptUrl,
+            'provider_ref'      => null,
+        ]);
+
+        // Update transaction status if needed
+        $transaction->update(['status' => $paymentStatus === 'accepted' ? 'completed' : 'pending']);
+
+        // 7️⃣ Clear cart
+        $cart = Cart::where('user_id', auth()->id())->first();
+        if ($cart) {
+            CartItem::where('cart_id', $cart->id)->delete();
+            $cart->delete();
+        }
+
+        DB::commit();
+
+        return redirect()->back()->with('success', 'Checkout completed successfully.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', $e->getMessage());
+    }
+}
 }
