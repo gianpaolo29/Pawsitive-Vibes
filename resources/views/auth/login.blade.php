@@ -216,40 +216,7 @@
         </div>
     </div>
 
-    <div class="footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="{{ asset('images/logo.png') }}" alt="Pawsitive Vibes Logo" class="footer-logo-img">
-                <span>Pawsitive Vibes</span>
-            </div>
-            <ul class="footer-links">
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Shipping Policy</a></li>
-                <li><a href="#">Returns</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-            </ul>
-            <p class="copyright">© {{ now()->year }} Pawsitive Vibes. All rights reserved.</p>
-        </div>
-    </div>
-
-    <div class="mobile-bottom-nav" aria-label="Bottom navigation">
-        <a href="{{ url('/') }}" class="mobile-nav-item">
-            <i class="fas fa-home"></i><span>Home</span>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <i class="fas fa-heart"></i><span>Favorites</span>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <i class="fas fa-hand-holding-usd"></i><span>Donate</span>
-        </a>
-        <a href="#" class="mobile-nav-item">
-            <i class="fas fa-shopping-cart"></i><span>Cart</span>
-        </a>
-        <a href="#" class="mobile-nav-item active">
-            <i class="fas fa-user"></i><span>Profile</span>
-        </a>
-    </div>
+    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -1,4 +1,4 @@
-<footer class="bg-[#8a2be2] text-white pt-16 pb-8 mt-16 relative overflow-hidden">
+<footer class="bg-[#8a2be2] text-white pt-16 pb-8 relative overflow-hidden">
     {{-- Font Awesome link remains for styling --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 

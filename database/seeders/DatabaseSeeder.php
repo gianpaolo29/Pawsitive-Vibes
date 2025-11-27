@@ -17,14 +17,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'role' => 'CUSTOMER',
-        ]);
+        User::factory()->firstOrCreate(
+            ['email' => 'admin@pawsitive.com'],
+            [
+                'fname' => 'Gian Paolo',
+                'lname' => 'Mulingbayan',
+                'username' => "Admin",
+                'password' => Hash::make('Computer_29'),
+                'role' => 'admin', 
+                'email_verified_at' => now(),
+            ]
+        );
 
-        $this->call(AdminUserSeeder::class);
-        $this->call(CategorySeeder::class);
 
     }
 }
