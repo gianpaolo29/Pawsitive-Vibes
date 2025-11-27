@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TransactionController;
@@ -11,20 +10,41 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\ShopController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\DonateController;
+use App\Http\Controllers\Customer\FavoriteController;
+use App\Http\Controllers\Customer\ProfileController;
+use App\Http\Controllers\WelcomeController;
+
 
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::get('google/redirect', [GoogleController::class, 'redirect'])->name('google.redirect');
     Route::get('google/callback', [GoogleController::class, 'callback'])->name('google.callback');
 });
 
-Route::get('/', fn () => view('welcome'))->name('home');
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
-     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+     Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+     Route::get('/cart', [CartController::class, 'index'])->name('cart');
+     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorite');
+     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+     Route::get('/donate', [DonateController::class, 'index'])->name('donate');
+
+
+
+
+
+
+
+
+
+
+
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
 });
 

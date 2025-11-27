@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Customer;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 
 
-class HomeController extends Controller
+class WelcomeController extends Controller
 {
     public function index()
     {
@@ -22,7 +22,7 @@ class HomeController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('customer.home', [
+        return view('welcome', [
             'categories' => $categories,
             'featuredProducts' => $featuredProducts,
             'products' => $products,

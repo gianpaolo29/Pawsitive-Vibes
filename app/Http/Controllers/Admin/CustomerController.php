@@ -39,8 +39,8 @@ class CustomerController extends Controller
         $stats = [
             'total_customers'  => User::where('role', 'customer')->count(),
             'new_this_month'   => User::where('role', 'customer')
-                                      ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
-                                      ->count(),
+                                ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+                                ->count(),
         ];
 
         return view('admin.customers.index', compact('customers', 'q', 'sort', 'dir', 'perPage', 'stats'));
