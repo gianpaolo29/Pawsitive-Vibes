@@ -21,7 +21,7 @@ class AdminUserSeeder extends Seeder
                 'lname' => 'Mulingbayan',
                 'username' => "Admin",
                 'password' => Hash::make('Computer_29'),
-                'role' => 'admin', 
+                'role' => 'ADMIN', 
                 'email_verified_at' => now(),
             ]
         );

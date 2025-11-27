@@ -20,7 +20,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 
 Route::get('/', fn () => view('welcome'))->name('home');
 
-Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer'])->group(function () {
+Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
      Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -29,7 +29,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer
 });
 
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 

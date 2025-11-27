@@ -44,7 +44,7 @@ class RegisteredUserController extends Controller
             'name'     => trim($data['first_name'].' '.$data['last_name']),
             'email'    => $data['email'],
             'password' => bcrypt($data['password']),
-            'role'     => 'customer', 
+            'role'     => 'CUSTOMER', 
         ]);
 
         event(new Registered($user));
