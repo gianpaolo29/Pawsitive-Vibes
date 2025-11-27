@@ -26,13 +26,31 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
-     Route::get('/shop', [ShopController::class, 'index'])->name('shop');
-     Route::get('/cart', [CartController::class, 'index'])->name('cart');
-     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorite');
-     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-     Route::get('/donate', [DonateController::class, 'index'])->name('donate');
+    Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorite');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/donate', [DonateController::class, 'index'])->name('donate');
+
+    Route::get('/cart', [CartController::class, 'index'])->name('customer.cart.index');
+
+    // Add to cart
+    Route::post('/cart/{product}', [CartController::class, 'store'])->name('cart.store');
+
+    // Update quantity
+    Route::patch('/cart/item/{item}', [CartController::class, 'update'])->name('cart.update');
+
+    // Remove item
+    Route::delete('/cart/item/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
+    http://127.0.0.1:8000/customer/cart/item/2
 
 
+
+
+
+
+
+    Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
 
 
