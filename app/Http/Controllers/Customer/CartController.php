@@ -172,6 +172,8 @@ class CartController extends Controller
                 if (!$product) {
                     throw new \Exception("Product ID {$item['product_id']} not found.");
                 }
+                 $qty = (int) $item['quantity'];
+
                 if ($item['qty'] > $product->stock) {
                     throw new \Exception("Not enough stock for product {$product->name}. Available: {$product->stock}");
                 }
@@ -179,7 +181,10 @@ class CartController extends Controller
 
             // 2️⃣ Compute subtotal
             foreach ($request->items as $item) {
-                $subTotal += $item['price'] * $item['qty'];
+                $qty   = (int) $item['quantity'];  // ⬅️ again
+                $price = (float) $item['price'];
+
+                $subTotal += $price * $qty;
             }
 
             $grandTotal = $subTotal; // add taxes, discounts, shipping if needed
