@@ -36,6 +36,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorite');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::get('/donate', [DonateController::class, 'index'])->name('donate');
+    Route::post('/donate', [DonateController::class, 'store'])->name('donations.store');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
@@ -53,7 +54,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
 });
 
 
@@ -70,7 +71,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
     Route::put('categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-        
+
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('products', [ProductController::class, 'store'])->name('products.store');
@@ -104,8 +105,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
 
-    
-    
+
+
 
 });
 
