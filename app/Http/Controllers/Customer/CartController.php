@@ -191,6 +191,7 @@ class CartController extends Controller
                 'subtotal'     => $subTotal,
                 'grand_total'  => $grandTotal,
                 'payment_method'=> $request->payment_method,
+                'status'       => 'paid',
             ]);
 
 
@@ -243,37 +244,11 @@ class CartController extends Controller
 
         DB::commit();
 
-         try {
-                $user = Auth::user();
-                if ($user) {
-                    $user->notify(new OrderPlacedNotification($transaction));
-                }
-            } catch (\Throwable $e) {
-                // optional: \Log::warning('Failed to send customer notification', ['error' => $e->getMessage()]);
-            }
+        return redirect()->back()->with('success', 'Checkout completed successfully.');
 
-            // b) Notify admins if GCash (pending validation)
-            try {
-                if (strtolower($request->payment_method) === 'gcash') {
-                    $admins = User::where('role', 'ADMIN')->get();
-                    foreach ($admins as $admin) {
-                        $admin->notify(new GcashPaymentPending($transaction));
-                    }
-                }
-            } catch (\Throwable $e) {
-                // optional: \Log::warning('Failed to send admin notifications', ['error' => $e->getMessage()]);
-            }
-
-            return redirect()
-                ->back()
-                ->with('success', 'Checkout completed successfully.');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage());
-        }
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', $e->getMessage());
     }
+}
 }
