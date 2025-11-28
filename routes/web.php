@@ -46,6 +46,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
     Route::get('/orders/{transaction}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile/transactions', [\App\Http\Controllers\Customer\TransactionController::class, 'index'])->name('profile.transactions');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');

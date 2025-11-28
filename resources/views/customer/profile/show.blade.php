@@ -22,11 +22,11 @@
             @endphp
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                
+
                 {{-- LEFT NAV --}}
                 <aside class="md:col-span-1">
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 space-y-4">
-                        
+
                         {{-- User Header (Improved) --}}
                         <div class="pb-4 border-b border-gray-200 dark:border-gray-700">
                             <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400">
@@ -38,20 +38,11 @@
                         </div>
 
                         <nav class="space-y-1 text-sm">
-                            
-                            {{-- Dashboard --}}
-                            <a href="{{ route('customer.shop') }}"
-                               class="flex items-center gap-2 px-3 py-2 rounded-lg transition duration-150
-                               {{ $current === 'customer.shop' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200 font-semibold' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700' }}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"/></svg>
-                                <span>Dashboard</span>
-                            </a>
-
                             {{-- History (Order History) --}}
-                            @if (\Illuminate\Support\Facades\Route::has('customer.orders.index'))
-                                <a href="{{ route('customer.orders.index') }}"
+                            @if (\Illuminate\Support\Facades\Route::has('customer.profile.transactions'))
+                                <a href="{{ route('customer.profile.transactions') }}"
                                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition duration-150
-                                   {{ str_starts_with($current, 'customer.orders.') ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200 font-semibold' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700' }}">
+                                   {{ str_starts_with($current, 'customer.profile.transactions') ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200 font-semibold' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700' }}">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m5-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     <span>Order History</span>
                                 </a>
@@ -69,7 +60,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A10.97 10.97 0 0112 15c2.21 0 4.267.64 5.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                 <span>Profile</span>
                             </a>
-                            
+
                             {{-- Logout Link (Added for completeness) --}}
                             <form method="POST" action="{{ route('logout') }}" class="w-full pt-2">
                                 @csrf
@@ -100,7 +91,7 @@
                             @method('PATCH')
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                
+
                                 {{-- First Name --}}
                                 <div>
                                     <label for="fname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -137,7 +128,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             {{-- Username & Email --}}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
@@ -187,7 +178,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        New Password 
+                                        New Password
                                     </label>
                                     <input
                                         type="password"
