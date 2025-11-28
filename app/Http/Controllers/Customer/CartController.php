@@ -241,12 +241,27 @@ class CartController extends Controller
         }
 
         DB::commit();
+            try {
+                if (strtolower($request->payment_method) === 'gcash') {
+                    $admins = User::where('role', 'ADMIN')->get();
+                    foreach ($admins as $admin) {
+                        $admin->notify(new GcashPaymentPending($transaction));
+                    }
+                }
+            } catch (\Throwable $e) {
+                // optional: \Log::warning('Failed to send admin notifications', ['error' => $e->getMessage()]);
+            }
 
-        return redirect()->back()->with('success', 'Checkout completed successfully.');
+            return redirect()
+                ->back()
+                ->with('success', 'Checkout completed successfully.');
 
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->back()->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage());
+        }
     }
-}
 }
