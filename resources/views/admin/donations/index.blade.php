@@ -7,6 +7,7 @@
                     <th class="px-4 py-3 text-left">Email Address</th>
                     <th class="px-4 py-3 text-left">Phone Number</th>
                     <th class="px-4 py-3 text-left">Donation Amount</th>
+                    <th class="px-4 py-3 text-left">Receipt</th>
                     <th class="px-4 py-3 text-left">Details</th>
                     <th class="px-4 py-3 text-left">Action</th>
                 </tr>
@@ -19,10 +20,13 @@
                         <td class="px-4 py-3 whitespace-nowrap">{{$donation->email}}</td>
                         <td class="px-4 py-3 whitespace-nowrap">{{$donation->phone}}</td>
                         <td class="px-4 py-3 whitespace-nowrap">{{$donation->total_amount}}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <a target="_blank" href="{{asset($donation->receipt_url)}}">View Receipt</a>
+                        </td>
 
                         @if($donation->type === 'cash')
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <a target="_blank" href="{{asset($donation->receipt_url)}}">View Receipt</a>
+                                
                             </td>
                         @else
                             <td class="px-4 py-3 whitespace-nowrap">

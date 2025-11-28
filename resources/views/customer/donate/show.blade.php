@@ -193,19 +193,6 @@
                             :required="type === 'cash'"
                         >
                     </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Receipt
-                        </label>
-                        <input
-                            type="file"
-                            name="receipt"
-                            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            :required="type === 'cash'"
-                            accept="image/*"
-                        >
-                    </div>
                 </div>
             </div>
 
@@ -249,6 +236,21 @@
                     class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     required
                 >
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Receipt
+                    </label>
+                    <input
+                        type="file"
+                        name="receipt"
+                        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        required
+                        accept="image/*"
+                    >
+                </div>
             </div>
 
             {{-- SUBMIT --}}

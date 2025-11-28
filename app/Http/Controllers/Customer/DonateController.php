@@ -33,7 +33,7 @@ class DonateController extends Controller
 
             // CASH fields (only if type=cash)
             'amount' => ['required_if:type,cash', 'nullable', 'numeric', 'min:1'],
-            'receipt' => ['required_if:type,cash', 'nullable', 'file', 'image', 'max:2048'],
+            'receipt' => ['required', 'file', 'image', 'max:2048'],
 
             // PRODUCT fields (only if type=products)
             'products'                => ['required_if:type,products', 'array'],
@@ -71,11 +71,11 @@ class DonateController extends Controller
             } else {
                 // Cash type
                 $totalAmount = (float) ($data['amount'] ?? 0);
+            }
 
-                // Handle receipt upload
-                if ($request->hasFile('receipt')) {
-                    $receiptUrl = $request->file('receipt')->store('receipts', 'public');
-                }
+            // Handle receipt upload
+            if ($request->hasFile('receipt')) {
+                $receiptUrl = $request->file('receipt')->store('receipts', 'public');
             }
 
             // 3. Create Donation record
