@@ -22,7 +22,7 @@ class ProfileController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        return view('customer.profile.index', [
+        return view('customer.profile.show', [
             'user' => $user,
         ]);
     }
@@ -73,7 +73,7 @@ class ProfileController extends Controller
         $user->update($updateData);
 
         return redirect()
-            ->route('customer.profile')
+            ->route('customer.profile.show')
             ->with('success', 'Profile updated successfully.');
     }
 }
