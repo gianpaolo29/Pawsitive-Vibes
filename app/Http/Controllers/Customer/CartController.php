@@ -211,8 +211,6 @@ class CartController extends Controller
                 $product->decrement('stock', $item['qty']);
             }
 
-        $paymentStatus = strtolower($request->payment_method) === 'gcash' ? 'pending' : 'accepted';
-
         // Handle optional receipt image
         $receiptUrl = null;
         if ($request->hasFile('receipt_image')) {
@@ -225,13 +223,10 @@ class CartController extends Controller
             'transaction_id'    => $transaction->id,
             'method'            => $request->payment_method,
             'amount'            => $grandTotal,
-            'status'            => $paymentStatus,
+            'status'            => 'pending',
             'receipt_image_url' => $receiptUrl,
             'provider_ref'      => null,
         ]);
-
-        // Update transaction status if needed
-        $transaction->update(['status' => $paymentStatus === 'accepted' ? 'completed' : 'pending']);
 
         // 7️⃣ Clear cart
         $cart = Cart::where('user_id', auth()->id())->first();

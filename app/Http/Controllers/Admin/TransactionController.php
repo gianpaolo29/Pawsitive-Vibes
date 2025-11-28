@@ -71,12 +71,13 @@ class TransactionController extends Controller
             ->where('status', 'pending')
             ->count();
 
-        $monthlyRevenue = Transaction::where('payment_status', 'paid')
+        $monthlyRevenue = Transaction::where('payment_status', 'Paid')
             ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->sum('grand_total');
 
         // For now, treat "ready for pickup" as status = 'paid'
-        $readyForPickupCount = Transaction::where('status', 'paid')->count();
+        $readyForPickupCount = Transaction::where('payment_status', 'Paid')
+            ->where('status', 'Pending')->count();
 
 
 

@@ -87,13 +87,13 @@
                 </div>
             @endif
 
-            <table>
+            <table class="w-full">
                 <thead>
                     <tr class="text-gray-700 hover:bg-gray-50">
                         <td class="px-4 py-3 whitespace-nowrap">Order No.</td>
                         <td class="px-4 py-3 whitespace-nowrap">Payment Status</td>
                         <td class="px-4 py-3 whitespace-nowrap">Order Status</td>
-                        <td class="px-4 py-3 whitespace-nowrap">Action</td>
+{{--                        <td class="px-4 py-3 whitespace-nowrap">Action</td>--}}
                     </tr>
                 </thead>
 
@@ -103,6 +103,25 @@
                             <td class="uppercase px-4 py-3 whitespace-nowrap">{{ $transaction->order_number  }}</td>
                             <td class="uppercase px-4 py-3 whitespace-nowrap">{{ $transaction->payment_status  }}</td>
                             <td class="uppercase px-4 py-3 whitespace-nowrap">{{ $transaction->status  }}</td>
+{{--                            <td class="uppercase px-4 py-3 whitespace-nowrap">--}}
+{{--                                @if($transaction->payment_status !== 'Paid')--}}
+{{--                                    <form>--}}
+{{--                                        @csrf--}}
+{{--                                        <input type="hidden" name="payment_status" value="Paid">--}}
+{{--                                        <button type="submit" class="border border-gray-50 rounded py-2 px-1.5">Mark as Paid</button>--}}
+{{--                                    </form>--}}
+{{--                                @elseif($transaction->status!== 'Completed')--}}
+{{--                                    <form>--}}
+{{--                                        @csrf--}}
+{{--                                        <input type="hidden" name="status" value="Completed">--}}
+{{--                                        <button type="submit" class="border border-gray-50 rounded py-2 px-1.5">Mark as Completed</button>--}}
+{{--                                    </form>--}}
+{{--                                @else--}}
+{{--                                    <p class="border border-green-50 rounded py-2 px-1.5 ">{{$transaction->status}}</p>--}}
+
+{{--                                @endif--}}
+{{--                            </td>--}}
+
                         </tr>
                     @endforeach
                 </tbody>
