@@ -21,12 +21,12 @@
                         <td class="px-4 py-3 whitespace-nowrap">{{$donation->phone}}</td>
                         <td class="px-4 py-3 whitespace-nowrap">{{$donation->total_amount}}</td>
                         <td class="px-4 py-3 whitespace-nowrap">
-                            <a target="_blank" href="{{asset($donation->receipt_url)}}">View Receipt</a>
+                            <a target="_blank" href="{{asset('storage/' . $donation->receipt_url)}}">View Receipt</a>
                         </td>
 
                         @if($donation->type === 'cash')
                             <td class="px-4 py-3 whitespace-nowrap">
-                                
+
                             </td>
                         @else
                             <td class="px-4 py-3 whitespace-nowrap">
