@@ -7,4 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class DonationItem extends Model
 {
     protected $guarded = [];
+
+    public function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

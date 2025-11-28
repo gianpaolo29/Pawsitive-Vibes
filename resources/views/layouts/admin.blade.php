@@ -30,6 +30,7 @@
         'Category'   => ['route' => 'admin/categories',   'icon' => 'M3 7.5h18M3 12h18M3 16.5h18'],
         'Customers'  => ['route' => 'admin/customers',  'icon' => 'M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM21 8.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0ZM8.624 21A12.3 12.3 0 0 1 3 19.234a6.375 6.375 0 0 1 11.964-3.07M15 19.234a9.5 9.5 0 0 0 7.5-.734 4.125 4.125 0 0 0-7.533-2.493'],
         'Analytics'  => ['route' => 'admin/analytics',  'icon' => 'M4.5 19.5h15M6 16.5V9m6 7.5V6m6 13.5V12'],
+        'Donations'  => ['route' => 'admin/donations',  'icon' => 'M4.5 19.5h15M6 16.5V9m6 7.5V6m6 13.5V12'],
     ];
 
     $order_group = [
@@ -45,7 +46,7 @@
     ];
 
     $loyalty_items = [
-    
+
     ];
 
 @endphp
@@ -68,15 +69,15 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
-    
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         :root{
-            --header-h: 64px;  
-            --sidebar-lg: 18rem;        
-            --sidebar-mini: 5rem;     
-            --sidebar-pad: var(--sidebar-lg); 
+            --header-h: 64px;
+            --sidebar-lg: 18rem;
+            --sidebar-mini: 5rem;
+            --sidebar-pad: var(--sidebar-lg);
         }
 
         .layout-main{ padding-top: var(--header-h); }
@@ -93,19 +94,19 @@
 
         .sidebar-transition { transition: width .35s cubic-bezier(0.4, 0, 0.2, 1); }
         .header-shell, .layout-main { transition: padding-left .35s cubic-bezier(0.4, 0, 0.2, 1); }
-        
+
         /* Modern sidebar gradient */
         .sidebar-gradient {
-            background: linear-gradient(135deg, 
-                rgb(255 255 255 / 98%) 0%, 
-                rgb(250 245 255 / 98%) 50%, 
+            background: linear-gradient(135deg,
+                rgb(255 255 255 / 98%) 0%,
+                rgb(250 245 255 / 98%) 50%,
                 rgb(245 243 255 / 98%) 100%);
         }
-        
+
         .dark .sidebar-gradient {
-            background: linear-gradient(135deg, 
-                rgb(17 24 39 / 98%) 0%, 
-                rgb(30 27 75 / 98%) 50%, 
+            background: linear-gradient(135deg,
+                rgb(17 24 39 / 98%) 0%,
+                rgb(30 27 75 / 98%) 50%,
                 rgb(35 28 76 / 98%) 100%);
         }
 
@@ -144,8 +145,8 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased bg-gradient-to-br from-gray-50 to-violet-50/30 dark:from-gray-900 dark:to-violet-900/20">
-    
+<body class="font-sans antialiased bg-gradient-to-br from-gray-50 to-violet-50/30">
+
 <div
     x-data="{
         mobileOpen:false,
@@ -200,16 +201,16 @@
 
     <!-- Modern Sidebar -->
     <aside
-        class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:flex-col border-r border-violet-200/50 dark:border-violet-700/30 sidebar-gradient backdrop-smooth thin-scrollbar overflow-y-auto sidebar-transition shadow-xl dark:shadow-2xl"
+        class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:flex-col border-r border-violet-200/50 sidebar-gradient backdrop-smooth thin-scrollbar overflow-y-auto sidebar-transition shadow-xl dark:shadow-2xl"
         :class="sidebarCollapsed ? 'lg:w-[var(--sidebar-mini)]' : 'lg:w-[var(--sidebar-lg)]'"
     >
         <div class="px-3 pt-4 pb-2">
             <div class="flex items-center gap-2 h-12 px-2">
                 <div class="relative">
-                    <img src="{{ asset('images/pawsitive-logo.jpg') }}" class="h-10 w-10 rounded-xl shadow-lg ring-2 ring-violet-300/50 dark:ring-violet-600/50 smooth-animate" alt="Pawsitive Logo">
+                    <img src="{{ asset('images/pawsitive-logo.jpg') }}" class="h-10 w-10 rounded-xl shadow-lg ring-2 ring-violet-300/50  smooth-animate" alt="Pawsitive Logo">
                     <div class="absolute -inset-1 bg-violet-400/20 rounded-xl blur-sm -z-10"></div>
                 </div>
-                <span class="font-[Pacifico] text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-purple-400 truncate smooth-animate"
+                <span class="font-[Pacifico] text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent  truncate smooth-animate"
                     x-show="!sidebarCollapsed"
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 translate-x-3"
@@ -229,7 +230,7 @@
                         <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate font-medium">{{ $name }}</span>
-                    
+
                     {{-- Transparent Tooltip for collapsed state --}}
                     <template x-if="sidebarCollapsed">
                         <div class="absolute left-full ml-3 px-3 py-2 text-xs font-medium text-white tooltip-transparent rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap"
@@ -325,7 +326,7 @@
                         <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate font-medium">{{ $name }}</span>
-                    
+
                     {{-- Transparent Tooltip for collapsed state --}}
                     <template x-if="sidebarCollapsed">
                         <div class="absolute left-full ml-3 px-3 py-2 text-xs font-medium text-white tooltip-transparent rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap">
@@ -522,7 +523,7 @@
                             <p class="text-xs text-violet-600 dark:text-violet-400 mt-0.5">{{ $user->role ?? 'Administrator' }}</p>
                         </div>
                         <a href="{{ url('admin/profile') }}" class="block px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50/50 dark:hover:bg-violet-900/20 smooth-animate">Your Profile</a>
-                        
+
                         {{-- Logout form with SweetAlert --}}
                         <form id="logout-form" method="POST" action="{{ route('logout') }}" class="border-t border-violet-200/30 dark:border-violet-700/30">
                             @csrf
@@ -594,7 +595,7 @@
                         ? 'text-violet-600 dark:text-violet-400'
                         : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300';
                 @endphp
-                
+
                 <div x-data="{ mobileOrdersOpen: {{ $isGroupActive ? 'true' : 'false' }} }">
                     {{-- Parent Toggle Button --}}
                     <button
@@ -660,7 +661,7 @@
                     <p class="text-xs text-violet-600 dark:text-violet-400 truncate">{{ $user->role ?? 'Administrator' }}</p>
                 </div>
                 {{-- Logout button in mobile --}}
-                <button @click="confirmLogout(); mobileOpen = false" 
+                <button @click="confirmLogout(); mobileOpen = false"
                         class="p-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50/50 dark:hover:bg-red-900/20 smooth-animate"
                         title="Sign out">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
@@ -695,7 +696,7 @@
                     @if (session('error'))
                         this.fire(@js(session('error')), 'error');
                     @endif
-                    
+
                 }
             }
         }

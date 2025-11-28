@@ -106,6 +106,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
 
 
 
+    Route::get('/donations', [\App\Http\Controllers\Admin\DonationController::class, 'index'])->name('donations.index');
+    Route::post('/donations/{donation}/verify', [\App\Http\Controllers\Admin\DonationController::class, 'verify'])->name('donations.verify');
 
 
 });

@@ -97,8 +97,6 @@ class DonateController extends Controller
                         continue;
                     }
 
-                    $product->decrement('stock', $item['quantity']);
-
                     $lineTotal = $product->price * $item['quantity'];
 
                     DonationItem::create([
