@@ -103,24 +103,6 @@
                             <td class="uppercase px-4 py-3 whitespace-nowrap">{{ $transaction->order_number  }}</td>
                             <td class="uppercase px-4 py-3 whitespace-nowrap">{{ $transaction->payment_status  }}</td>
                             <td class="uppercase px-4 py-3 whitespace-nowrap">{{ $transaction->status  }}</td>
-{{--                            <td class="uppercase px-4 py-3 whitespace-nowrap">--}}
-{{--                                @if($transaction->payment_status !== 'Paid')--}}
-{{--                                    <form>--}}
-{{--                                        @csrf--}}
-{{--                                        <input type="hidden" name="payment_status" value="Paid">--}}
-{{--                                        <button type="submit" class="border border-gray-50 rounded py-2 px-1.5">Mark as Paid</button>--}}
-{{--                                    </form>--}}
-{{--                                @elseif($transaction->status!== 'Completed')--}}
-{{--                                    <form>--}}
-{{--                                        @csrf--}}
-{{--                                        <input type="hidden" name="status" value="Completed">--}}
-{{--                                        <button type="submit" class="border border-gray-50 rounded py-2 px-1.5">Mark as Completed</button>--}}
-{{--                                    </form>--}}
-{{--                                @else--}}
-{{--                                    <p class="border border-green-50 rounded py-2 px-1.5 ">{{$transaction->status}}</p>--}}
-
-{{--                                @endif--}}
-{{--                            </td>--}}
 
                         </tr>
                     @endforeach

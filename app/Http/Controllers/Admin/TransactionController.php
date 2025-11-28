@@ -280,14 +280,20 @@ class TransactionController extends Controller
     public function update(Request $request, Transaction $order)
     {
         $data = $request->validate([
-            'status'         => ['required', Rule::in(['pending', 'paid', 'cancelled', 'refunded'])],
-            'payment_status' => ['required', Rule::in(['unpaid', 'paid', 'refunded'])],
+            'status'         => ['sometimes', Rule::in(['Completed'])],
+            'payment_status' => ['sometimes', Rule::in(['Paid'])],
         ]);
+
+        if ($request->has('payment_status')) {
+            Payment::where('transaction_id', $order->id)->update([
+                'status' => 'accepted',
+            ]);
+        }
 
         $order->update($data);
 
         return redirect()
-            ->route('admin.orders.show', $order)
+            ->back()
             ->with('ok', 'Transaction updated.');
     }
 

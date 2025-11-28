@@ -205,12 +205,10 @@
                                     <div class="text-xs text-gray-500">{{ $o->user?->email ?? '—' }}</div>
                                 </td>
                                 <td class="px-5 py-3 whitespace-nowrap">
-                                    <span class="px-3 py-1 text-xs rounded-full font-semibold
+                                    <span
                                         @class([
-                                            'bg-yellow-100 text-yellow-800 border border-yellow-200' => $o->status === 'pending',
-                                            'bg-green-100 text-green-800 border border-green-200'    => $o->status === 'paid',
-                                            'bg-red-100 text-red-800 border border-red-200'          => $o->status === 'cancelled',
-                                            'bg-gray-100 text-gray-800 border border-gray-200'       => $o->status === 'refunded',
+                                            'bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 text-xs rounded-full font-semibold' => $o->status === 'Pending',
+                                            'bg-green-100 text-green-800 border border-green-200 px-3 py-1 text-xs rounded-full font-semibold'    => $o->status === 'Completed',
                                         ])">
                                         {{ ucfirst($o->status) }}
                                     </span>
@@ -236,59 +234,37 @@
                                     @endif
                                 </td>
                                 <td class="px-5 py-3 whitespace-nowrap">
-                                    @if($o->payment?->method === 'gcash' && $o->payment?->status === 'pending')
-                                        <span class="px-3 py-1 text-xs rounded-full bg-orange-100 text-orange-800 font-semibold border border-orange-200">
-                                            Pending Validation
-                                        </span>
-                                    @else
-                                        <span class="px-3 py-1 text-xs rounded-full font-semibold
+
+                                        <span
                                             @class([
-                                                'bg-gray-100 text-gray-800 border border-gray-200'   => $o->payment_status === 'unpaid',
-                                                'bg-green-100 text-green-800 border border-green-200' => $o->payment_status === 'paid',
-                                                'bg-yellow-100 text-yellow-800 border border-yellow-200' => $o->payment_status === 'refunded',
+                                                'bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 text-xs rounded-full font-semibold'   => $o->payment_status === 'Unpaid',
+                                                'bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 text-xs rounded-full font-semibold' => $o->payment_status === 'For Verification',
+                                                'bg-yellow-100 text-green-800 border border-green-200 px-3 py-1 text-xs rounded-full font-semibold' => $o->payment_status === 'Paid',
                                             ])">
                                             {{ ucfirst($o->payment_status) }}
                                         </span>
-                                    @endif
                                 </td>
                                 <td class="px-5 py-3 whitespace-nowrap text-gray-600">
                                     {{ optional($o->created_at)->format('M j, Y') }}
                                 </td>
                                 <td class="px-5 py-3 text-center whitespace-nowrap">
-                                    <div class="inline-flex items-center gap-2">
-                                        @if($o->payment?->method === 'gcash' && $o->payment?->status === 'pending')
-                                            <button type="button"
-                                                @click.stop="
-                                                    modalData = {
-                                                        // Use ORDER id for routes
-                                                        id: '{{ $o->id }}',
-                                                        order_number: '{{ $o->order_number }}',
-                                                        customer: '{{ $o->user?->username ?? '—' }}',
-                                                        amount: '{{ number_format((float)$o->grand_total, 2) }}',
-                                                        reference: '{{ $o->payment?->provider_ref ?? 'N/A' }}',
-                                                        image_url: '{{ $o->payment?->receipt_image_url ?? '' }}'
-                                                    };
-                                                    $nextTick(() => { openModal = true; });
-                                                "
-                                                title="Validate GCash Payment"
-                                                class="text-amber-600 hover:text-amber-800 p-2 rounded-full hover:bg-amber-50">
-                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                                                     stroke="currentColor" stroke-width="2">
-                                                    <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-1 15.5h2v-7h-2v7zm0-9.5h2V6h-2v2z"/>
-                                                </svg>
-                                            </button>
-                                        @endif
-
-                                        <button class="text-gray-500 hover:text-gray-800 p-2 rounded-full hover:bg-gray-100"
-                                                title="Manage Order" @click.stop="">
-                                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                                                 stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="1"/>
-                                                <circle cx="19" cy="12" r="1"/>
-                                                <circle cx="5" cy="12" r="1"/>
-                                            </svg>
-                                        </button>
-                                    </div>
+                                    @if($o->payment_status !== 'Paid')
+                                        <form method="POST" action="{{ route('admin.orders.update', ['order' => $o]) }}">
+                                            @csrf
+                                            <input type="hidden" name="payment_status" value="Paid">
+                                            <input type="hidden" name="_method" value="PUT">
+                                            <button type="submit" class="border border-gray-500 rounded py-2 px-1.5">Mark as Paid</button>
+                                        </form>
+                                    @elseif($o->status!== 'Completed')
+                                        <form method="POST" action="{{ route('admin.orders.update', ['order' => $o]) }}">
+                                            @csrf
+                                            <input type="hidden" name="_method" value="PUT">
+                                            <input type="hidden" name="status" value="Completed">
+                                            <button type="submit" class="border border-gray-500 rounded py-2 px-1.5">Mark as Completed</button>
+                                        </form>
+                                    @else
+                                        No Action needed
+                                    @endif
                                 </td>
                             </tr>
 

@@ -33,12 +33,12 @@ class DashboardController extends Controller
         */
         $currentRevenue = Transaction::whereYear('created_at', $currentYear)
             ->whereMonth('created_at', $currentMonth)
-            ->where('payment_status', 'paid')
+            ->where('payment_status', 'Paid')
             ->sum('grand_total');
 
         $lastRevenue = Transaction::whereYear('created_at', $lastYear)
             ->whereMonth('created_at', $lastMonth)
-            ->where('payment_status', 'paid')
+            ->where('payment_status', 'Paid')
             ->sum('grand_total');
 
         $revenueChange = $lastRevenue > 0
@@ -56,7 +56,7 @@ class DashboardController extends Controller
             ->join('transactions', 'transaction_items.transaction_id', '=', 'transactions.id')
             ->whereYear('transactions.created_at', $currentYear)
             ->whereMonth('transactions.created_at', $currentMonth)
-            ->where('transactions.payment_status', 'paid')
+            ->where('transactions.payment_status', 'Paid')
             ->sum(DB::raw('(products.price - products.cost_price) * transaction_items.quantity'));
 
         $lastProfit = DB::table('transaction_items')
@@ -64,7 +64,7 @@ class DashboardController extends Controller
             ->join('transactions', 'transaction_items.transaction_id', '=', 'transactions.id')
             ->whereYear('transactions.created_at', $lastYear)
             ->whereMonth('transactions.created_at', $lastMonth)
-            ->where('transactions.payment_status', 'paid')
+            ->where('transactions.payment_status', 'Paid')
             ->sum(DB::raw('(products.price - products.cost_price) * transaction_items.quantity'));
 
         $profitChange = $lastProfit > 0
@@ -133,7 +133,7 @@ class DashboardController extends Controller
         | STOCK / TOTALS
         |--------------------------------------------------------------------------
         */
-        $totalRevenue    = Transaction::where('payment_status', 'paid')->sum('grand_total');
+        $totalRevenue    = Transaction::where('payment_status', 'Paid')->sum('grand_total');
         $totalOrders     = Transaction::count();
         $totalCustomers  = User::where('role', 'customer')->count();
         $activeProducts  = Product::where('is_active', true)->count();
@@ -151,7 +151,7 @@ class DashboardController extends Controller
                 DB::raw('DATE(created_at) as date'),
                 DB::raw('SUM(grand_total) as total')
             )
-            ->where('payment_status', 'paid')
+            ->where('payment_status', 'Paid')
             ->where('created_at', '>=', $startDate)
             ->groupBy(DB::raw('DATE(created_at)'))
             ->orderBy('date')
@@ -191,7 +191,7 @@ class DashboardController extends Controller
 
             $rev = Transaction::whereYear('created_at', $m->year)
                 ->whereMonth('created_at', $m->month)
-                ->where('payment_status', 'paid')
+                ->where('payment_status', 'Paid')
                 ->sum('grand_total');
 
             $prof = DB::table('transaction_items')
@@ -199,7 +199,7 @@ class DashboardController extends Controller
                 ->join('transactions', 'transaction_items.transaction_id', '=', 'transactions.id')
                 ->whereYear('transactions.created_at', $m->year)
                 ->whereMonth('transactions.created_at', $m->month)
-                ->where('transactions.payment_status', 'paid')
+                ->where('transactions.payment_status', 'Paid')
                 ->sum(DB::raw('(products.price - products.cost_price) * transaction_items.quantity'));
 
             $prRevData[]  = (float) $rev;
