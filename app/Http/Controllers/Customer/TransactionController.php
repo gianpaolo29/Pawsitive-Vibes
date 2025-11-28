@@ -14,9 +14,6 @@ class TransactionController extends Controller
             ->with('items.product')
             ->latest()
             ->get();
-
-        dd($transactions->toArray());
-
         $user = auth()->user();
 
         return view('customer.profile.transactions', compact('transactions', 'user'));

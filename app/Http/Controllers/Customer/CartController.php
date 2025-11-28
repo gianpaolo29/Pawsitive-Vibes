@@ -149,7 +149,7 @@ class CartController extends Controller
     }
 
 
-   
+
     public function checkout(Request $request)
     {
         // Validate request
@@ -191,9 +191,9 @@ class CartController extends Controller
                 'subtotal'     => $subTotal,
                 'grand_total'  => $grandTotal,
                 'payment_method'=> $request->payment_method,
-                'status'       => 'completed',
+                'payment_status' => $request->payment_method === 'cash' ? 'Unpaid': 'For Verification',
+                'status'       => 'Pending',
             ]);
-
 
             foreach ($request->items as $item) {
                 $product = Product::find($item['product_id']);

@@ -38,6 +38,14 @@
                         </div>
 
                         <nav class="space-y-1 text-sm">
+                            {{-- Profile (Active Link) --}}
+                            <a href="{{ route('customer.profile') }}"
+                               class="flex items-center gap-2 px-3 py-2 rounded-lg transition duration-150
+                               {{ $current === 'customer.profile' ? 'bg-indigo-600 text-white shadow-md font-semibold' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700' }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A10.97 10.97 0 0112 15c2.21 0 4.267.64 5.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <span>Profile</span>
+                            </a>
+
                             {{-- History (Order History) --}}
                             @if (\Illuminate\Support\Facades\Route::has('customer.profile.transactions'))
                                 <a href="{{ route('customer.profile.transactions') }}"
@@ -52,14 +60,6 @@
                                     <span>Order History (coming soon)</span>
                                 </div>
                             @endif
-
-                            {{-- Profile (Active Link) --}}
-                            <a href="{{ route('customer.profile') }}"
-                               class="flex items-center gap-2 px-3 py-2 rounded-lg transition duration-150
-                               {{ $current === 'customer.profile' ? 'bg-indigo-600 text-white shadow-md font-semibold' : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700' }}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A10.97 10.97 0 0112 15c2.21 0 4.267.64 5.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                <span>Profile</span>
-                            </a>
 
                             {{-- Logout Link (Added for completeness) --}}
                             <form method="POST" action="{{ route('logout') }}" class="w-full pt-2">
