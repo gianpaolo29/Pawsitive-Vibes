@@ -165,9 +165,13 @@ class CartController extends Controller
         // Start a transaction to ensure atomicity
         DB::beginTransaction();
 
+        $validItems = collect($request->items)->filter(function ($item) {
+            return isset($item['qty']);
+        })->values()->toArray();
+
         try {
             // 1️⃣ Validate stock before creating transaction
-            foreach ($request->items as $item) {
+            foreach ($validItems as $item) {
                 $product = Product::find($item['product_id']);
                 if (!$product) {
                     throw new \Exception("Product ID {$item['product_id']} not found.");
@@ -178,7 +182,7 @@ class CartController extends Controller
             }
 
             // 2️⃣ Compute subtotal
-            foreach ($request->items as $item) {
+            foreach ($validItems as $item) {
                 $subTotal += $item['price'] * $item['qty'];
             }
 
@@ -195,7 +199,7 @@ class CartController extends Controller
                 'status'       => 'Pending',
             ]);
 
-            foreach ($request->items as $item) {
+            foreach ($validItems as $item) {
                 $product = Product::find($item['product_id']);
 
                 $lineTotal = $item['qty'] * $item['price'];
