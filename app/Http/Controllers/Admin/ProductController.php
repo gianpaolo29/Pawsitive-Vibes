@@ -13,6 +13,18 @@ class ProductController extends Controller
 {
     protected int $lowStock = 10;
 
+    /**
+     * Check if a product is involved in any transactions (e.g., order items).
+     * You MUST ensure the Product model has the appropriate relationship (e.g., 'orderItems').
+     */
+    protected function productHasTransactions(Product $product): bool
+    {
+        // 🚨 IMPORTANT: Replace 'orderItems' with the actual name of your relationship
+        // e.g., if Product hasMany OrderItem, use $product->orderItems()->exists();
+        // If the relationship is not defined, this will fail.
+        return $product->orderItems()->exists(); 
+    }
+
     public function index(Request $req)
     {
         $q           = $req->string('q')->toString();
@@ -25,8 +37,8 @@ class ProductController extends Controller
             'total_products'  => Product::count(),
             'active_products' => Product::where('is_active', true)->count(),
             'low_stock'       => Product::where('stock', '>', 0)
-                                        ->where('stock', '<', $this->lowStock)
-                                        ->count(),
+                                         ->where('stock', '<', $this->lowStock)
+                                         ->count(),
             'categories'      => Category::count(),
         ];
 
@@ -152,27 +164,51 @@ class ProductController extends Controller
             ->with('success', 'Changes saved.');
     }
 
+    /**
+     * Delete the product with SweetAlert confirmation logic based on transactions.
+     * @param Product $product
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(Product $product)
     {
+        // 1. Check for transactions/relationships
+        if ($this->productHasTransactions($product)) {
+            // Cannot delete product with transactions. Redirect with SweetAlert error.
+            return back()->with('error', 
+                "Cannot delete product '{$product->name}'. It is linked to existing transactions/orders."
+            );
+        }
+        
+        // 2. No transactions, proceed with deletion
         if ($product->image_url) {
             Storage::disk('public')->delete($product->image_url);
         }
 
         $product->delete();
 
-        return back()->with('ok', 'Product deleted.');
+        // SweetAlert success message
+        return back()->with('ok', "Product '{$product->name}' deleted successfully.");
     }
 
+    /**
+     * Toggle the product's active status with SweetAlert confirmation.
+     * @param Product $product
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function toggle(Product $product)
     {
         if (!$product->is_active && $product->stock <= 0) {
-            return back()->with('error', 'Please add stock first.');
+            // SweetAlert error message for validation failure
+            return back()->with('error', 'Cannot activate: Please add stock first.');
         }
 
         $product->update([
             'is_active' => ! $product->is_active
         ]);
 
-        return back()->with('ok', 'Status updated.');
+        $status = $product->is_active ? 'activated' : 'deactivated';
+
+        // SweetAlert success message
+        return back()->with('ok', "Product '{$product->name}' has been {$status}.");
     }
 }

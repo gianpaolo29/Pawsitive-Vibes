@@ -191,7 +191,6 @@ class CartController extends Controller
                 'subtotal'     => $subTotal,
                 'grand_total'  => $grandTotal,
                 'payment_method'=> $request->payment_method,
-                'status'       => 'completed',
             ]);
 
 
