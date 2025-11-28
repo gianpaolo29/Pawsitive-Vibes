@@ -191,12 +191,10 @@ class CartController extends Controller
                 'subtotal'     => $subTotal,
                 'grand_total'  => $grandTotal,
                 'payment_method'=> $request->payment_method,
-                'status'       => 'paid',
+                'status'       => 'completed',
             ]);
 
 
-
-            // 4️⃣ Insert Transaction Items and reduce stock
             foreach ($request->items as $item) {
                 $product = Product::find($item['product_id']);
 
