@@ -222,7 +222,9 @@
                                             <circle cx="12" cy="12" r="10"/>
                                             <path fill="#fff" d="M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 8a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
                                         </svg>
-                                        GCash
+                                        GCash |
+
+                                        <a class="underline text-blue-500" target="_blank" href="{{$o->payment->receipt_image_url}}">View Receipt</a>
                                     @elseif($o->payment?->method === 'cash')
                                         <svg class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none"
                                              stroke="currentColor" stroke-width="2">
@@ -239,7 +241,7 @@
                                             @class([
                                                 'bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 text-xs rounded-full font-semibold'   => $o->payment_status === 'Unpaid',
                                                 'bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 text-xs rounded-full font-semibold' => $o->payment_status === 'For Verification',
-                                                'bg-yellow-100 text-green-800 border border-green-200 px-3 py-1 text-xs rounded-full font-semibold' => $o->payment_status === 'Paid',
+                                                'bg-green-100 text-green-800 border border-green-200 px-3 py-1 text-xs rounded-full font-semibold' => $o->payment_status === 'Paid',
                                             ])">
                                             {{ ucfirst($o->payment_status) }}
                                         </span>
