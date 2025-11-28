@@ -19,7 +19,6 @@
                             <th class="px-5 py-3 text-left">Total</th>
                             <th class="px-5 py-3 text-left">Payment</th>
                             <th class="px-5 py-3 text-left">Date</th>
-                            <th class="px-5 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
 

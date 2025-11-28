@@ -17,6 +17,7 @@ use App\Http\Controllers\Customer\FavoriteController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Admin\AdminProfileController;
 
 
 
@@ -57,12 +58,13 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->group(function () {
+    Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile');
+    Route::patch('/profile', [AdminProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('password.update');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])
-    ->name('notifications.mark-all-read');
-    Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markRead'])
-        ->name('notifications.markRead');
+    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+    Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markRead'])->name('notifications.markRead');
 
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');

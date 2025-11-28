@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b h-20 sm:h-24 sticky top-0 z-10 shadow-sm">
+<nav x-data="{ open: false }" class="bg-white border-b h-20 sm:h-24 sticky top-0 z-40 shadow-sm">
 
     @php
         $current = request()->path();

@@ -177,11 +177,6 @@
                             <a href="{{ route('admin.products.edit',$p) }}" class="text-violet-600 hover:text-violet-700 font-medium">Edit</a>
                             
                             {{-- MODIFIED: Replaced original form submission with SweetAlert trigger --}}
-                            <button 
-                                type="button" 
-                                onclick="confirmDelete('{{ route('admin.products.destroy', $p) }}', '{{ $p->name }}')" 
-                                class="text-rose-600 hover:text-rose-700 font-medium"
-                            >Delete</button>
                         </div>
                         </td>
                     </tr>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Customer;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,36 +8,21 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
-class ProfileController extends Controller
+class AdminProfileController extends Controller
 {
-    /**
-     * Show the logged-in customer's profile page.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user();
-
-        // just to be safe: only allow CUSTOMER role here
-        if (! $user || strtoupper($user->role) !== 'CUSTOMER') {
-            abort(403, 'Unauthorized');
-        }
-
-        return view('customer.profile.show', [
-            'user' => $user,
+        return view('admin.profile', [
+            'user' => $request->user(),
         ]);
     }
 
-    /**
-     * Update the logged-in customer's profile.
-     *
-     * (Optional) Create this route:
-     * Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-     */
     public function update(Request $request)
     {
         $user = Auth::user();
 
-        if (! $user || strtoupper($user->role) !== 'CUSTOMER') {
+        // Optional if you already use role middleware
+        if (! $user || strtoupper($user->role) !== 'ADMIN') {
             abort(403, 'Unauthorized');
         }
 
@@ -73,7 +58,7 @@ class ProfileController extends Controller
         $user->update($updateData);
 
         return redirect()
-            ->route('customer.profile')
+            ->route('admin.profile') // make sure this route exists
             ->with('success', 'Profile updated successfully.');
     }
 }

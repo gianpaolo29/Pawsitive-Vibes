@@ -22,18 +22,29 @@
         .dark .product-card-bg { background: #1f2937; }
     </style>
 
-    {{-- Success/Error Messages --}}
     @if (session('success'))
-        <div class="fixed top-4 right-4 z-50 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg animate-fade-in">
-            {{ session('success') }}
-        </div>
+    <div
+        x-data="{ show: true }"
+        x-init="setTimeout(() => show = false, 1000)" {{-- 1 second --}}
+        x-show="show"
+        x-transition.opacity.duration.300ms
+        class="fixed top-4 right-4 z-50 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg"
+    >
+        {{ session('success') }}
+    </div>
     @endif
-
     @if (session('error'))
-        <div class="fixed top-4 right-4 z-50 px-6 py-3 bg-red-500 text-white rounded-lg shadow-lg animate-fade-in">
-            {{ session('error') }}
-        </div>
+    <div
+        x-data="{ show: true }"
+        x-init="setTimeout(() => show = false, 1000)" {{-- 1 second --}}
+        x-show="show"
+        x-transition.opacity.duration.300ms
+        class="fixed top-4 right-4 z-50 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg"
+    >
+        {{ session('error') }}
+    </div>
     @endif
+    
 
     <div x-data="shop()" x-init="init()" class="py-12 bg-gray-50 dark:bg-gray-900">
         <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto">
