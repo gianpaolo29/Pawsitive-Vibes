@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;   // ✅ ADD THIS
-use Illuminate\Support\Facades\Auth;   // ✅ ADD THIS
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
 use App\Models\Notification;
 
 
@@ -23,6 +24,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Password::defaults(fn () => Password::min(8)
+            ->letters()
+            ->mixedCase()
+            ->numbers()
+            ->symbols()
+        );
+
         View::composer('components.admin-layout', function ($view) {
         $user = Auth::user();
 

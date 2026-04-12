@@ -166,7 +166,7 @@ class CartController extends Controller
         DB::beginTransaction();
 
         $validItems = collect($request->items)->filter(function ($item) {
-            return isset($item['qty']);
+            return isset($item['qty']) && !empty($item['selected']);
         })->values()->toArray();
 
         try {
@@ -232,11 +232,18 @@ class CartController extends Controller
             'provider_ref'      => null,
         ]);
 
-        // 7️⃣ Clear cart
+        // 7️⃣ Remove only checked-out items from cart
         $cart = Cart::where('user_id', auth()->id())->first();
         if ($cart) {
-            CartItem::where('cart_id', $cart->id)->delete();
-            $cart->delete();
+            $checkedOutCartItemIds = collect($validItems)->pluck('cart_item_id')->filter()->all();
+            CartItem::where('cart_id', $cart->id)
+                ->whereIn('id', $checkedOutCartItemIds)
+                ->delete();
+
+            // Delete cart only if no items remain
+            if ($cart->items()->count() === 0) {
+                $cart->delete();
+            }
         }
 
         DB::commit();

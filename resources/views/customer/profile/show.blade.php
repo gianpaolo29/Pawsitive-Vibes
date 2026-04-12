@@ -216,6 +216,143 @@
                             </div>
                         </form>
                     </div>
+
+                    {{-- SECURITY QUESTIONS SECTION --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mt-8">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1 border-b pb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            Security Questions
+                        </h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 mb-6">
+                            Set up 3 security questions to recover your account if you forget your password. Choose questions about yourself and your pet.
+                        </p>
+
+                        @if($user->security_question_1)
+                            <div class="mb-4 p-3 text-sm text-green-700 bg-green-50 dark:bg-green-900/30 dark:text-green-300 rounded-lg flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                Security questions are set up. You can update them below.
+                            </div>
+                        @else
+                            <div class="mb-4 p-3 text-sm text-amber-700 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-300 rounded-lg flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                Security questions not set up yet. Please set them up for account recovery.
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('customer.profile.security-questions.update') }}" class="space-y-6">
+                            @csrf
+                            @method('PATCH')
+
+                            @php
+                                $questions = [
+                                    'about_you' => [
+                                        'What is your mother\'s maiden name?',
+                                        'What city were you born in?',
+                                        'What was the name of your first school?',
+                                        'What is your favorite food?',
+                                        'What is the name of the street you grew up on?',
+                                    ],
+                                    'about_pet' => [
+                                        'What is your pet\'s name?',
+                                        'What breed is your pet?',
+                                        'What is your pet\'s favorite toy?',
+                                        'How old is your pet (in years)?',
+                                        'What is your pet\'s favorite treat?',
+                                        'What color is your pet?',
+                                    ],
+                                ];
+                            @endphp
+
+                            {{-- Question 1 - About You --}}
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                                <h4 class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mb-3 flex items-center gap-2">
+                                    <span class="w-6 h-6 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                                    About You
+                                </h4>
+                                <div class="mb-3">
+                                    <label for="security_question_1" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Question</label>
+                                    <select id="security_question_1" name="security_question_1"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('security_question_1') border-red-500 @enderror">
+                                        <option value="">Select a question...</option>
+                                        @foreach($questions['about_you'] as $q)
+                                            <option value="{{ $q }}" {{ old('security_question_1', $user->security_question_1) === $q ? 'selected' : '' }}>{{ $q }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('security_question_1') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label for="security_answer_1" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Answer</label>
+                                    <input type="text" id="security_answer_1" name="security_answer_1"
+                                        value="{{ old('security_answer_1', $user->security_answer_1) }}"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('security_answer_1') border-red-500 @enderror"
+                                        placeholder="Your answer...">
+                                    @error('security_answer_1') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+
+                            {{-- Question 2 - About Your Pet --}}
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                                <h4 class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mb-3 flex items-center gap-2">
+                                    <span class="w-6 h-6 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                                    About Your Pet
+                                </h4>
+                                <div class="mb-3">
+                                    <label for="security_question_2" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Question</label>
+                                    <select id="security_question_2" name="security_question_2"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('security_question_2') border-red-500 @enderror">
+                                        <option value="">Select a question...</option>
+                                        @foreach($questions['about_pet'] as $q)
+                                            <option value="{{ $q }}" {{ old('security_question_2', $user->security_question_2) === $q ? 'selected' : '' }}>{{ $q }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('security_question_2') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label for="security_answer_2" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Answer</label>
+                                    <input type="text" id="security_answer_2" name="security_answer_2"
+                                        value="{{ old('security_answer_2', $user->security_answer_2) }}"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('security_answer_2') border-red-500 @enderror"
+                                        placeholder="Your answer...">
+                                    @error('security_answer_2') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+
+                            {{-- Question 3 - About Your Pet --}}
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                                <h4 class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mb-3 flex items-center gap-2">
+                                    <span class="w-6 h-6 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                                    About Your Pet
+                                </h4>
+                                <div class="mb-3">
+                                    <label for="security_question_3" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Question</label>
+                                    <select id="security_question_3" name="security_question_3"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('security_question_3') border-red-500 @enderror">
+                                        <option value="">Select a question...</option>
+                                        @foreach($questions['about_pet'] as $q)
+                                            <option value="{{ $q }}" {{ old('security_question_3', $user->security_question_3) === $q ? 'selected' : '' }}>{{ $q }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('security_question_3') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label for="security_answer_3" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Answer</label>
+                                    <input type="text" id="security_answer_3" name="security_answer_3"
+                                        value="{{ old('security_answer_3', $user->security_answer_3) }}"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('security_answer_3') border-red-500 @enderror"
+                                        placeholder="Your answer...">
+                                    @error('security_answer_3') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end pt-2">
+                                <button type="submit"
+                                    class="inline-flex items-center px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold shadow-md transition duration-150 gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    Save Security Questions
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </section>
             </div>
         </div>

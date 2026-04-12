@@ -518,16 +518,10 @@
                 Choose a new password to regain access to your account.
             </div>
 
-            <form method="POST" action="{{ route('password.store') }}">
+            <form method="POST" action="{{ route('security.reset-password.store') }}">
                 @csrf
 
-                <input type="hidden" name="token" value="{{ $request->route('token') }}">
-
-                <input type="hidden" name="email" value="{{ old('email', $request->email) }}">
-
-                @error('email')
-                    <div class="field-error" style="margin-bottom: 20px;">{{ $message }}</div>
-                @enderror
+                <input type="hidden" name="token" value="{{ $token }}">
 
                 <div class="input-group" style="margin-bottom:16px">
                     <input

@@ -57,7 +57,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Pawsitive Vibes</title>
+    <title>{{ config('app.name') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -214,7 +214,7 @@
                     x-show="!sidebarCollapsed"
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 translate-x-3"
-                    x-transition:enter-end="opacity-100 translate-x-0">Pawsitive Vibes</span>
+                    x-transition:enter-end="opacity-100 translate-x-0">{{ config('app.name') }}</span>
             </div>
         </div>
 
@@ -555,7 +555,7 @@
                 <img src="{{ asset('images/pawsitive-logo.jpg') }}" class="h-10 w-10 rounded-xl shadow-lg ring-2 ring-violet-300/50 dark:ring-violet-600/50" alt="Pawsitive Logo">
                 <div class="absolute -inset-1 bg-violet-400/20 rounded-xl blur-sm -z-10"></div>
             </div>
-            <span class="font-[Pacifico] text-2xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-purple-400">Pawsitive Vibes</span>
+            <span class="font-[Pacifico] text-2xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-purple-400">{{ config('app.name') }}</span>
             <button @click="mobileOpen = false" class="ml-auto p-2 rounded-xl text-gray-500 dark:text-gray-300 hover:text-violet-700 dark:hover:text-violet-300 hover:bg-violet-100/50 dark:hover:bg-violet-900/30 smooth-animate" aria-label="Close sidebar menu">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

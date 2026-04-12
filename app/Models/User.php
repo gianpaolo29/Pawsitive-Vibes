@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,6 +12,11 @@ class User extends Authenticatable
 {
 
     use HasFactory, Notifiable;
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +30,12 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'security_question_1',
+        'security_answer_1',
+        'security_question_2',
+        'security_answer_2',
+        'security_question_3',
+        'security_answer_3',
     ];
 
 

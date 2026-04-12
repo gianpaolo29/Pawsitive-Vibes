@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
+use App\Models\Favorite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -89,10 +90,20 @@ class ShopController extends Controller
                 ->toArray();
         }
 
+        $cartItemCount = Auth::check()
+            ? Cart::where('user_id', Auth::id())->first()?->items()->sum('quantity') ?? 0
+            : 0;
+
+        $favoritedProductIds = Auth::check()
+            ? Favorite::where('user_id', Auth::id())->pluck('product_id')->toArray()
+            : [];
+
         return view('customer.shop.show', [
-            'products'             => $products,
-            'categories'           => $categories,
-            'cartItemIdsByProduct' => $cartItemIdsByProduct,
+            'products'              => $products,
+            'categories'            => $categories,
+            'cartItemIdsByProduct'  => $cartItemIdsByProduct,
+            'cartItemCount'         => $cartItemCount,
+            'favoritedProductIds'   => $favoritedProductIds,
         ]);
     }
 }

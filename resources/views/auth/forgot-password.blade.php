@@ -447,7 +447,7 @@
             
             {{-- HEADER / LOGO --}}
             <div class="logo">
-                <h1>Pawsitive Vibes</h1>
+                <h1>{{ config('app.name') }}</h1>
                 <p>Reset Your Password</p>
             </div>
 

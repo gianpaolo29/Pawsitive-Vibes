@@ -51,6 +51,8 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
     Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
+    Route::patch('/profile/security-questions', [ProfileController::class, 'updateSecurityQuestions'])->name('profile.security-questions.update');
+
 
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

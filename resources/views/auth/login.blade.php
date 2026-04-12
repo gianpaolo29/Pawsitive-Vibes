@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Pawsitive Vibes | Pet Shop Login</title>
+        <title>{{ config('app.name') }} | Pet Shop Login</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -114,8 +114,8 @@
 <body>
     <nav class="glass-navbar">
         <div class="nav-logo">
-            <img src="{{ asset('images/pawsitive-logo.jpg') }}" alt="Pawsitive Vibes Logo" class="logo-img">
-            <span>Pawsitive Vibes</span>
+            <img src="{{ asset('images/pawsitive-logo.jpg') }}" alt="{{ config('app.name') }} Logo" class="logo-img">
+            <span>{{ config('app.name') }}</span>
         </div>
     </nav>
 
@@ -129,7 +129,7 @@
     <div class="main-content">
         <div class="login-container">
             <div class="logo">
-                <h1>Pawsitive Vibes</h1>
+                <h1>{{ config('app.name') }}</h1>
                 <p>Your Pet's Happy Place</p>
             </div>
 
@@ -147,20 +147,18 @@
 
                 <div class="input-group">
                     <input
-                        type="text"
+                        type="email"
                         id="email"
-                        name="username"
-                        class="input-field @error('username') is-invalid @enderror"
+                        name="email"
+                        class="input-field @error('email') is-invalid @enderror"
                         placeholder=" "
-                        value="{{ old('username') }}"
+                        value="{{ old('email') }}"
                         required
-                        autocomplete="username"
+                        autocomplete="email"
                         autofocus
                     >
-                    <label for="username" class="input-label">Username</label>
-                    @error('username')
-                        <div class="field-error">{{ $message }}</div>
-                    @enderror
+                    <label for="email" class="input-label">Email Address</label>
+                    {{-- errors shown via SweetAlert --}}
                 </div>
 
                 <div class="input-group">
@@ -218,11 +216,52 @@
 
     
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
             const petIcons = document.querySelectorAll('.pet-icon');
+
+            @if ($errors->has('email'))
+                @php $errorMsg = $errors->first('email'); @endphp
+                @if ($errorMsg === 'attempt_1')
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Incorrect Password',
+                        html: 'The email or password you entered is incorrect.<br><br><b>2 attempts remaining.</b><br><small style="color:#666">Please wait 10 seconds before trying again.</small>',
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @elseif ($errorMsg === 'attempt_2')
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Second Failed Attempt',
+                        html: 'The email or password you entered is incorrect.<br><br><b>1 attempt remaining.</b><br><small style="color:#666">Please wait 5 minutes before trying again.</small>',
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @elseif (str_starts_with($errorMsg, 'delay_minutes:'))
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Please Wait',
+                        html: 'Too many failed attempts.<br><br>Please try again in <b>{{ str_replace("delay_minutes:", "", $errorMsg) }} minute(s)</b>.',
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @elseif (str_starts_with($errorMsg, 'delay_seconds:'))
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Please Wait',
+                        html: 'Too many failed attempts.<br><br>Please try again in <b>{{ str_replace("delay_seconds:", "", $errorMsg) }} seconds</b>.',
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @else
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Login Failed',
+                        text: @json($errorMsg),
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @endif
+            @endif
 
             createParticles();
 

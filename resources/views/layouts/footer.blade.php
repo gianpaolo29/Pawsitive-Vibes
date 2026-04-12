@@ -20,11 +20,11 @@
                 {{-- Logo + About + Newsletter (Column 1) --}}
                 <div class="lg:col-span-1">
                     <div class="flex items-center gap-3 mb-6">
-                        <img src="https://placehold.co/48x48/8a2be2/F9DF71?text=PV" 
-                             alt="Pawsitive Vibes Logo"
+                        <img src="{{ asset('images/logo.png') }}"
+                             alt="{{ config('app.name') }} Logo"
                              class="h-12 w-12 rounded-full object-cover border-2 border-white/20">
                         <h3 class="text-2xl lg:text-3xl font-bold tracking-wide bg-gradient-to-r from-white to-[#F9DF71] bg-clip-text text-transparent">
-                            Pawsitive Vibes
+                            {{ config('app.name') }}
                         </h3>
                     </div>
 
@@ -52,25 +52,25 @@
                     <h4 class="text-lg lg:text-xl font-semibold mb-6 pb-2 border-b border-white/20">Quick Links</h4>
                     <ul class="space-y-3 text-sm lg:text-base">
                         <li>
-                            <a href="/customer/dashboard" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
+                            <a href="/" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
                                 <span class="w-1 h-1 bg-[#F9DF71] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                                 Home
                             </a>
                         </li>
                         <li>
-                            <a href="/favorites" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
+                            <a href="/customer/favorites" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
                                 <span class="w-1 h-1 bg-[#F9DF71] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                                 Favorites
                             </a>
                         </li>
                         <li>
-                            <a href="/donate" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
+                            <a href="/customer/donate" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
                                 <span class="w-1 h-1 bg-[#F9DF71] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                                 Donate
                             </a>
                         </li>
                         <li>
-                            <a href="/cart" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
+                            <a href="/customer/cart" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
                                 <span class="w-1 h-1 bg-[#F9DF71] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                                 Cart
                             </a>
@@ -83,27 +83,15 @@
                     <h4 class="text-lg lg:text-xl font-semibold mb-6 pb-2 border-b border-white/20">Customer Support</h4>
                     <ul class="space-y-3 text-sm lg:text-base">
                         <li>
-                            <a href="#" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
+                            <a  class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
                                 <span class="w-1 h-1 bg-[#F9DF71] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                                 About Us
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
+                            <a  class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
                                 <span class="w-1 h-1 bg-[#F9DF71] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                                 Contact
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
-                                <span class="w-1 h-1 bg-[#F9DF71] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                                Shipping Policy
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-white/80 hover:text-[#F9DF71] transition-colors duration-200 flex items-center gap-2 group">
-                                <span class="w-1 h-1 bg-[#F9DF71] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                                Returns & Refunds
                             </a>
                         </li>
                         <li>
@@ -149,47 +137,36 @@
                         <p class="text-white/90 font-medium mb-4 text-sm">Follow Us</p>
                         <div class="flex gap-4">
                             {{-- IMPROVED FACEBOOK ICON CLASS: Ensure the `fab` class is used for brand icons --}}
-                            <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F9DF71] hover:text-[#8a2be2] transition-all duration-200 transform hover:scale-110">
+                            <a href="https://www.facebook.com/profile.php?id=61575048088417" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F9DF71] hover:text-[#8a2be2] transition-all duration-200 transform hover:scale-110">
                                 <i class="fab fa-facebook-f text-lg"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F9DF71] hover:text-[#8a2be2] transition-all duration-200 transform hover:scale-110">
-                                <i class="fab fa-instagram text-lg"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F9DF71] hover:text-[#8a2be2] transition-all duration-200 transform hover:scale-110">
-                                <i class="fab fa-twitter text-lg"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F9DF71] hover:text-[#8a2be2] transition-all duration-200 transform hover:scale-110">
-                                <i class="fab fa-tiktok text-lg"></i>
+
                             </a>
                         </div>
                     </div>
 
-                    {{-- Payment Methods --}}
                     <div class="mt-6">
                         <p class="text-white/90 font-medium mb-3 text-sm">We Accept</p>
                         <div class="flex flex-wrap gap-2">
                             <div class="px-2 py-1 bg-white rounded flex items-center justify-center text-xs font-bold text-[#8a2be2] shadow-md">GCash</div>
-                            <div class="px-2 py-1 bg-white rounded flex items-center justify-center text-xs font-bold text-[#8a2be2] shadow-md">Visa</div>
-                            <div class="px-2 py-1 bg-white rounded flex items-center justify-center text-xs font-bold text-[#8a2be2] shadow-md">MasterCard</div>
-                            <div class="px-2 py-1 bg-white rounded flex items-center justify-center text-xs font-bold text-[#8a2be2] shadow-md">BPI</div>
+                            <div class="px-2 py-1 bg-white rounded flex items-center justify-center text-xs font-bold text-[#8a2be2] shadow-md">Cash</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Bottom Section --}}
         <div class="w-full mt-12 pt-6 border-t border-white/20">
             <div class="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
                 <div class="flex flex-col lg:flex-row justify-between items-center gap-4 text-center lg:text-left">
                     <div class="text-sm text-white/70">
-                        © {{ date('Y') }} Pawsitive Vibes — All Rights Reserved.
+                        © {{ date('Y') }} {{ config('app.name') }} — All Rights Reserved.
                     </div>
                     
                     <div class="flex flex-wrap justify-center gap-6 text-sm text-white/70">
-                        <a href="#" class="hover:text-[#F9DF71] transition-colors duration-200">Terms of Service</a>
-                        <a href="#" class="hover:text-[#F9DF71] transition-colors duration-200">Privacy Policy</a>
-                        <a href="#" class="hover:text-[#F9DF71] transition-colors duration-200">Cookie Policy</a>
+                        <a class="hover:text-[#F9DF71] transition-colors duration-200">Terms of Service</a>
+                        <a class="hover:text-[#F9DF71] transition-colors duration-200">Privacy Policy</a>
+                        <a class="hover:text-[#F9DF71] transition-colors duration-200">Cookie Policy</a>
                     </div>
                 </div>
             </div>

@@ -202,12 +202,14 @@
                                 name="items[{{ $item->id }}][cart_item_id]"
                                 value="{{ $item->id }}"
                                 data-hidden-item-id="{{ $item->id }}"
+                                data-checkout-field="{{ $item->id }}"
                             >
 
                             <input
                                 type="hidden"
                                 name="items[{{ $item->id }}][product_id]"
                                 value="{{ $product->id }}"
+                                data-checkout-field="{{ $item->id }}"
                             >
 
                             <input
@@ -215,6 +217,7 @@
                                 name="items[{{ $item->id }}][qty]"
                                 value="{{ $item->quantity }}"
                                 data-hidden-qty="{{ $item->id }}"
+                                data-checkout-field="{{ $item->id }}"
                             >
 
                             <input
@@ -222,12 +225,14 @@
                                 name="items[{{ $item->id }}][selected]"
                                 value="1"
                                 data-hidden-selected="{{ $item->id }}"
+                                data-checkout-field="{{ $item->id }}"
                             >
 
                             <input
                                 type="hidden"
                                 name="items[{{ $item->id }}][price]"
                                 value="{{ $item->unit_price }}"
+                                data-checkout-field="{{ $item->id }}"
                             >
                         @endforeach
 
@@ -318,7 +323,7 @@
                                     required
                                 >
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-medium text-gray-900 dark:text-white">GCash</span>
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">GCash - 09206013676</span>
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
                                         Send payment via GCash and upload your receipt.
                                     </span>
@@ -505,20 +510,17 @@
                     const hiddenItem = document.querySelector('[data-hidden-item-id="'+itemId+'"]'); // Check if cart item exists
 
                     if (hiddenQty)      hiddenQty.value      = qty;
-                    // Only update selection if the hidden item fields exist
                     if (hiddenSelected) hiddenSelected.value = cb.checked ? 1 : 0;
-                    // If the item is not selected, remove it from the form data entirely by disabling the fields
-                    // This is an alternative to setting the value to 0, which might be cleaner for the backend
-                    if(hiddenItem) {
-                        const allHiddenFields = document.querySelectorAll(`[data-hidden-item-id="${itemId}"], [data-hidden-qty="${itemId}"], [data-hidden-selected="${itemId}"]`);
-                        allHiddenFields.forEach(field => {
-                            if (cb.checked) {
-                                field.removeAttribute('disabled');
-                            } else {
-                                field.setAttribute('disabled', 'disabled');
-                            }
-                        });
-                    }
+
+                    // Disable/enable ALL hidden fields for this item so unchecked items are excluded from form submission
+                    const allCheckoutFields = document.querySelectorAll(`[data-checkout-field="${itemId}"]`);
+                    allCheckoutFields.forEach(field => {
+                        if (cb.checked) {
+                            field.removeAttribute('disabled');
+                        } else {
+                            field.setAttribute('disabled', 'disabled');
+                        }
+                    });
 
                     // if not selected, do not add to totals / summary list
                     if (!cb.checked) return;

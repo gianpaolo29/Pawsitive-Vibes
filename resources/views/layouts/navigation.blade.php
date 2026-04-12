@@ -40,7 +40,7 @@
             {{-- LOGO --}}
             <a href="/" class="shrink-0 flex items-center text-3xl font-extrabold text-[#8a2be2]">
                 <img src="{{ asset('images/logo.png') }}" class="h-10 w-10 mr-2 rounded-full object-cover">
-                Pawsitive Vibes
+                {{ config('app.name') }}
                 <span class="ml-2 w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></span>
             </a>
 

@@ -126,7 +126,7 @@
                                 @php
                                     $cartItemId = $cartItemIdsByProduct[$product->id] ?? null;
                                     $isInCart = !is_null($cartItemId);
-                                    $isFavorited = $product->is_favorite ?? false; 
+                                    $isFavorited = in_array($product->id, $favoritedProductIds);
                                 @endphp
 
                                 <div class="group product-card-bg rounded-2xl shadow-lg hover:shadow-2xl smooth-transition overflow-hidden border border-gray-200 dark:border-gray-700">
@@ -336,7 +336,22 @@
                 </div>
             </div>
         </div>
-    </div> 
+        {{-- FLOATING CART BUTTON --}}
+        <a href="{{ route('customer.cart.index') }}"
+           class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full gradient-bg text-white shadow-lg hover:opacity-90 hover:scale-110 smooth-transition"
+           title="Go to Cart">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 3h2l.4 2M7 13h10l1.4-7H6.4M7 13L5.4 5M7 13l-2 6h14M10 21a1 1 0 11-2 0 1 1 0 012 0zm8 0a1 1 0 11-2 0 1 1 0 012 0z" />
+            </svg>
+            @if($cartItemCount > 0)
+                <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[11px] font-bold text-white bg-red-500 rounded-full ring-2 ring-white">
+                    {{ $cartItemCount > 99 ? '99+' : $cartItemCount }}
+                </span>
+            @endif
+        </a>
+
+    </div>
 
     {{-- SCRIPTS --}}
     <script>
