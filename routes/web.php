@@ -30,6 +30,15 @@ Route::prefix('auth')->name('auth.')->group(function () {
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
+// TEMPORARY: View last 50 lines of error log — REMOVE AFTER DEBUGGING
+Route::get('/debug-log', function () {
+    $path = storage_path('logs/laravel.log');
+    if (!file_exists($path)) return 'No log file found.';
+    $lines = file($path);
+    $last50 = array_slice($lines, -50);
+    return '<pre>' . htmlspecialchars(implode('', $last50)) . '</pre>';
+});
+
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
     Route::get('/shop', [ShopController::class, 'index'])->name('shop');
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
