@@ -65,6 +65,10 @@ return [
             'transport' => 'resend',
         ],
 
+        'brevo' => [
+            'transport' => 'brevo+api',
+            'key' => env('BREVO_API_KEY'),
+        ],
 
         'sendmail' => [
             'transport' => 'sendmail',
