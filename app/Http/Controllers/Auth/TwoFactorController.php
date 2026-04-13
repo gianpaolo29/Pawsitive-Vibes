@@ -59,11 +59,21 @@ class TwoFactorController extends Controller
     }
 
     /**
-     * Disable 2FA.
+     * Disable 2FA (requires OTP verification).
      */
     public function disable(Request $request)
     {
+        $request->validate([
+            'code' => ['required', 'string', 'size:6'],
+        ]);
+
         $user = $request->user();
+        $google2fa = app(\PragmaRX\Google2FA\Google2FA::class);
+        $secret = decrypt($user->two_factor_secret);
+
+        if (!$google2fa->verifyKey($secret, $request->code)) {
+            return back()->with('error', 'Invalid code. Please enter the correct code from your authenticator app.');
+        }
 
         $user->forceFill([
             'two_factor_secret' => null,
@@ -72,7 +82,7 @@ class TwoFactorController extends Controller
         ])->save();
 
         return redirect()->route('customer.profile')
-            ->with('success', 'Two-factor authentication disabled.');
+            ->with('success', 'Two-factor authentication has been disabled.');
     }
 
     /**
