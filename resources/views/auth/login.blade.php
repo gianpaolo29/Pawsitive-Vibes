@@ -225,7 +225,21 @@
 
             @if ($errors->has('email'))
                 @php $errorMsg = $errors->first('email'); @endphp
-                @if ($errorMsg === 'deactivated')
+                @if ($errorMsg === 'blocked_suspicious')
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Account Blocked',
+                        html: `
+                            <div style="text-align:center;">
+                                <div style="font-size:40px;margin-bottom:10px;">🚨</div>
+                                <p style="color:#444;margin-bottom:12px;">Your account has been <strong>temporarily blocked</strong> due to suspicious login activity.</p>
+                                <p style="color:#666;font-size:13px;">We detected logins from multiple different locations in a short period. For your security, the account is locked for <strong>24 hours</strong>.</p>
+                                <p style="color:#888;font-size:12px;margin-top:12px;">If this was you, please contact support to unblock your account.</p>
+                            </div>
+                        `,
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @elseif ($errorMsg === 'deactivated')
                     Swal.fire({
                         icon: 'error',
                         title: 'Account Deactivated',

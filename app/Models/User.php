@@ -31,6 +31,8 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'blocked_reason',
+        'blocked_until',
         'security_question_1',
         'security_answer_1',
         'security_question_2',
@@ -61,6 +63,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'blocked_until' => 'datetime',
         ];
     }
 
@@ -77,6 +80,11 @@ class User extends Authenticatable
     public function favoriteProducts()
     {
         return $this->belongsToMany(Product::class, 'favorites');
+    }
+
+    public function loginLogs()
+    {
+        return $this->hasMany(LoginLog::class);
     }
 
 }

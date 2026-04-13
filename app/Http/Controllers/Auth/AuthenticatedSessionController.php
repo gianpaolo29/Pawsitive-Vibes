@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\LoginSecurityService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,13 +56,38 @@ class AuthenticatedSessionController extends Controller
             return back()->withErrors(['email' => 'failed:' . $remaining])->onlyInput('email');
         }
 
-        // Check if account is deactivated
         $user = $request->user();
+
+        // Check if time-based block has expired
+        if (!$user->is_active && $user->blocked_until && $user->blocked_until->isPast()) {
+            $user->update([
+                'is_active' => true,
+                'blocked_reason' => null,
+                'blocked_until' => null,
+            ]);
+        }
+
+        // Check if account is deactivated
         if (!$user->is_active) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
+
+            $reason = $user->blocked_reason ?? '';
+            if (str_contains($reason, 'Suspicious')) {
+                return back()->withErrors(['email' => 'blocked_suspicious'])->onlyInput('email');
+            }
             return back()->withErrors(['email' => 'deactivated'])->onlyInput('email');
+        }
+
+        // Log the login and check for suspicious activity
+        $securityCheck = LoginSecurityService::logAndCheck($user, $request);
+
+        if ($securityCheck['blocked']) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return back()->withErrors(['email' => 'blocked_suspicious'])->onlyInput('email');
         }
 
         // Success — clear everything
