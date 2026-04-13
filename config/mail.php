@@ -65,10 +65,6 @@ return [
             'transport' => 'resend',
         ],
 
-        'brevo' => [
-            'transport' => 'smtp',
-            'url' => env('BREVO_MAILER_DSN'),
-        ],
 
         'sendmail' => [
             'transport' => 'sendmail',

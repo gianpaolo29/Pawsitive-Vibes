@@ -13,7 +13,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <link rel="icon" type="image/png" href="{{ asset('icons/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -225,32 +225,19 @@
 
             @if ($errors->has('email'))
                 @php $errorMsg = $errors->first('email'); @endphp
-                @if ($errorMsg === 'attempt_1')
+                @if (str_starts_with($errorMsg, 'locked:'))
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Account Locked',
+                        html: 'Too many failed login attempts.<br><br>Your account is locked for <b>{{ str_replace("locked:", "", $errorMsg) }} minute(s)</b>.<br><small style="color:#666">Please try again later.</small>',
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @elseif (str_starts_with($errorMsg, 'failed:'))
+                    @php $remaining = str_replace('failed:', '', $errorMsg); @endphp
                     Swal.fire({
                         icon: 'warning',
                         title: 'Incorrect Password',
-                        html: 'The email or password you entered is incorrect.<br><br><b>2 attempts remaining.</b><br><small style="color:#666">Please wait 10 seconds before trying again.</small>',
-                        confirmButtonColor: '#8a2be2',
-                    });
-                @elseif ($errorMsg === 'attempt_2')
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Second Failed Attempt',
-                        html: 'The email or password you entered is incorrect.<br><br><b>1 attempt remaining.</b><br><small style="color:#666">Please wait 5 minutes before trying again.</small>',
-                        confirmButtonColor: '#8a2be2',
-                    });
-                @elseif (str_starts_with($errorMsg, 'delay_minutes:'))
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Please Wait',
-                        html: 'Too many failed attempts.<br><br>Please try again in <b>{{ str_replace("delay_minutes:", "", $errorMsg) }} minute(s)</b>.',
-                        confirmButtonColor: '#8a2be2',
-                    });
-                @elseif (str_starts_with($errorMsg, 'delay_seconds:'))
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Please Wait',
-                        html: 'Too many failed attempts.<br><br>Please try again in <b>{{ str_replace("delay_seconds:", "", $errorMsg) }} seconds</b>.',
+                        html: 'The email or password you entered is incorrect.<br><br><b>{{ $remaining }} attempt(s) remaining</b> before your account is locked for 5 minutes.',
                         confirmButtonColor: '#8a2be2',
                     });
                 @else
