@@ -252,6 +252,7 @@
                                     <form id="disable2faForm" method="POST" action="{{ route('customer.profile.two-factor.disable') }}">
                                         @csrf
                                         @method('DELETE')
+                                        <input type="hidden" name="code" id="disable2faCode">
                                         <button type="button"
                                             onclick="confirmDisable2FA()"
                                             class="w-full inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition">
@@ -463,16 +464,37 @@
         // Disable 2FA confirmation
         function confirmDisable2FA() {
             Swal.fire({
-                icon: 'warning',
-                title: 'Disable Two-Factor Authentication?',
-                html: 'Your account will no longer be protected by 2FA.<br><small style="color:#6b7280;">You can re-enable it anytime.</small>',
+                html: `
+                    <div style="text-align:center;padding:5px 0;">
+                        <div style="font-size:40px;margin-bottom:10px;">🔐</div>
+                        <h2 style="font-size:18px;font-weight:700;color:#1f2937;margin-bottom:6px;">Verify to Disable 2FA</h2>
+                        <p style="color:#6b7280;font-size:13px;margin-bottom:16px;">Enter the 6-digit code from your <strong>Google Authenticator</strong> app to confirm.</p>
+                    </div>
+                `,
+                input: 'text',
+                inputAttributes: {
+                    maxlength: 6,
+                    inputmode: 'numeric',
+                    pattern: '[0-9]*',
+                    autocomplete: 'one-time-code',
+                    style: 'text-align:center;font-size:24px;font-weight:700;letter-spacing:8px;font-family:monospace;border:2px solid #e5e7eb;border-radius:12px;padding:12px;',
+                    placeholder: '000000',
+                },
                 showCancelButton: true,
-                confirmButtonText: 'Yes, Disable',
+                confirmButtonText: 'Disable 2FA',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#dc2626',
                 cancelButtonColor: '#6b7280',
+                preConfirm: (code) => {
+                    if (!code || code.length !== 6 || !/^\d{6}$/.test(code)) {
+                        Swal.showValidationMessage('Please enter a valid 6-digit code');
+                        return false;
+                    }
+                    return code;
+                },
             }).then((result) => {
-                if (result.isConfirmed) {
+                if (result.isConfirmed && result.value) {
+                    document.getElementById('disable2faCode').value = result.value;
                     document.getElementById('disable2faForm').submit();
                 }
             });

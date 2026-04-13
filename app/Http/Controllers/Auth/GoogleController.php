@@ -43,9 +43,11 @@ class GoogleController extends Controller
 
             session()->flash('welcome_user', $user->fname ?? $user->username);
 
-            return redirect()->intended(
-                $user->role === 'ADMIN' ? route('admin.dashboard') : route('welcome')
-            );
+            if ($user->role === 'ADMIN') {
+                return redirect()->route('admin.dashboard');
+            }
+
+            return redirect()->intended(route('welcome'));
         } catch (\Throwable $e) {
             report($e);
 

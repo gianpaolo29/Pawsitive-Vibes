@@ -21,7 +21,7 @@
                             Open <strong>Google Authenticator</strong>, <strong>Authy</strong>, or any TOTP app and scan this QR code.
                         </p>
                         <div class="flex justify-center">
-                            <div class="bg-white rounded-xl p-3 shadow-md border-2 border-gray-100 inline-block w-48 h-48 sm:w-60 sm:h-60">
+                            <div class="bg-white rounded-xl p-3 shadow-md border-2 border-gray-100 w-48 h-48 sm:w-60 sm:h-60 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
                                 {!! $qrSvg !!}
                             </div>
                         </div>
@@ -53,12 +53,13 @@
 
                         <form method="POST" action="{{ route('customer.profile.two-factor.confirm') }}">
                             @csrf
-                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                                <input type="text" name="code" maxlength="6" inputmode="numeric"
-                                    class="flex-1 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-center text-lg font-mono font-bold tracking-[0.3em] placeholder-gray-400"
+                            <div class="space-y-3">
+                                <input type="text" name="code" maxlength="6" inputmode="numeric" pattern="[0-9]*"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-center text-lg font-mono font-bold tracking-[0.3em] placeholder-gray-400"
                                     placeholder="000000" autofocus required>
                                 <button type="submit"
-                                    class="inline-flex items-center px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-md transition">
+                                    class="w-full inline-flex items-center justify-center px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-md transition">
                                     Confirm
                                 </button>
                             </div>
