@@ -29,7 +29,7 @@ class TransactionController extends Controller
         $dateFilter    = $request->string('date')->toString();            // today / last_7_days / last_30_days
 
         $ordersQuery = Transaction::query()
-            ->with(['user:id,username,email', 'items', 'payment'])
+            ->with(['user:id,fname,lname,email,username', 'items', 'payment'])
             ->latest('created_at');
 
         // Search by order number or customer

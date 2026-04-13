@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pawsitive Vibes | Pet Shop Sign Up</title>
+    <title>{{ config('app.name') }} | Pet Shop Sign Up</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -87,8 +87,8 @@
    
     <nav class="glass-navbar">
         <div class="nav-logo">
-            <img src="{{ asset('images/logo.png') }}" alt="Pawsitive Vibes Logo" class="logo-img">
-            <span>Pawsitive Vibes</span>
+            <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }} Logo" class="logo-img">
+            <span>{{ config('app.name') }}</span>
         </div>
     </nav>
 
@@ -101,7 +101,7 @@
     <div class="main-content">
         <div class="signup-container">
             <div class="logo">
-                <h1>Pawsitive Vibes</h1>
+                <h1>{{ config('app.name') }}</h1>
                 <p>Your Pet's Happy Place</p>
             </div>
 
@@ -174,8 +174,17 @@
                     <div class="requirement" id="length-req">
                     <i class="far fa-circle"></i><span>Minimum 8 characters</span>
                     </div>
+                    <div class="requirement" id="uppercase-req">
+                    <i class="far fa-circle"></i><span>Contains an uppercase letter</span>
+                    </div>
+                    <div class="requirement" id="lowercase-req">
+                    <i class="far fa-circle"></i><span>Contains a lowercase letter</span>
+                    </div>
+                    <div class="requirement" id="number-req">
+                    <i class="far fa-circle"></i><span>Contains a number</span>
+                    </div>
                     <div class="requirement" id="symbol-req">
-                    <i class="far fa-circle"></i><span>Contains a symbol or number</span>
+                    <i class="far fa-circle"></i><span>Contains a symbol</span>
                     </div>
                     <div class="requirement" id="unique-req">
                     <i class="far fa-circle"></i><span>Not similar to your name or username</span>
@@ -225,8 +234,8 @@
     <div class="footer">
         <div class="footer-content">
             <div class="footer-logo">
-                <img src="{{ asset('images/logo.png') }}" alt="Pawsitive Vibes Logo" class="footer-logo-img">
-                <span>Pawsitive Vibes</span>
+                <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }} Logo" class="footer-logo-img">
+                <span>{{ config('app.name') }}</span>
             </div>
             <ul class="footer-links">
                 <li><a href="#">About Us</a></li>
@@ -235,7 +244,7 @@
                 <li><a href="#">Returns</a></li>
                 <li><a href="#">Privacy Policy</a></li>
             </ul>
-            <p class="copyright">© {{ now()->year }} Pawsitive Vibes. All rights reserved.</p>
+            <p class="copyright">© {{ now()->year }} {{ config('app.name') }}. All rights reserved.</p>
         </div>
     </div>
 
@@ -251,11 +260,14 @@
         const passEl  = document.getElementById('password');
         const pass2El = document.getElementById('confirmPassword'); // ✅ correct id
 
-        const lengthReq  = document.getElementById('length-req');
-        const symbolReq  = document.getElementById('symbol-req');
-        const uniqueReq  = document.getElementById('unique-req');
-        const strengthEl = document.getElementById('password-strength');
-        const confirmErr = document.getElementById('confirm-password-error');
+        const lengthReq    = document.getElementById('length-req');
+        const uppercaseReq = document.getElementById('uppercase-req');
+        const lowercaseReq = document.getElementById('lowercase-req');
+        const numberReq    = document.getElementById('number-req');
+        const symbolReq    = document.getElementById('symbol-req');
+        const uniqueReq    = document.getElementById('unique-req');
+        const strengthEl   = document.getElementById('password-strength');
+        const confirmErr   = document.getElementById('confirm-password-error');
 
         // Eye toggles
         const togglePassword        = document.getElementById('togglePassword');
@@ -296,8 +308,10 @@
             const uname = (userEl?.value || '').toLowerCase();
 
             const hasLen    = pwd.length >= 8;
-            const hasSymbol = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd);
+            const hasUpper  = /[A-Z]/.test(pwd);
+            const hasLower  = /[a-z]/.test(pwd);
             const hasNum    = /\d/.test(pwd);
+            const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(pwd);
             const similar   = !!pwd && (
             (first && pwd.toLowerCase().includes(first)) ||
             (last  && pwd.toLowerCase().includes(last))  ||
@@ -305,25 +319,31 @@
             );
 
             setReq(lengthReq, hasLen);
-            setReq(symbolReq, hasSymbol || hasNum);
+            setReq(uppercaseReq, hasUpper);
+            setReq(lowercaseReq, hasLower);
+            setReq(numberReq, hasNum);
+            setReq(symbolReq, hasSymbol);
             setReq(uniqueReq, !similar);
 
             if (!strengthEl) return;
+
+            const score = [hasLen, hasUpper, hasLower, hasNum, hasSymbol, !similar].filter(Boolean).length;
+
             if (!pwd) {
             strengthEl.textContent = 'Please choose a stronger password.';
             strengthEl.className = 'password-strength';
-            } else if (!hasLen || !(hasSymbol || hasNum) || similar) {
+            } else if (score <= 3) {
             strengthEl.textContent = 'Weak password';
             strengthEl.className = 'password-strength weak';
-            } else if (pwd.length >= 10 && hasSymbol && hasNum && !similar) {
-            strengthEl.textContent = 'Strong password';
-            strengthEl.className = 'password-strength strong';
-            } else {
+            } else if (score <= 5) {
             strengthEl.textContent = 'Medium password';
             strengthEl.className = 'password-strength medium';
+            } else {
+            strengthEl.textContent = 'Strong password';
+            strengthEl.className = 'password-strength strong';
             }
 
-            checkMatch(); // keep live sync with confirm field
+            checkMatch();
         }
 
         function checkMatch() {

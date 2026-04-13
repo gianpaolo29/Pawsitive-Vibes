@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favorites - Pawsitive Vibes</title>
-    <link rel="icon" type="image/png" href="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png">
+    <title>Favorites - {{ config('app.name') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -728,7 +728,7 @@
 
         @media (max-width: 480px) {
             .products-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             }
             
             .page-title {
@@ -753,8 +753,8 @@
     <!-- Navigation Bar -->
     <nav class="glass-navbar">
         <div class="nav-logo">
-            <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="Pawsitive Vibes Logo" class="logo-img">
-            <span>Pawsitive Vibes</span>
+            <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="{{ config('app.name') }} Logo" class="logo-img">
+            <span>{{ config('app.name') }}</span>
         </div>
         
         <ul class="nav-links">
@@ -800,8 +800,8 @@
     <div class="footer">
         <div class="footer-content">
             <div class="footer-logo">
-                <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="Pawsitive Vibes Logo" class="footer-logo-img">
-                <span>Pawsitive Vibes</span>
+                <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="{{ config('app.name') }} Logo" class="footer-logo-img">
+                <span>{{ config('app.name') }}</span>
             </div>
             <ul class="footer-links">
                 <li><a href="#">About Us</a></li>
@@ -810,7 +810,7 @@
                 <li><a href="#">Returns</a></li>
                 <li><a href="#">Privacy Policy</a></li>
             </ul>
-            <p class="copyright">© 2023 Pawsitive Vibes. All rights reserved.</p>
+            <p class="copyright">© 2023 {{ config('app.name') }}. All rights reserved.</p>
         </div>
     </div>
 

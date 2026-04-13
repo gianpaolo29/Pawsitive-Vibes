@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(php -l app/Notifications/ResetPasswordNotification.php)",
+      "Bash(php -l app/Models/User.php)",
+      "Bash(php -r \"echo base64_encode\\(file_get_contents\\('public/images/logo.png'\\)\\);\")",
+      "Bash(ls \"C:\\\\Users\\\\Windows\\\\Herd\\\\Pawsitive_Vibes/public/images/gcash\"*)",
+      "Bash(ls \"C:\\\\Users\\\\Windows\\\\Herd\\\\Pawsitive_Vibes/public/images/\"*gcash*)",
+      "Bash(ls \"C:\\\\Users\\\\Windows\\\\Herd\\\\Pawsitive_Vibes/public/images/\"*qr*)",
+      "Bash(composer require:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}

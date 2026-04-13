@@ -25,11 +25,14 @@ class GcashPaymentPending extends Notification
     // Data stored in notifications table
     public function toDatabase($notifiable)
     {
+        $customer = $this->order->user?->fname ?? 'A customer';
+
         return [
+            'title'         => 'GCash Payment Pending',
+            'message'       => "{$customer} submitted a GCash payment of ₱" . number_format($this->order->grand_total, 2) . " for order #{$this->order->order_number}. Awaiting validation.",
             'order_id'      => $this->order->id,
             'order_number'  => $this->order->order_number,
             'amount'        => $this->order->grand_total,
-            'message'       => 'New GCash payment awaiting validation.',
             'created_by'    => $this->order->user?->username ?? 'Customer',
         ];
     }

@@ -3,14 +3,20 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable
 {
+    use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
-    use HasFactory, Notifiable;
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +30,13 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_active',
+        'security_question_1',
+        'security_answer_1',
+        'security_question_2',
+        'security_answer_2',
+        'security_question_3',
+        'security_answer_3',
     ];
 
 
@@ -47,6 +60,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 

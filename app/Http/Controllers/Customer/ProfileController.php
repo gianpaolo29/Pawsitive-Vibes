@@ -73,7 +73,34 @@ class ProfileController extends Controller
         $user->update($updateData);
 
         return redirect()
-            ->route('customer.profile.show')
+            ->route('customer.profile')
             ->with('success', 'Profile updated successfully.');
+    }
+
+    /**
+     * Update security questions.
+     */
+    public function updateSecurityQuestions(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user || strtoupper($user->role) !== 'CUSTOMER') {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'security_question_1' => ['required', 'string', 'max:255'],
+            'security_answer_1'   => ['required', 'string', 'max:255'],
+            'security_question_2' => ['required', 'string', 'max:255'],
+            'security_answer_2'   => ['required', 'string', 'max:255'],
+            'security_question_3' => ['required', 'string', 'max:255'],
+            'security_answer_3'   => ['required', 'string', 'max:255'],
+        ]);
+
+        $user->update($validated);
+
+        return redirect()
+            ->route('customer.profile')
+            ->with('success', 'Security questions updated successfully.');
     }
 }

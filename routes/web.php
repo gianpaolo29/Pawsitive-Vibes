@@ -30,6 +30,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
+
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
     Route::get('/shop', [ShopController::class, 'index'])->name('shop');
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
@@ -51,6 +52,12 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
     Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
+    Route::patch('/profile/security-questions', [ProfileController::class, 'updateSecurityQuestions'])->name('profile.security-questions.update');
+    Route::get('/profile/two-factor/setup', [\App\Http\Controllers\Auth\TwoFactorController::class, 'setup'])->name('profile.two-factor.setup');
+    Route::post('/profile/two-factor/confirm', [\App\Http\Controllers\Auth\TwoFactorController::class, 'confirmSetup'])->name('profile.two-factor.confirm');
+    Route::delete('/profile/two-factor', [\App\Http\Controllers\Auth\TwoFactorController::class, 'disable'])->name('profile.two-factor.disable');
+    Route::get('/profile/two-factor/recovery-codes', [\App\Http\Controllers\Auth\TwoFactorController::class, 'recoveryCodes'])->name('profile.two-factor.recovery-codes');
+
 
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -60,6 +67,8 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->group(function () {
+    Route::get('/search/suggestions', [\App\Http\Controllers\Admin\SearchController::class, 'suggestions'])->name('search.suggestions');
+    Route::get('/search/customers', [\App\Http\Controllers\Admin\SearchController::class, 'customerSuggestions'])->name('search.customers');
     Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile');
     Route::patch('/profile', [AdminProfileController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('password.update');
@@ -87,6 +96,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::get('customers/edit/{customer}',[CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('customers/{customer}',     [CustomerController::class, 'update'])->name('customers.update');
     Route::delete('customers/{customer}',  [CustomerController::class, 'destroy'])->name('customers.destroy');
+    Route::patch('customers/{customer}/toggle', [CustomerController::class, 'toggle'])->name('customers.toggle');
 
     Route::get('orders', [TransactionController::class, 'index'])->name('orders.index');
     Route::post('orders', [TransactionController::class, 'store'])->name('orders.store');
@@ -104,6 +114,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
 
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
 
 
 

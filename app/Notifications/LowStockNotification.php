@@ -25,12 +25,13 @@ class LowStockNotification extends Notification
     public function toDatabase(object $notifiable): array
     {
         return [
+            'title'       => 'Low Stock Alert',
+            'message'     => "{$this->product->name} is running low — only {$this->product->stock} left in stock.",
             'type'        => 'low_stock',
             'product_id'  => $this->product->id,
             'name'        => $this->product->name,
             'stock'       => $this->product->stock,
             'threshold'   => 5,
-            'created_at'  => now()->toDateTimeString(),
         ];
     }
 }

@@ -3,9 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;   // ✅ ADD THIS
-use Illuminate\Support\Facades\Auth;   // ✅ ADD THIS
-use App\Models\Notification;
+use Illuminate\Validation\Rules\Password;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -23,27 +21,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('components.admin-layout', function ($view) {
-        $user = Auth::user();
+        Password::defaults(fn () => Password::min(8)
+            ->letters()
+            ->mixedCase()
+            ->numbers()
+            ->symbols()
+        );
 
-        if (!$user || $user->role !== 'admin') {
-            $view->with([
-                'unreadNotificationsCount' => 0,
-                'recentNotifications'      => collect(),
-            ]);
-            return;
-        }
-
-        $notifications = Notification::where('user_id', $user->id)
-            ->latest()
-            ->take(10)
-            ->get();
-
-        $view->with([
-            'unreadNotificationsCount' => $notifications->where('is_read', false)->count(),
-            'recentNotifications'      => $notifications,
-        ]);
-    });
+        // Notification counts are handled directly in layouts/admin.blade.php
+        // using the Notifiable trait's built-in methods.
 
     }
 }

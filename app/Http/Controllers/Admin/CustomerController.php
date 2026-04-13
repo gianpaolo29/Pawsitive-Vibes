@@ -17,6 +17,8 @@ class CustomerController extends Controller
         $sort    = $request->get('sort', 'created_at');
         $dir     = $request->get('dir', 'desc');
         $perPage = (int) $request->get('per_page', 10);
+        $status  = $request->get('status', '');
+        $date    = $request->get('date', '');
 
         $sortable = ['fname', 'lname', 'username', 'email', 'created_at'];
         if (!in_array($sort, $sortable, true)) $sort = 'created_at';
@@ -34,6 +36,24 @@ class CustomerController extends Controller
             });
         }
 
+        // Status filter
+        if ($status === 'active') {
+            $qbase->where('is_active', true);
+        } elseif ($status === 'deactivated') {
+            $qbase->where('is_active', false);
+        }
+
+        // Date filter
+        if ($date === 'today') {
+            $qbase->whereDate('created_at', now()->toDateString());
+        } elseif ($date === '7days') {
+            $qbase->whereBetween('created_at', [now()->subDays(7), now()]);
+        } elseif ($date === '30days') {
+            $qbase->whereBetween('created_at', [now()->subDays(30), now()]);
+        } elseif ($date === 'this_year') {
+            $qbase->whereYear('created_at', now()->year);
+        }
+
         $customers = $qbase->orderBy($sort, $dir)->paginate($perPage)->withQueryString();
 
         $stats = [
@@ -43,7 +63,7 @@ class CustomerController extends Controller
                                 ->count(),
         ];
 
-        return view('admin.customers.index', compact('customers', 'q', 'sort', 'dir', 'perPage', 'stats'));
+        return view('admin.customers.index', compact('customers', 'q', 'sort', 'dir', 'perPage', 'stats', 'status', 'date'));
     }
 
     public function create()
@@ -109,6 +129,18 @@ class CustomerController extends Controller
 
         return redirect()->route('admin.customers.index')
             ->with('success', 'Customer updated successfully!');
+    }
+
+    public function toggle(User $customer)
+    {
+        abort_unless($customer->role === 'CUSTOMER', 404);
+
+        $customer->update(['is_active' => !$customer->is_active]);
+
+        $status = $customer->is_active ? 'activated' : 'deactivated';
+
+        return redirect()->route('admin.customers.index')
+            ->with('success', "Customer {$customer->fname} {$customer->lname} has been {$status}.");
     }
 
     public function destroy(User $customer)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -12,52 +13,72 @@ class GoogleController extends Controller
 {
     public function redirect()
     {
-        // No semicolon before chaining; call redirect ONCE.
-        // (You can omit stateless() here; we'll use it in callback.)
         return Socialite::driver('google')->redirect();
     }
 
     public function callback()
     {
         try {
-            // Use stateless() here to avoid state mismatch in local setups
             $g = Socialite::driver('google')->stateless()->user();
 
-            // 1) Find by google_id
-            $user = User::where('google_id', $g->getId())->first();
+            // Find by email
+            $user = $g->getEmail() ? User::where('email', $g->getEmail())->first() : null;
 
-            // 2) If not found, try by email and link
-            if (!$user && $g->getEmail()) {
-                $user = User::where('email', $g->getEmail())->first();
-                if ($user) {
-                    $user->google_id = $g->getId();
-                    $user->avatar    = $g->getAvatar();
-                    $user->save();
-                }
-            }
-
-            // 3) Or create new
+            // Or create new
             if (!$user) {
+                [$fname, $lname] = $this->splitName($g->getName());
+
                 $user = User::create([
-                    'name'              => $g->getName() ?: 'Google User',
-                    'email'             => $g->getEmail(), // allow nullable if Google hides email
-                    'google_id'         => $g->getId(),
-                    'avatar'            => $g->getAvatar(),
-                    'password'          => bcrypt(Str::random(24)),
+                    'fname'             => $fname,
+                    'lname'             => $lname,
+                    'username'          => $this->uniqueUsername($g->getEmail(), $fname, $lname),
+                    'email'             => $g->getEmail(),
+                    'password'          => bcrypt(Str::random(32)),
                     'email_verified_at' => now(),
-                    'role'              => 'customer',
+                    'role'              => 'CUSTOMER',
                 ]);
             }
 
-            Auth::guard('web')->login($user, remember: true);
+            Auth::guard('web')->login($user, true);
 
-            return redirect()->intended(route('dashboard'));
+            session()->flash('welcome_user', $user->fname ?? $user->username);
+
+            return redirect()->intended(
+                $user->role === 'ADMIN' ? route('admin.dashboard') : route('welcome')
+            );
         } catch (\Throwable $e) {
             report($e);
 
             return redirect()->route('login')->withErrors([
-                'google' => 'Google sign-in failed. Please try again.',
+                'email' => 'Google sign-in failed. Please try again.',
             ]);
         }
+    }
+
+    private function splitName(?string $full): array
+    {
+        $full = trim((string) $full);
+        if ($full === '') {
+            return ['Google', 'User'];
+        }
+        $parts = preg_split('/\s+/', $full, 2);
+        return [$parts[0] ?? 'Google', $parts[1] ?? 'User'];
+    }
+
+    private function uniqueUsername(?string $email, string $fname, string $lname): string
+    {
+        if ($email && str_contains($email, '@')) {
+            $base = explode('@', $email)[0];
+        } else {
+            $base = strtolower(preg_replace('/[^a-z0-9]+/i', '', $fname . $lname)) ?: 'user';
+        }
+        $base = mb_substr($base, 0, 90);
+
+        $candidate = $base;
+        $i = 1;
+        while (DB::table('users')->where('username', $candidate)->exists()) {
+            $candidate = $base . $i++;
+        }
+        return $candidate;
     }
 }

@@ -27,7 +27,7 @@
                     <div class="flex-1 text-center md:text-left" data-aos="fade-right">
                         <span class="inline-block px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-bold mb-4">🐾 Premium Pet Care</span>
                         <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight mb-6">
-                            Pawsitive Vibes <br> <span class="text-purple-600">Pet Supplies</span>
+                            {{ config('app.name') }} <br> <span class="text-purple-600">Pet Supplies</span>
                         </h1>
                         <p class="text-lg text-gray-600 mb-8">
                             Discover a place where pets come first. Essentials, treats, and toys to support every stage of your pet's life.
@@ -309,4 +309,5 @@
             </div>
         </section>
     </div>
+
 </x-app-layout>

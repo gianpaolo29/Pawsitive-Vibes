@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donate - Pawsitive Vibes</title>
-    <link rel="icon" type="image/png" href="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png">
+    <title>Donate - {{ config('app.name') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -988,7 +988,7 @@
             
             /* Even more compact donation options for very small screens */
             .donation-option {
-                min-width: 170px;
+                min-width: 140px;
                 padding: 12px;
             }
             
@@ -1030,8 +1030,8 @@
     <!-- Navigation Bar -->
     <nav class="glass-navbar">
         <div class="nav-logo">
-            <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="Pawsitive Vibes Logo" class="logo-img">
-            <span>Pawsitive Vibes</span>
+            <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="{{ config('app.name') }} Logo" class="logo-img">
+            <span>{{ config('app.name') }}</span>
         </div>
         
         <ul class="nav-links">
@@ -1153,7 +1153,7 @@
                     </div>
                     <div class="gcash-detail">
                         <strong>Account Name</strong>
-                        <span>Pawsitive Vibes Foundation</span>
+                        <span>{{ config('app.name') }} Foundation</span>
                     </div>
                 </div>
             </div>
@@ -1245,8 +1245,8 @@
     <div class="footer">
         <div class="footer-content">
             <div class="footer-logo">
-                <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="Pawsitive Vibes Logo" class="footer-logo-img">
-                <span>Pawsitive Vibes</span>
+                <img src="C:\Users\Theresa\OneDrive\Documents\Web System and Technologies & System Integration and Architecture\PawsitiveVibes\icons\logo.png" alt="{{ config('app.name') }} Logo" class="footer-logo-img">
+                <span>{{ config('app.name') }}</span>
             </div>
             <ul class="footer-links">
                 <li><a href="#">About Us</a></li>
@@ -1255,7 +1255,7 @@
                 <li><a href="#">Returns</a></li>
                 <li><a href="#">Privacy Policy</a></li>
             </ul>
-            <p class="copyright">© 2023 Pawsitive Vibes. All rights reserved.</p>
+            <p class="copyright">© 2023 {{ config('app.name') }}. All rights reserved.</p>
         </div>
     </div>
 

@@ -48,7 +48,7 @@
                     </h2>
                     <div class="prose text-gray-600 leading-relaxed space-y-4">
                         <p>
-                            Founded in <strong>April 2025</strong>, Pawsitive Vibes grew from a simple love for animals—especially our two dogs, 
+                            Founded in <strong>April 2025</strong>, {{ config('app.name') }} grew from a simple love for animals—especially our two dogs, 
                             <span class="text-purple-600 font-bold">Cooky and Loki</span>.
                         </p>
                         <p>

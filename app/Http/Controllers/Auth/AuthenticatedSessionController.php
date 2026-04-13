@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,25 +18,69 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request)
     {
         $credentials = $request->validate([
-            'username' => ['required','string'],
+            'email' => ['required','string','email'],
             'password' => ['required','string'],
         ]);
 
-        $remember = $request->boolean('remember');
+        $attemptKey = 'login-count:' . $request->ip() . '|' . $credentials['email'];
+        $lockKey    = 'login-locked:' . $request->ip() . '|' . $credentials['email'];
 
-        if (! Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $remember)) {
-            return back()->withErrors([
-                'username' => 'These credentials do not match our records.',
-            ])->onlyInput('username');
+        // Check if locked (5 minute cooldown after 3 fails)
+        if (cache()->has($lockKey)) {
+            $seconds = (int) cache()->get($lockKey) - now()->timestamp;
+            if ($seconds > 0) {
+                $minutes = ceil($seconds / 60);
+                return back()->withErrors(['email' => 'locked:' . $minutes])->onlyInput('email');
+            }
+            // Lock expired — reset everything
+            cache()->forget($lockKey);
+            cache()->forget($attemptKey);
         }
 
+        $remember = $request->boolean('remember');
+
+        if (! Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], $remember)) {
+            $totalAttempts = (int) cache()->get($attemptKey, 0) + 1;
+            cache()->put($attemptKey, $totalAttempts, now()->addMinutes(10));
+
+            $remaining = 3 - $totalAttempts;
+
+            if ($totalAttempts >= 3) {
+                // Lock for 5 minutes
+                cache()->put($lockKey, now()->addMinutes(5)->timestamp, now()->addMinutes(5));
+                cache()->put($attemptKey, $totalAttempts, now()->addMinutes(5));
+                return back()->withErrors(['email' => 'locked:5'])->onlyInput('email');
+            }
+
+            return back()->withErrors(['email' => 'failed:' . $remaining])->onlyInput('email');
+        }
+
+        // Check if account is deactivated
+        $user = $request->user();
+        if (!$user->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return back()->withErrors(['email' => 'deactivated'])->onlyInput('email');
+        }
+
+        // Check if 2FA is enabled (Fortify handles the challenge)
+        if ($user->two_factor_secret && $user->two_factor_confirmed_at) {
+            Auth::logout();
+            $request->session()->put([
+                'login.id' => $user->getKey(),
+                'login.remember' => $request->boolean('remember'),
+            ]);
+            return redirect()->route('two-factor.login');
+        }
+
+        // Success — clear everything
+        cache()->forget($attemptKey);
+        cache()->forget($lockKey);
         $request->session()->regenerate();
 
+        session()->flash('welcome_user', $user->fname ?? $user->username);
 
-        
-        $user = $request->user();
-
-        
         return redirect()->intended($user->role === 'ADMIN' ? route('admin.dashboard') : route('welcome'));
     }
 
