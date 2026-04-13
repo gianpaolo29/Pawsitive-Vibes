@@ -151,6 +151,9 @@
             {{-- MOBILE CART --}}
             <x-responsive-nav-link href="{{ Auth::check() ? '/customer/cart' : '/login' }}">Cart</x-responsive-nav-link>
 
+            {{-- MOBILE PROFILE --}}
+            <x-responsive-nav-link href="{{ Auth::check() ? '/customer/profile' : '/login' }}">Profile</x-responsive-nav-link>
+
         </div>
 
         <div class="border-t pt-4 pb-3 px-4">
