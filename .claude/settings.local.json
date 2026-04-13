@@ -9,7 +9,10 @@
       "Bash(ls \"C:\\\\Users\\\\Windows\\\\Herd\\\\Pawsitive_Vibes/public/images/\"*gcash*)",
       "Bash(ls \"C:\\\\Users\\\\Windows\\\\Herd\\\\Pawsitive_Vibes/public/images/\"*qr*)",
       "Bash(composer require:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(xargs basename:*)",
+      "Bash(grep -r \"MAIL_FROM\\\\|support\\\\|admin\" /c/Users/Windows/Herd/Pawsitive_Vibes/.env*)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

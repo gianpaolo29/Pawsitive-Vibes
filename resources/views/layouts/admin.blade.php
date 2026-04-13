@@ -19,6 +19,11 @@
         ? $user->unreadNotifications()->count()
         : 0;
 
+    $unreadChatCount = \App\Models\ChatMessage::where('sender_type', 'customer')
+        ->where('is_read', false)->count();
+
+    $openTicketsCount = \App\Models\SupportTicket::whereIn('status', ['open', 'in_progress'])->count();
+
     // Get latest 7 notifications (read + unread)
     $recentNotifications = $user
         ? $user->notifications()->latest()->take(7)->get()
@@ -31,6 +36,8 @@
         'Customers'  => ['route' => 'admin/customers',  'icon' => 'M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM21 8.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0ZM8.624 21A12.3 12.3 0 0 1 3 19.234a6.375 6.375 0 0 1 11.964-3.07M15 19.234a9.5 9.5 0 0 0 7.5-.734 4.125 4.125 0 0 0-7.533-2.493'],
         'Analytics'  => ['route' => 'admin/analytics',  'icon' => 'M4.5 19.5h15M6 16.5V9m6 7.5V6m6 13.5V12'],
         'Donations'  => ['route' => 'admin/donations',  'icon' => 'M4.5 19.5h15M6 16.5V9m6 7.5V6m6 13.5V12'],
+        'Tickets'    => ['route' => 'admin/tickets',    'icon' => 'M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z'],
+        'Chat'       => ['route' => 'admin/chat',       'icon' => 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'],
     ];
 
     $order_group = [
@@ -231,6 +238,18 @@
                         <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate font-medium">{{ $name }}</span>
+
+                    @if($name === 'Tickets' && $openTicketsCount > 0)
+                        <span class="ml-auto inline-flex items-center justify-center w-5 h-5 bg-orange-500 text-white text-[10px] font-bold rounded-full animate-pulse">
+                            {{ $openTicketsCount > 9 ? '9+' : $openTicketsCount }}
+                        </span>
+                    @endif
+
+                    @if($name === 'Chat' && $unreadChatCount > 0)
+                        <span class="ml-auto inline-flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-pulse">
+                            {{ $unreadChatCount > 9 ? '9+' : $unreadChatCount }}
+                        </span>
+                    @endif
 
                     {{-- Transparent Tooltip for collapsed state --}}
                     <template x-if="sidebarCollapsed">

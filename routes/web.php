@@ -18,6 +18,10 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Customer\ChatController as CustomerChatController;
+use App\Http\Controllers\Admin\ChatController as AdminChatController;
+use App\Http\Controllers\SupportTicketController;
+use App\Http\Controllers\Admin\SupportTicketController as AdminSupportTicketController;
 
 
 
@@ -29,6 +33,14 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+
+// Support Tickets (public - for blocked users)
+Route::prefix('support')->name('support.')->group(function () {
+    Route::get('/ticket', [SupportTicketController::class, 'create'])->name('ticket.create');
+    Route::post('/ticket', [SupportTicketController::class, 'store'])->name('ticket.store');
+    Route::get('/ticket/success', [SupportTicketController::class, 'success'])->name('ticket.success');
+    Route::get('/ticket/track', [SupportTicketController::class, 'track'])->name('ticket.track');
+});
 
 
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
@@ -65,6 +77,17 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
 });
 
+
+// Chat (accessible to both guests and logged-in users)
+Route::prefix('chat')->name('chat.')->group(function () {
+    Route::get('/messages', [CustomerChatController::class, 'index'])->name('messages');
+    Route::post('/send', [CustomerChatController::class, 'store'])->name('send');
+    Route::get('/unread', [CustomerChatController::class, 'unread'])->name('unread');
+    Route::post('/mark-read', [CustomerChatController::class, 'markRead'])->name('markRead');
+    Route::get('/suggestions', [CustomerChatController::class, 'suggestions'])->name('suggestions');
+    Route::post('/typing', [CustomerChatController::class, 'typing'])->name('typing');
+    Route::get('/admin-typing', [CustomerChatController::class, 'adminTyping'])->name('adminTyping');
+});
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::get('/search/suggestions', [\App\Http\Controllers\Admin\SearchController::class, 'suggestions'])->name('search.suggestions');
@@ -121,7 +144,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::get('/donations', [\App\Http\Controllers\Admin\DonationController::class, 'index'])->name('donations.index');
     Route::post('/donations/{donation}/verify', [\App\Http\Controllers\Admin\DonationController::class, 'verify'])->name('donations.verify');
 
+    // Support Tickets
+    Route::get('/tickets', [AdminSupportTicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/{ticket}', [AdminSupportTicketController::class, 'show'])->name('tickets.show');
+    Route::patch('/tickets/{ticket}/approve', [AdminSupportTicketController::class, 'approve'])->name('tickets.approve');
+    Route::patch('/tickets/{ticket}/reject', [AdminSupportTicketController::class, 'reject'])->name('tickets.reject');
+    Route::patch('/tickets/{ticket}/in-progress', [AdminSupportTicketController::class, 'markInProgress'])->name('tickets.markInProgress');
 
+    // Chat
+    Route::get('/chat', [AdminChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{id}', [AdminChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{id}/reply', [AdminChatController::class, 'reply'])->name('chat.reply');
+    Route::get('/chat/{id}/messages', [AdminChatController::class, 'messages'])->name('chat.messages');
+    Route::post('/chat/{id}/typing', [AdminChatController::class, 'typing'])->name('chat.typing');
+    Route::get('/chat/{id}/customer-typing', [AdminChatController::class, 'customerTyping'])->name('chat.customerTyping');
+    Route::get('/chat-unread-total', [AdminChatController::class, 'unreadTotal'])->name('chat.unreadTotal');
 });
 
 
