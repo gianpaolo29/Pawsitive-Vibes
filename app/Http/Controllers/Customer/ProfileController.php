@@ -73,7 +73,7 @@ class ProfileController extends Controller
         $user->update($updateData);
 
         return redirect()
-            ->route('customer.profile.show')
+            ->route('customer.profile')
             ->with('success', 'Profile updated successfully.');
     }
 

@@ -324,40 +324,69 @@
                             </label>
 
                             {{-- GCASH --}}
-                            <label class="flex items-center gap-3 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <label class="flex items-center gap-3 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                   :class="paymentMethod === 'gcash' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''">
                                 <input
                                     type="radio"
                                     name="payment_method"
                                     value="gcash"
-                                    class="text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                                    class="text-blue-600 border-gray-300 focus:ring-blue-500"
                                     x-model="paymentMethod"
                                     required
                                 >
-                                <div class="flex flex-col">
-                                    <span class="text-sm font-medium text-gray-900 dark:text-white">GCash - 09206013676</span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        Send payment via GCash and upload your receipt.
-                                    </span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                        <span class="text-white text-xs font-bold">G</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white">GCash</span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">09206013676</span>
+                                    </div>
                                 </div>
                             </label>
 
-                                {{-- GCash receipt upload – only when gcash --}}
-                                <div x-show="paymentMethod === 'gcash'" x-cloak class="mt-3 space-y-1">
-                                    <label class="block text-sm font-medium text-gray-900 dark:text-white">
-                                        Upload GCash Receipt
-                                    </label>
-                                    <input
-                                        type="file"
-                                        name="receipt_image"
-                                        accept="image/*"
-                                        class="block w-full text-sm text-gray-900 dark:text-gray-100
-                                            border border-gray-300 dark:border-gray-600 rounded-lg
-                                            cursor-pointer bg-gray-50 dark:bg-gray-800
-                                            focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                                    >
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                        Upload a clear screenshot of your GCash payment.
-                                    </p>
+                                {{-- GCash QR + receipt upload – only when gcash --}}
+                                <div x-show="paymentMethod === 'gcash'" x-cloak
+                                     x-transition:enter="transition ease-out duration-300"
+                                     x-transition:enter-start="opacity-0 -translate-y-2"
+                                     x-transition:enter-end="opacity-100 translate-y-0"
+                                     class="mt-3 space-y-4">
+
+                                    {{-- QR Code --}}
+                                    <div class="bg-gradient-to-b from-blue-50 to-white dark:from-blue-900/20 dark:to-gray-800 rounded-xl border border-blue-200 dark:border-blue-800 p-4">
+                                        <div class="text-center mb-3">
+                                            <p class="text-sm font-semibold text-blue-700 dark:text-blue-400">Scan QR Code to Pay</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Open your GCash app and scan this QR code</p>
+                                        </div>
+                                        <div class="flex justify-center">
+                                            <div class="bg-white rounded-xl p-2 shadow-md border border-gray-200 inline-block">
+                                                <img src="{{ asset('images/Gcash.jpg') }}" alt="GCash QR Code" class="w-48 h-48 object-contain rounded-lg">
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3 space-y-1">
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Send to: <strong class="text-gray-700 dark:text-gray-300">09206013676</strong></p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Name: <strong class="text-gray-700 dark:text-gray-300">Pawsitive Vibes</strong></p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Receipt Upload --}}
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-900 dark:text-white">
+                                            Upload GCash Receipt
+                                        </label>
+                                        <input
+                                            type="file"
+                                            name="receipt_image"
+                                            accept="image/*"
+                                            class="block w-full text-sm text-gray-900 dark:text-gray-100
+                                                border border-gray-300 dark:border-gray-600 rounded-lg
+                                                cursor-pointer bg-gray-50 dark:bg-gray-800
+                                                focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                        >
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            Upload a clear screenshot of your GCash payment receipt.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 

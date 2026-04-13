@@ -53,6 +53,10 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
     Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
     Route::patch('/profile/security-questions', [ProfileController::class, 'updateSecurityQuestions'])->name('profile.security-questions.update');
+    Route::get('/profile/two-factor/setup', [\App\Http\Controllers\Auth\TwoFactorController::class, 'setup'])->name('profile.two-factor.setup');
+    Route::post('/profile/two-factor/confirm', [\App\Http\Controllers\Auth\TwoFactorController::class, 'confirmSetup'])->name('profile.two-factor.confirm');
+    Route::delete('/profile/two-factor', [\App\Http\Controllers\Auth\TwoFactorController::class, 'disable'])->name('profile.two-factor.disable');
+    Route::get('/profile/two-factor/recovery-codes', [\App\Http\Controllers\Auth\TwoFactorController::class, 'recoveryCodes'])->name('profile.two-factor.recovery-codes');
 
 
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

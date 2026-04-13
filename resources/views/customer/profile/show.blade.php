@@ -80,11 +80,6 @@
                             Account Details
                         </h2>
 
-                        @if (session('success'))
-                            <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 dark:bg-green-900/40 dark:text-green-300 rounded-lg" role="alert">
-                                {{ session('success') }}
-                            </div>
-                        @endif
 
                         <form method="POST" action="{{ route('customer.profile.update') }}" class="space-y-6">
                             @csrf
@@ -215,6 +210,62 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+
+                    {{-- TWO-FACTOR AUTHENTICATION --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mt-8">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1 border-b pb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            Two-Factor Authentication
+                        </h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 mb-5">
+                            Add an extra layer of security using Google Authenticator. When enabled, you'll need to enter a code from your authenticator app each time you log in.
+                        </p>
+
+                        <div class="flex items-center justify-between p-4 rounded-xl {{ $user->two_factor_confirmed_at ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800' : 'bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600' }}">
+                            <div class="flex items-center gap-3">
+                                @if($user->two_factor_confirmed_at)
+                                    <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">2FA is Enabled</p>
+                                        <p class="text-xs text-emerald-600/70 dark:text-emerald-500/70">Protected with Google Authenticator.</p>
+                                    </div>
+                                @else
+                                    <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">2FA is Disabled</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Enable it for extra security on your account.</p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            @if($user->two_factor_confirmed_at)
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('customer.profile.two-factor.recovery-codes') }}"
+                                       class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                                        Recovery Codes
+                                    </a>
+                                    <form id="disable2faForm" method="POST" action="{{ route('customer.profile.two-factor.disable') }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                            onclick="confirmDisable2FA()"
+                                            class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition">
+                                            Disable 2FA
+                                        </button>
+                                    </form>
+                                </div>
+                            @else
+                                <a href="{{ route('customer.profile.two-factor.setup') }}"
+                                   class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 shadow-md transition">
+                                    Enable 2FA
+                                </a>
+                            @endif
+                        </div>
                     </div>
 
                     {{-- SECURITY QUESTIONS SECTION --}}
@@ -357,4 +408,74 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Flash messages
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: @json(session('success')),
+                    confirmButtonColor: '#6366f1',
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: @json(session('error')),
+                    confirmButtonColor: '#6366f1',
+                });
+            @endif
+
+            // Show recovery codes in SweetAlert after enabling 2FA
+            @if(session('recovery_codes'))
+                const codes = @json(session('recovery_codes'));
+                const codesHtml = codes.map(c => `<code style="display:inline-block;background:#f3f4f6;padding:6px 14px;border-radius:8px;font-family:monospace;font-weight:700;font-size:14px;margin:4px;border:1px solid #e5e7eb;">${c}</code>`).join('');
+
+                Swal.fire({
+                    html: `
+                        <div style="text-align:center;padding:5px 0;">
+                            <div style="font-size:40px;margin-bottom:10px;">🔑</div>
+                            <h2 style="font-size:20px;font-weight:700;color:#1f2937;margin-bottom:8px;">Save Your Recovery Codes</h2>
+                            <p style="color:#6b7280;font-size:13px;margin-bottom:16px;">Store these codes somewhere safe. Each code can only be used <strong>once</strong> if you lose access to your authenticator app.</p>
+                            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-bottom:12px;">
+                                ${codesHtml}
+                            </div>
+                            <p style="color:#92400e;font-size:12px;background:#fffbeb;padding:10px;border-radius:8px;border:1px solid #fde68a;margin-top:12px;">
+                                ⚠️ These codes will <strong>not</strong> be shown again. Save them now!
+                            </p>
+                        </div>
+                    `,
+                    confirmButtonText: 'I\'ve Saved Them',
+                    confirmButtonColor: '#6366f1',
+                    width: 480,
+                    allowOutsideClick: false,
+                });
+            @endif
+        });
+
+        // Disable 2FA confirmation
+        function confirmDisable2FA() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Disable Two-Factor Authentication?',
+                html: 'Your account will no longer be protected by 2FA.<br><small style="color:#6b7280;">You can re-enable it anytime.</small>',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Disable',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('disable2faForm').submit();
+                }
+            });
+        }
+    </script>
 </x-app-layout>

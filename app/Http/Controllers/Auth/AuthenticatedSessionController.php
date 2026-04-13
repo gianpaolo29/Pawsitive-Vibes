@@ -64,12 +64,20 @@ class AuthenticatedSessionController extends Controller
             return back()->withErrors(['email' => 'deactivated'])->onlyInput('email');
         }
 
+        // Check if 2FA is enabled (Fortify handles the challenge)
+        if ($user->two_factor_secret && $user->two_factor_confirmed_at) {
+            Auth::logout();
+            $request->session()->put([
+                'login.id' => $user->getKey(),
+                'login.remember' => $request->boolean('remember'),
+            ]);
+            return redirect()->route('two-factor.login');
+        }
+
         // Success — clear everything
         cache()->forget($attemptKey);
         cache()->forget($lockKey);
         $request->session()->regenerate();
-
-        $user = $request->user();
 
         session()->flash('welcome_user', $user->fname ?? $user->username);
 
