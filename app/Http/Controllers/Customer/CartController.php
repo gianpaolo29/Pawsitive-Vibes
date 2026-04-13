@@ -9,11 +9,14 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use App\Models\Payment;
+use App\Models\User;
+use App\Notifications\GcashPaymentPending;
+use App\Notifications\LowStockNotification;
+use App\Notifications\NewOrderNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class CartController extends Controller
 {
@@ -247,15 +250,32 @@ class CartController extends Controller
         }
 
         DB::commit();
+
+            // Notify all admins
             try {
-                if (strtolower($request->payment_method) === 'gcash') {
-                    $admins = User::where('role', 'ADMIN')->get();
-                    foreach ($admins as $admin) {
+                $admins = User::where('role', 'ADMIN')->get();
+
+                foreach ($admins as $admin) {
+                    // New order notification for every order
+                    $admin->notify(new NewOrderNotification($transaction));
+
+                    // GCash-specific notification
+                    if (strtolower($request->payment_method) === 'gcash') {
                         $admin->notify(new GcashPaymentPending($transaction));
                     }
                 }
+
+                // Low stock alerts (threshold: 5)
+                foreach ($validItems as $item) {
+                    $product = Product::find($item['product_id']);
+                    if ($product && $product->stock <= 5) {
+                        foreach ($admins as $admin) {
+                            $admin->notify(new LowStockNotification($product));
+                        }
+                    }
+                }
             } catch (\Throwable $e) {
-                // optional: \Log::warning('Failed to send admin notifications', ['error' => $e->getMessage()]);
+                \Log::warning('Failed to send admin notifications', ['error' => $e->getMessage()]);
             }
 
             return redirect()

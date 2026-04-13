@@ -376,17 +376,123 @@
             </div>
 
             {{-- Search --}}
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 min-w-0"
+                 x-data="{
+                    query: '',
+                    results: [],
+                    open: false,
+                    loading: false,
+                    selected: -1,
+                    debounceTimer: null,
+                    search() {
+                        clearTimeout(this.debounceTimer);
+                        if (this.query.length < 2) { this.results = []; this.open = false; return; }
+                        this.loading = true;
+                        this.debounceTimer = setTimeout(() => {
+                            fetch('{{ route('admin.search.suggestions') }}?q=' + encodeURIComponent(this.query), {
+                                headers: { 'Accept': 'application/json' }
+                            })
+                            .then(r => r.json())
+                            .then(data => {
+                                this.results = data;
+                                this.open = data.length > 0;
+                                this.selected = -1;
+                                this.loading = false;
+                            })
+                            .catch(() => { this.loading = false; });
+                        }, 250);
+                    },
+                    navigate(e) {
+                        if (!this.open) return;
+                        if (e.key === 'ArrowDown') { e.preventDefault(); this.selected = Math.min(this.selected + 1, this.results.length - 1); }
+                        if (e.key === 'ArrowUp') { e.preventDefault(); this.selected = Math.max(this.selected - 1, 0); }
+                        if (e.key === 'Enter' && this.selected >= 0) { e.preventDefault(); window.location.href = this.results[this.selected].url; }
+                        if (e.key === 'Escape') { this.open = false; }
+                    },
+                    go(url) { window.location.href = url; }
+                 }"
+                 @click.away="open = false"
+                 @keydown="navigate($event)"
+            >
                 <div class="relative w-full max-w-2xl lg:mx-0">
                     <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-violet-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.45 4.39l3.33 3.33a.75.75 0 1 1-1.06 1.06l-3.33-3.33A7 7 0 0 1 2 9Z"/>
                     </svg>
                     <input
                         type="search"
+                        x-model="query"
+                        @input="search()"
+                        @focus="if (results.length) open = true"
                         class="block w-full rounded-2xl border border-violet-200/50 dark:border-violet-700/50 bg-white/50 dark:bg-gray-800/50 pl-10 pr-4 py-2.5 text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:focus:ring-violet-500/30 text-gray-900 dark:text-gray-100 placeholder-violet-400 shadow-sm smooth-animate backdrop-blur-sm"
                         placeholder="Search products, orders, customers..."
                         aria-label="Search the dashboard content"
+                        autocomplete="off"
                     />
+
+                    {{-- Loading spinner --}}
+                    <div x-show="loading" class="absolute right-3 top-1/2 -translate-y-1/2">
+                        <svg class="animate-spin h-4 w-4 text-violet-400" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                    </div>
+
+                    {{-- Suggestions dropdown --}}
+                    <div x-show="open" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
+                         class="absolute z-50 mt-2 w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-violet-200/50 dark:border-violet-700/50 overflow-hidden max-h-[400px] overflow-y-auto">
+
+                        <template x-for="(item, index) in results" :key="index">
+                            <div @click="go(item.url)"
+                                 :class="{ 'bg-violet-50 dark:bg-violet-900/30': selected === index }"
+                                 class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-colors border-b border-gray-100 dark:border-gray-700/50 last:border-0"
+                                 @mouseenter="selected = index">
+
+                                {{-- Icon --}}
+                                <div class="flex-shrink-0">
+                                    <template x-if="item.icon === 'product'">
+                                        <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </span>
+                                    </template>
+                                    <template x-if="item.icon === 'order'">
+                                        <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </span>
+                                    </template>
+                                    <template x-if="item.icon === 'customer'">
+                                        <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </span>
+                                    </template>
+                                </div>
+
+                                {{-- Content --}}
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate" x-text="item.title"></span>
+                                        <span class="flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
+                                              :class="{
+                                                  'bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300': item.icon === 'product',
+                                                  'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300': item.icon === 'order',
+                                                  'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300': item.icon === 'customer'
+                                              }"
+                                              x-text="item.type"></span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" x-text="item.meta"></p>
+                                </div>
+
+                                {{-- Arrow --}}
+                                <svg class="flex-shrink-0 h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </template>
+
+                        {{-- No results --}}
+                        <div x-show="results.length === 0 && query.length >= 2 && !loading" class="px-4 py-6 text-center text-sm text-gray-400">
+                            No results found for "<span x-text="query" class="font-medium text-gray-600 dark:text-gray-300"></span>"
+                        </div>
+                    </div>
                 </div>
             </div>
 

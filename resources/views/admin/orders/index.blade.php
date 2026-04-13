@@ -201,8 +201,7 @@
                                     </div>
                                 </td>
                                 <td class="px-5 py-3 whitespace-nowrap">
-                                    <div class="font-medium text-gray-800">{{ $o->user?->username ?? '—' }}</div>
-                                    <div class="text-xs text-gray-500">{{ $o->user?->email ?? '—' }}</div>
+                                    <div class="font-medium text-gray-800">{{ ($o->user?->fname ?? '') . ' ' . ($o->user?->lname ?? '') ?: '—' }}</div>
                                 </td>
                                 <td class="px-5 py-3 whitespace-nowrap">
                                     <span
@@ -222,9 +221,7 @@
                                             <circle cx="12" cy="12" r="10"/>
                                             <path fill="#fff" d="M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 8a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
                                         </svg>
-                                        GCash |
-
-                                        <a class="underline text-blue-500" target="_blank" href="{{$o->payment->receipt_image_url}}">View Receipt</a>
+                                        GCash
                                     @elseif($o->payment?->method === 'cash')
                                         <svg class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none"
                                              stroke="currentColor" stroke-width="2">
@@ -250,23 +247,63 @@
                                     {{ optional($o->created_at)->format('M j, Y') }}
                                 </td>
                                 <td class="px-5 py-3 text-center whitespace-nowrap">
-                                    @if($o->payment_status !== 'Paid')
-                                        <form method="POST" action="{{ route('admin.orders.update', ['order' => $o]) }}">
-                                            @csrf
-                                            <input type="hidden" name="payment_status" value="Paid">
-                                            <input type="hidden" name="_method" value="PUT">
-                                            <button type="submit" class="border border-gray-500 rounded py-2 px-1.5">Mark as Paid</button>
-                                        </form>
-                                    @elseif($o->status!== 'Completed')
-                                        <form method="POST" action="{{ route('admin.orders.update', ['order' => $o]) }}">
-                                            @csrf
-                                            <input type="hidden" name="_method" value="PUT">
-                                            <input type="hidden" name="status" value="Completed">
-                                            <button type="submit" class="border border-gray-500 rounded py-2 px-1.5">Mark as Completed</button>
-                                        </form>
-                                    @else
-                                        No Action needed
-                                    @endif
+                                    <div class="flex items-center justify-center gap-2">
+                                        @if($o->payment?->method === 'gcash' && $o->payment_status === 'For Verification')
+                                            <button
+                                                type="button"
+                                                @click="modalData = {
+                                                    id: {{ $o->id }},
+                                                    order_number: '{{ $o->order_number }}',
+                                                    customer: '{{ ($o->user?->fname ?? '') . ' ' . ($o->user?->lname ?? '') }}',
+                                                    email: '{{ $o->user?->email ?? '' }}',
+                                                    amount: '{{ number_format((float)$o->grand_total, 2) }}',
+                                                    method: '{{ $o->payment?->method }}',
+                                                    reference: '{{ $o->payment?->provider_ref ?? '' }}',
+                                                    image_url: '{{ $o->payment?->receipt_image_url ? asset(ltrim($o->payment->receipt_image_url, '/')) : '' }}',
+                                                    date: '{{ optional($o->created_at)->format('M j, Y g:i A') }}',
+                                                    items_count: {{ $o->items->count() }},
+                                                    status: '{{ $o->status }}',
+                                                    payment_status: '{{ $o->payment_status }}'
+                                                }; openModal = true"
+                                                class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition"
+                                            >
+                                                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                                Verify GCash
+                                            </button>
+                                        @elseif($o->payment_status !== 'Paid')
+                                            @if($o->payment?->method === 'cash')
+                                                <form method="POST" action="{{ route('admin.orders.markPaidCash', $o) }}">
+                                                    @csrf
+                                                    <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition">
+                                                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                        Mark Paid
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        @elseif($o->status !== 'Completed' && $o->status !== 'completed')
+                                            <form method="POST" action="{{ route('admin.orders.update', ['order' => $o]) }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="status" value="Completed">
+                                                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-violet-600 hover:bg-violet-700 shadow-sm transition">
+                                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                    Complete
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="text-xs text-gray-400 font-medium">Done</span>
+                                        @endif
+
+                                        @if($o->status !== 'cancelled' && $o->status !== 'Completed' && $o->status !== 'completed')
+                                            <button type="button"
+                                                @click="confirmCancel('{{ route('admin.orders.cancel', $o) }}', '{{ $o->order_number }}')"
+                                                class="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition">
+                                                Cancel
+                                            </button>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
 
@@ -320,11 +357,11 @@
             </div>
         </div>
 
-        {{-- INLINE GCash VALIDATION MODAL (no partial) --}}
+        {{-- GCash VALIDATION MODAL --}}
         <div
             x-show="openModal"
             x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
             x-transition:enter="ease-out duration-200"
             x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100"
@@ -334,110 +371,118 @@
         >
             <div
                 @click.away="openModal = false"
-                class="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden"
+                class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden max-h-[90vh] flex flex-col"
                 x-transition:enter="ease-out duration-200"
                 x-transition:enter-start="opacity-0 scale-95 translate-y-2"
                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
             >
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            Validate GCash Payment
-                        </h3>
-                        <p class="text-xs text-gray-500 mt-0.5">
-                            Order <span class="font-semibold" x-text="modalData.order_number"></span>
-                        </p>
+                {{-- Header --}}
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-violet-50 shrink-0">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-sm">
+                            <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Verify GCash Payment</h3>
+                            <p class="text-xs text-gray-500">Order <span class="font-bold text-blue-600" x-text="modalData.order_number"></span></p>
+                        </div>
                     </div>
-                    <button
-                        type="button"
-                        @click="openModal = false"
-                        class="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-800 transition"
-                    >
-                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2">
-                            <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                    <button type="button" @click="openModal = false" class="p-2 rounded-full hover:bg-white/80 text-gray-400 hover:text-gray-700 transition">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                 </div>
 
-                <div class="px-6 py-5 space-y-4 text-sm text-gray-700">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-xs uppercase tracking-wide text-gray-500">Customer</p>
-                            <p class="font-semibold mt-0.5" x-text="modalData.customer"></p>
+                {{-- Body --}}
+                <div class="px-6 py-5 space-y-5 overflow-y-auto flex-1">
+                    {{-- Order Info Cards --}}
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-gray-50 rounded-xl p-3 text-center">
+                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Customer</p>
+                            <p class="text-sm font-bold text-gray-900 mt-1 truncate" x-text="modalData.customer"></p>
+                            <p class="text-[11px] text-gray-500 truncate" x-text="modalData.email"></p>
                         </div>
-                        <div class="text-right">
-                            <p class="text-xs uppercase tracking-wide text-gray-500">Amount</p>
-                            <p class="font-bold text-emerald-600 text-lg mt-0.5">
-                                ₱<span x-text="modalData.amount"></span>
-                            </p>
+                        <div class="bg-emerald-50 rounded-xl p-3 text-center">
+                            <p class="text-[10px] uppercase tracking-wider text-emerald-500 font-semibold">Amount</p>
+                            <p class="text-xl font-black text-emerald-600 mt-1">₱<span x-text="modalData.amount"></span></p>
+                        </div>
+                        <div class="bg-blue-50 rounded-xl p-3 text-center">
+                            <p class="text-[10px] uppercase tracking-wider text-blue-400 font-semibold">Method</p>
+                            <p class="text-sm font-bold text-blue-700 mt-1">GCash</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-3 text-center">
+                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Date</p>
+                            <p class="text-sm font-semibold text-gray-700 mt-1" x-text="modalData.date"></p>
                         </div>
                     </div>
 
-                    <div>
-                        <p class="text-xs uppercase tracking-wide text-gray-500">Reference / GCash Details</p>
-                        <p class="mt-1 font-medium" x-text="modalData.reference || 'N/A'"></p>
+                    {{-- Reference --}}
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">GCash Reference Number</p>
+                        <p class="text-base font-mono font-bold text-gray-900" x-text="modalData.reference || 'Not provided'"></p>
                     </div>
 
+                    {{-- Receipt Image --}}
                     <template x-if="modalData.image_url">
-                    <div>
-                        <p class="text-xs uppercase tracking-wide text-gray-500 mb-2">Uploaded Receipt</p>
-                        <div class="border border-gray-200 rounded-xl overflow-hidden">
-                            <img
-                                class="w-full max-h-96 object-contain bg-gray-50"
-                                :src="modalData.image_url ? '{{ asset('') }}/' + modalData.image_url : ''"
-                                alt="GCash Receipt"
-
-                                src="http://127.0.0.1:8000/storage//storage/receipts/Jg2E9YhQKeYrBT1hKjxdzeEolRjSuspM4kZwKmiu.jpg"
-                            >
+                        <div>
+                            <p class="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Payment Receipt</p>
+                            <div class="border-2 border-dashed border-gray-200 rounded-xl overflow-hidden bg-gray-50 relative group">
+                                <img
+                                    class="w-full max-h-[400px] object-contain"
+                                    :src="modalData.image_url"
+                                    alt="GCash Receipt"
+                                >
+                                <a :href="modalData.image_url" target="_blank"
+                                   class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-white shadow-sm border transition opacity-0 group-hover:opacity-100">
+                                    <svg class="h-3.5 w-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    Open Full Size
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </template>
+                    </template>
 
-                    <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-800 flex gap-2">
-                        <svg class="h-4 w-4 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2">
-                            <path d="M12 9v4m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z"
-                                  stroke-linecap="round" stroke-linejoin="round"/>
+                    <template x-if="!modalData.image_url">
+                        <div class="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center bg-gray-50">
+                            <svg class="h-10 w-10 text-gray-300 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <p class="text-sm text-gray-400 font-medium">No receipt image uploaded</p>
+                        </div>
+                    </template>
+
+                    {{-- Warning --}}
+                    <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-800 flex gap-2.5">
+                        <svg class="h-4 w-4 mt-0.5 flex-shrink-0 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 9v4m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <p>
-                            Double-check that the payment amount and reference match your GCash records
-                            before accepting. You can reject if the proof is invalid or unclear.
-                        </p>
+                        <p>Verify that the <strong>amount</strong> and <strong>reference number</strong> on the receipt match your GCash records before accepting. Reject if the proof is invalid, unclear, or doesn't match.</p>
                     </div>
                 </div>
 
-                <div class="px-6 py-4 bg-gray-50 flex justify-between items-center gap-3">
-                    <button
-                        type="button"
-                        @click="openModal = false"
-                        class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:text-gray-900 border border-gray-200 hover:bg-gray-100 transition"
-                    >
+                {{-- Footer Actions --}}
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center gap-3 shrink-0">
+                    <button type="button" @click="openModal = false"
+                        class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-200 hover:bg-white transition">
                         Close
                     </button>
 
                     <div class="flex items-center gap-2">
-                        {{-- Reject Payment --}}
-                        <form method="POST"
-                              :action="`{{ url('admin/orders') }}/${modalData.id}/reject-payment`">
+                        <form method="POST" :action="`{{ url('admin/orders') }}/${modalData.id}/reject-payment`">
                             @csrf
-                            <button
-                                type="submit"
-                                class="px-4 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition"
-                            >
-                                Reject
+                            <button type="submit"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition"
+                                onclick="return confirm('Reject this GCash payment?')">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                Reject Payment
                             </button>
                         </form>
 
-                        {{-- Accept Payment --}}
-                        <form method="POST"
-                              :action="`{{ url('admin/orders') }}/${modalData.id}/accept-payment`">
+                        <form method="POST" :action="`{{ url('admin/orders') }}/${modalData.id}/accept-payment`">
                             @csrf
-                            <button
-                                type="submit"
-                                class="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition"
-                            >
-                                Accept & Mark as Paid
+                            <button type="submit"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition"
+                                onclick="return confirm('Accept this payment and mark order as paid?')">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                Accept & Mark Paid
                             </button>
                         </form>
                     </div>

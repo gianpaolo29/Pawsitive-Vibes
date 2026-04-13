@@ -30,16 +30,6 @@ Route::prefix('auth')->name('auth.')->group(function () {
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
-// TEMPORARY: View last error — REMOVE AFTER DEBUGGING
-Route::get('/debug-log', function () {
-    $path = storage_path('logs/laravel.log');
-    if (!file_exists($path)) return 'No log file found.';
-    $content = file_get_contents($path);
-    // Find last error entry
-    preg_match_all('/\[\d{4}-\d{2}-\d{2}.*?\] \w+\.\w+: (.+?)(?=\n\[|\z)/s', $content, $matches);
-    $last3 = array_slice($matches[0], -3);
-    return '<pre style="white-space:pre-wrap;word-wrap:break-word;max-width:900px;">' . htmlspecialchars(implode("\n\n---\n\n", $last3)) . '</pre>';
-});
 
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
     Route::get('/shop', [ShopController::class, 'index'])->name('shop');
@@ -73,6 +63,8 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->group(function () {
+    Route::get('/search/suggestions', [\App\Http\Controllers\Admin\SearchController::class, 'suggestions'])->name('search.suggestions');
+    Route::get('/search/customers', [\App\Http\Controllers\Admin\SearchController::class, 'customerSuggestions'])->name('search.customers');
     Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile');
     Route::patch('/profile', [AdminProfileController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('password.update');
@@ -100,6 +92,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::get('customers/edit/{customer}',[CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('customers/{customer}',     [CustomerController::class, 'update'])->name('customers.update');
     Route::delete('customers/{customer}',  [CustomerController::class, 'destroy'])->name('customers.destroy');
+    Route::patch('customers/{customer}/toggle', [CustomerController::class, 'toggle'])->name('customers.toggle');
 
     Route::get('orders', [TransactionController::class, 'index'])->name('orders.index');
     Route::post('orders', [TransactionController::class, 'store'])->name('orders.store');
@@ -117,6 +110,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
 
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
 
 
 

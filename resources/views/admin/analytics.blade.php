@@ -6,18 +6,82 @@
                 <h1 class="text-3xl font-bold text-gray-900">Analytics</h1>
                 <p class="text-sm text-gray-500">
                     Deep insights for sales, profit, products, customers, and payments.
+                    @if($hasRange)
+                        <span class="ml-1 font-semibold text-violet-600">
+                            ({{ $startDate->format('M d, Y') }} — {{ $endDate->format('M d, Y') }})
+                        </span>
+                    @else
+                        <span class="ml-1 text-gray-400">(All Time)</span>
+                    @endif
                 </p>
             </div>
-            <button
-                onclick="window.location.reload()"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 text-white text-sm font-semibold shadow hover:bg-violet-700">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="1.8">
-                    <path d="M4 4v6h6M20 20v-6h-6M5 19A9 9 0 0 1 5 5l1.5 1.5M19 5A9 9 0 0 1 19 19L17.5 17.5"
-                          stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Refresh
-            </button>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('admin.analytics.export', request()->only('start_date', 'end_date')) }}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold shadow hover:bg-emerald-700">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Export CSV
+                </a>
+                <button onclick="window.location.reload()"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 text-white text-sm font-semibold shadow hover:bg-violet-700">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M4 4v6h6M20 20v-6h-6M5 19A9 9 0 0 1 5 5l1.5 1.5M19 5A9 9 0 0 1 19 19L17.5 17.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        {{-- DATE RANGE FILTER --}}
+        <div class="bg-white rounded-xl shadow-sm p-4">
+            <form method="GET" action="{{ route('admin.analytics.index') }}" class="flex flex-wrap items-end gap-4">
+                <div class="flex-1 min-w-[160px]">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Start Date</label>
+                    <input type="date" name="start_date" value="{{ request('start_date', $startDate?->format('Y-m-d')) }}"
+                        class="w-full rounded-lg border-gray-300 text-sm focus:border-violet-500 focus:ring-violet-500">
+                </div>
+                <div class="flex-1 min-w-[160px]">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">End Date</label>
+                    <input type="date" name="end_date" value="{{ request('end_date', $endDate?->format('Y-m-d')) }}"
+                        class="w-full rounded-lg border-gray-300 text-sm focus:border-violet-500 focus:ring-violet-500">
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="submit"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 text-white text-sm font-semibold shadow hover:bg-violet-700">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Filter
+                    </button>
+                    @if($hasRange)
+                        <a href="{{ route('admin.analytics.index') }}"
+                            class="inline-flex items-center gap-1 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200">
+                            Clear
+                        </a>
+                    @endif
+                </div>
+                {{-- Quick presets --}}
+                <div class="flex items-center gap-2 ml-auto">
+                    <span class="text-xs text-gray-400">Quick:</span>
+                    <a href="{{ route('admin.analytics.index', ['start_date' => now()->startOfDay()->format('Y-m-d'), 'end_date' => now()->format('Y-m-d')]) }}"
+                       class="px-3 py-1 rounded-full text-xs font-medium {{ request('start_date') === now()->format('Y-m-d') ? 'bg-violet-100 text-violet-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                        Today
+                    </a>
+                    <a href="{{ route('admin.analytics.index', ['start_date' => now()->subDays(7)->format('Y-m-d'), 'end_date' => now()->format('Y-m-d')]) }}"
+                       class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">
+                        7 Days
+                    </a>
+                    <a href="{{ route('admin.analytics.index', ['start_date' => now()->subDays(30)->format('Y-m-d'), 'end_date' => now()->format('Y-m-d')]) }}"
+                       class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">
+                        30 Days
+                    </a>
+                    <a href="{{ route('admin.analytics.index', ['start_date' => now()->startOfYear()->format('Y-m-d'), 'end_date' => now()->format('Y-m-d')]) }}"
+                       class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">
+                        This Year
+                    </a>
+                </div>
+            </form>
         </div>
 
         {{-- TOP KPI CARDS --}}
@@ -29,7 +93,7 @@
                     <p class="text-2xl font-bold text-gray-900">
                         ₱{{ number_format($totalRevenue, 2) }}
                     </p>
-                    <p class="text-xs text-gray-400 mt-1">All-time paid orders</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ $hasRange ? 'Filtered period' : 'All-time' }} paid orders</p>
                 </div>
                 <div class="p-2 rounded-full bg-violet-50 text-violet-600">
                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none"

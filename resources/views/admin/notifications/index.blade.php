@@ -84,7 +84,7 @@
                         type="button"
                         @click="markAllRead('{{ route('admin.notifications.mark-all-read') }}')"
                         class="text-xs font-medium text-violet-600 hover:text-violet-800 hover:underline disabled:text-gray-400"
-                        @disabled($notifications->where('is_read', false)->count() === 0)
+                        @disabled($notifications->whereNull('read_at')->count() === 0)
                         title="Mark all unread notifications as read.">
                         Mark All as Read
                     </button>
@@ -98,27 +98,35 @@
                 @forelse($notifications as $notif)
                     @php
                         $markReadUrl = route('admin.notifications.markRead', $notif->id);
+                        $isUnread = is_null($notif->read_at);
+                        $data = $notif->data ?? [];
+                        $title = $data['title'] ?? class_basename($notif->type);
+                        $message = $data['message'] ?? ($data['body'] ?? 'You have a new notification.');
+                        $notifType = $data['type'] ?? '';
                     @endphp
 
                     <div
                         class="px-4 py-3 flex items-start gap-3 cursor-pointer transition-colors duration-200
-                            {{ $notif->is_read ? 'bg-white hover:bg-gray-50' : 'bg-violet-50/70 hover:bg-violet-100' }}"
-                        data-read="{{ $notif->is_read ? 'true' : 'false' }}"
+                            {{ $isUnread ? 'bg-violet-50/70 hover:bg-violet-100' : 'bg-white hover:bg-gray-50' }}"
+                        data-read="{{ $isUnread ? 'false' : 'true' }}"
                         @click="markAsRead($event, '{{ $markReadUrl }}')"
                     >
                         <div class="mt-0.5 flex-shrink-0">
-                            {{-- TYPE ICON/BADGE --}}
-                            @if($notif->type === 'low_stock')
+                            @if($notifType === 'low_stock' || str_contains($notif->type, 'LowStock'))
                                 <span class="inline-flex items-center justify-center h-7 w-7 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
                                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"/></svg>
                                 </span>
-                            @elseif($notif->type === 'payment_pending')
+                            @elseif(str_contains($notif->type, 'GcashPayment'))
                                 <span class="inline-flex items-center justify-center h-7 w-7 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
                                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                                 </span>
+                            @elseif(str_contains($notif->type, 'NewOrder'))
+                                <span class="inline-flex items-center justify-center h-7 w-7 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+                                </span>
                             @else
                                 <span class="inline-flex items-center justify-center h-7 w-7 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold">
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6"/></svg>
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
                                 </span>
                             @endif
                         </div>
@@ -126,27 +134,19 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between gap-2">
                                 <h3 class="text-sm font-semibold text-gray-900 truncate">
-                                    {{ $notif->title ?? 'Notification' }}
+                                    {{ $title }}
                                 </h3>
                                 <span class="text-xs text-gray-400 whitespace-nowrap">
                                     {{ $notif->created_at?->diffForHumans() }}
                                 </span>
                             </div>
 
-                            @if($notif->body)
-                                <p class="mt-1 text-sm text-gray-700 line-clamp-2">
-                                    {{ $notif->body }}
-                                </p>
-                            @endif
-
-                            @if($notif->data && is_array($notif->data))
-                                <p class="mt-1 text-xs text-gray-500">
-                                    {{ $notif->data['meta'] ?? '' }}
-                                </p>
-                            @endif
+                            <p class="mt-1 text-sm text-gray-700 line-clamp-2">
+                                {{ $message }}
+                            </p>
                         </div>
 
-                        @if(!$notif->is_read)
+                        @if($isUnread)
                             <span class="notif-badge-new mt-1 inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700 flex-shrink-0">
                                 New
                             </span>

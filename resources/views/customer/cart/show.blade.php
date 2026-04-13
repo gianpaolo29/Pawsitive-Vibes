@@ -25,18 +25,29 @@
         }
     </style>
 
-    {{-- Success/Error Messages --}}
-    @if (session('success'))
-        <div class="fixed top-4 right-4 z-50 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg animate-fade-in">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="fixed top-4 right-4 z-50 px-6 py-3 bg-red-500 text-white rounded-lg shadow-lg animate-fade-in">
-            {{ session('error') }}
-        </div>
-    @endif
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: @json(session('success')),
+                    confirmButtonColor: '#8a2be2',
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            @endif
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: @json(session('error')),
+                    confirmButtonColor: '#8a2be2',
+                });
+            @endif
+        });
+    </script>
 
     <div x-data="cartPage()" class="py-12 bg-gray-50 dark:bg-gray-900 min-h-screen">
         {{-- container-fluid style --}}

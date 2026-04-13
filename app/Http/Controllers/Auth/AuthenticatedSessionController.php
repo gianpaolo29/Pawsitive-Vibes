@@ -55,6 +55,15 @@ class AuthenticatedSessionController extends Controller
             return back()->withErrors(['email' => 'failed:' . $remaining])->onlyInput('email');
         }
 
+        // Check if account is deactivated
+        $user = $request->user();
+        if (!$user->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return back()->withErrors(['email' => 'deactivated'])->onlyInput('email');
+        }
+
         // Success — clear everything
         cache()->forget($attemptKey);
         cache()->forget($lockKey);

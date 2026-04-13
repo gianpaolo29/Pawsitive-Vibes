@@ -225,7 +225,14 @@
 
             @if ($errors->has('email'))
                 @php $errorMsg = $errors->first('email'); @endphp
-                @if (str_starts_with($errorMsg, 'locked:'))
+                @if ($errorMsg === 'deactivated')
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Account Deactivated',
+                        html: 'Your account has been deactivated by an administrator.<br><br><small style="color:#666">Please contact support for assistance.</small>',
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @elseif (str_starts_with($errorMsg, 'locked:'))
                     Swal.fire({
                         icon: 'error',
                         title: 'Account Locked',
