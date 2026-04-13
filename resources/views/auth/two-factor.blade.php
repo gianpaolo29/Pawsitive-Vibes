@@ -16,7 +16,7 @@
         .verify-container {
             background:rgba(255,255,255,.95); backdrop-filter:blur(20px);
             border-radius:24px; box-shadow:var(--card-shadow);
-            width:100%; max-width:440px; padding:50px 40px; position:relative; overflow:hidden;
+            width:100%; max-width:440px; padding:35px 25px; position:relative; overflow:hidden;
             opacity:0; transform:translateY(30px); animation:fadeInUp .8s ease forwards
         }
         .verify-container::before {
@@ -39,9 +39,9 @@
             border-left:4px solid var(--primary-violet); opacity:0; animation:fadeIn .8s ease .6s forwards
         }
 
-        .code-inputs { display:flex; gap:8px; justify-content:center; margin-bottom:20px; opacity:0; animation:fadeIn .8s ease .8s forwards }
+        .code-inputs { display:flex; gap:6px; justify-content:center; margin-bottom:20px; opacity:0; animation:fadeIn .8s ease .8s forwards }
         .code-input {
-            width:50px; height:58px; text-align:center; font-size:22px; font-weight:700;
+            width:46px; height:54px; text-align:center; font-size:22px; font-weight:700;
             border:2px solid var(--medium-gray); border-radius:14px; background:var(--light-gray);
             color:var(--primary-violet); font-family:'Poppins',sans-serif;
             transition:all .3s ease; outline:none
@@ -82,7 +82,8 @@
             0%{transform:translateY(100vh);opacity:0} 10%{opacity:1}
             90%{opacity:1} 100%{transform:translateY(-100px);opacity:0}
         }
-        @media (max-width:500px) { .verify-container{padding:30px 20px} .code-input{width:42px;height:50px;font-size:18px} }
+        @media (max-width:400px) { .verify-container{padding:25px 16px} .code-input{width:38px;height:46px;font-size:16px} }
+        @media (max-width:350px) { .code-input{width:34px;height:42px;font-size:14px} .code-inputs{gap:4px} }
     </style>
 
     <div class="particles" id="particles"></div>

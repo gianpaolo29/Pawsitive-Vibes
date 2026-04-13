@@ -8,16 +8,16 @@
                     <p class="text-amber-100 text-sm mt-1">Use these if you lose access to your authenticator app</p>
                 </div>
 
-                <div class="p-6">
+                <div class="p-4 md:p-6">
                     <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-5">
                         <p class="text-xs text-amber-800 dark:text-amber-300">
                             Each code can only be used <strong>once</strong>. After using a recovery code, it will be permanently removed. Keep these somewhere safe.
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mb-6">
                         @forelse($codes as $code)
-                            <code class="bg-gray-50 dark:bg-gray-700 px-4 py-3 rounded-xl text-sm font-mono font-bold text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600 text-center">{{ $code }}</code>
+                            <code class="bg-gray-50 dark:bg-gray-700 px-4 py-3 rounded-xl text-xs sm:text-sm font-mono font-bold text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600 text-center">{{ $code }}</code>
                         @empty
                             <p class="col-span-2 text-center text-sm text-gray-500 py-4">No recovery codes remaining. Consider regenerating them.</p>
                         @endforelse

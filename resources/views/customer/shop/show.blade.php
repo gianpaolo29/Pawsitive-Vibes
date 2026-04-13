@@ -257,7 +257,7 @@
                  x-transition:leave="transition ease-in duration-200"
                  x-transition:leave-start="translate-x-0"
                  x-transition:leave-end="translate-x-full"
-                 class="fixed top-0 right-0 h-full w-80 product-card-bg shadow-xl z-50 overflow-y-auto no-scrollbar">
+                 class="fixed top-0 right-0 h-full w-full max-w-xs sm:w-80 product-card-bg shadow-xl z-50 overflow-y-auto no-scrollbar">
 
                 <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Filters</h3>

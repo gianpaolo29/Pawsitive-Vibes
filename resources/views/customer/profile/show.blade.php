@@ -9,7 +9,7 @@
 
             {{-- PAGE TITLE --}}
             <div class="mb-8">
-                <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white">
                     Account Settings
                 </h1>
                 <p class="mt-1 text-base text-gray-500 dark:text-gray-400">
@@ -75,7 +75,7 @@
 
                 {{-- MAIN CONTENT (PROFILE FORM) --}}
                 <section class="md:col-span-3">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 md:p-6">
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b pb-3">
                             Account Details
                         </h2>
@@ -213,7 +213,7 @@
                     </div>
 
                     {{-- TWO-FACTOR AUTHENTICATION --}}
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mt-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 md:p-6 mt-8">
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1 border-b pb-3 flex items-center gap-2">
                             <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                             Two-Factor Authentication
@@ -222,7 +222,7 @@
                             Add an extra layer of security using Google Authenticator. When enabled, you'll need to enter a code from your authenticator app each time you log in.
                         </p>
 
-                        <div class="flex items-center justify-between p-4 rounded-xl {{ $user->two_factor_confirmed_at ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800' : 'bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600' }}">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-xl {{ $user->two_factor_confirmed_at ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800' : 'bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600' }}">
                             <div class="flex items-center gap-3">
                                 @if($user->two_factor_confirmed_at)
                                     <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
@@ -244,9 +244,9 @@
                             </div>
 
                             @if($user->two_factor_confirmed_at)
-                                <div class="flex items-center gap-2">
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                                     <a href="{{ route('customer.profile.two-factor.recovery-codes') }}"
-                                       class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                                       class="inline-flex items-center justify-center px-3 py-2 rounded-xl text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
                                         Recovery Codes
                                     </a>
                                     <form id="disable2faForm" method="POST" action="{{ route('customer.profile.two-factor.disable') }}">
@@ -254,7 +254,7 @@
                                         @method('DELETE')
                                         <button type="button"
                                             onclick="confirmDisable2FA()"
-                                            class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition">
+                                            class="w-full inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition">
                                             Disable 2FA
                                         </button>
                                     </form>
@@ -269,7 +269,7 @@
                     </div>
 
                     {{-- SECURITY QUESTIONS SECTION --}}
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mt-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 md:p-6 mt-8">
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1 border-b pb-3 flex items-center gap-2">
                             <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                             Security Questions

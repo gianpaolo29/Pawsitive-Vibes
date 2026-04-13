@@ -988,7 +988,7 @@
             
             /* Even more compact donation options for very small screens */
             .donation-option {
-                min-width: 170px;
+                min-width: 140px;
                 padding: 12px;
             }
             

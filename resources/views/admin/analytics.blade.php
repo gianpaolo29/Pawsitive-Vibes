@@ -62,7 +62,7 @@
                     @endif
                 </div>
                 {{-- Quick presets --}}
-                <div class="flex items-center gap-2 ml-auto">
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:ml-auto">
                     <span class="text-xs text-gray-400">Quick:</span>
                     <a href="{{ route('admin.analytics.index', ['start_date' => now()->startOfDay()->format('Y-m-d'), 'end_date' => now()->format('Y-m-d')]) }}"
                        class="px-3 py-1 rounded-full text-xs font-medium {{ request('start_date') === now()->format('Y-m-d') ? 'bg-violet-100 text-violet-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">

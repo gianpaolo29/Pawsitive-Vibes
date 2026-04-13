@@ -10,7 +10,7 @@
                     <p class="text-indigo-200 text-sm mt-2">Scan the QR code with your authenticator app</p>
                 </div>
 
-                <div class="p-6 space-y-6">
+                <div class="p-4 md:p-6 space-y-6">
                     {{-- Step 1 --}}
                     <div>
                         <div class="flex items-center gap-3 mb-3">
@@ -21,7 +21,7 @@
                             Open <strong>Google Authenticator</strong>, <strong>Authy</strong>, or any TOTP app and scan this QR code.
                         </p>
                         <div class="flex justify-center">
-                            <div class="bg-white rounded-xl p-3 shadow-md border-2 border-gray-100 inline-block w-60 h-60">
+                            <div class="bg-white rounded-xl p-3 shadow-md border-2 border-gray-100 inline-block w-48 h-48 sm:w-60 sm:h-60">
                                 {!! $qrSvg !!}
                             </div>
                         </div>
@@ -30,7 +30,7 @@
                     {{-- Manual Key --}}
                     <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Can't scan? Enter this key manually:</p>
-                        <div class="bg-white dark:bg-gray-800 rounded-lg px-4 py-3 font-mono text-sm font-bold text-indigo-700 dark:text-indigo-400 tracking-widest text-center select-all border border-gray-200 dark:border-gray-600">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg px-4 py-3 font-mono text-xs sm:text-sm font-bold text-indigo-700 dark:text-indigo-400 tracking-wider sm:tracking-widest break-all text-center select-all border border-gray-200 dark:border-gray-600">
                             {{ $secret }}
                         </div>
                     </div>
@@ -53,7 +53,7 @@
 
                         <form method="POST" action="{{ route('customer.profile.two-factor.confirm') }}">
                             @csrf
-                            <div class="flex items-center gap-3">
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                                 <input type="text" name="code" maxlength="6" inputmode="numeric"
                                     class="flex-1 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-center text-lg font-mono font-bold tracking-[0.3em] placeholder-gray-400"
                                     placeholder="000000" autofocus required>

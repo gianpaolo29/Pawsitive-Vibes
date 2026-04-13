@@ -353,14 +353,14 @@
                                      class="mt-3 space-y-4">
 
                                     {{-- QR Code --}}
-                                    <div class="bg-gradient-to-b from-blue-50 to-white dark:from-blue-900/20 dark:to-gray-800 rounded-xl border border-blue-200 dark:border-blue-800 p-4">
+                                    <div class="bg-gradient-to-b from-blue-50 to-white dark:from-blue-900/20 dark:to-gray-800 rounded-xl border border-blue-200 dark:border-blue-800 p-3 sm:p-4">
                                         <div class="text-center mb-3">
                                             <p class="text-sm font-semibold text-blue-700 dark:text-blue-400">Scan QR Code to Pay</p>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">Open your GCash app and scan this QR code</p>
                                         </div>
                                         <div class="flex justify-center">
                                             <div class="bg-white rounded-xl p-2 shadow-md border border-gray-200 inline-block">
-                                                <img src="{{ asset('images/Gcash.jpg') }}" alt="GCash QR Code" class="w-48 h-48 object-contain rounded-lg">
+                                                <img src="{{ asset('images/Gcash.jpg') }}" alt="GCash QR Code" class="w-36 h-36 sm:w-48 sm:h-48 object-contain rounded-lg">
                                             </div>
                                         </div>
                                         <div class="text-center mt-3 space-y-1">

@@ -397,7 +397,7 @@
                 {{-- Body --}}
                 <div class="px-6 py-5 space-y-5 overflow-y-auto flex-1">
                     {{-- Order Info Cards --}}
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
                         <div class="bg-gray-50 rounded-xl p-3 text-center">
                             <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Customer</p>
                             <p class="text-sm font-bold text-gray-900 mt-1 truncate" x-text="modalData.customer"></p>
@@ -459,13 +459,13 @@
                 </div>
 
                 {{-- Footer Actions --}}
-                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center gap-3 shrink-0">
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-3 shrink-0">
                     <button type="button" @click="openModal = false"
                         class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-200 hover:bg-white transition">
                         Close
                     </button>
 
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                         <form method="POST" :action="`{{ url('admin/orders') }}/${modalData.id}/reject-payment`">
                             @csrf
                             <button type="submit"

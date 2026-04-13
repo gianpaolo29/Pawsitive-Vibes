@@ -728,7 +728,7 @@
 
         @media (max-width: 480px) {
             .products-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             }
             
             .page-title {

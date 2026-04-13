@@ -224,18 +224,18 @@
                             ]);
                         @endphp
                         <tr class="text-xs text-gray-500 uppercase tracking-wider">
-                            <th class="px-5 py-3 text-left"><a href="{{ $link('fname') }}" class="hover:text-violet-600">Name{!! $arrow('fname') !!}</a></th>
-                            <th class="px-5 py-3 text-left"><a href="{{ $link('username') }}" class="hover:text-violet-600">Username{!! $arrow('username') !!}</a></th>
-                            <th class="px-5 py-3 text-left"><a href="{{ $link('email') }}" class="hover:text-violet-600">Email{!! $arrow('email') !!}</a></th>
-                            <th class="px-5 py-3 text-center">Status</th>
-                            <th class="px-5 py-3 text-left"><a href="{{ $link('created_at') }}" class="hover:text-violet-600">Joined{!! $arrow('created_at') !!}</a></th>
-                            <th class="px-5 py-3 text-center">Actions</th>
+                            <th class="px-3 sm:px-5 py-3 text-left"><a href="{{ $link('fname') }}" class="hover:text-violet-600">Name{!! $arrow('fname') !!}</a></th>
+                            <th class="px-3 sm:px-5 py-3 text-left"><a href="{{ $link('username') }}" class="hover:text-violet-600">Username{!! $arrow('username') !!}</a></th>
+                            <th class="px-3 sm:px-5 py-3 text-left"><a href="{{ $link('email') }}" class="hover:text-violet-600">Email{!! $arrow('email') !!}</a></th>
+                            <th class="px-3 sm:px-5 py-3 text-center">Status</th>
+                            <th class="px-3 sm:px-5 py-3 text-left"><a href="{{ $link('created_at') }}" class="hover:text-violet-600">Joined{!! $arrow('created_at') !!}</a></th>
+                            <th class="px-3 sm:px-5 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse ($customers as $c)
                             <tr class="hover:bg-gray-50/50 transition {{ !$c->is_active ? 'opacity-60' : '' }}">
-                                <td class="px-5 py-4 whitespace-nowrap">
+                                <td class="px-3 py-3 sm:px-5 sm:py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="h-9 w-9 rounded-full flex items-center justify-center text-sm font-bold {{ $c->is_active ? 'bg-violet-100 text-violet-700' : 'bg-gray-200 text-gray-500' }}">
                                             {{ strtoupper(substr($c->fname, 0, 1)) }}{{ strtoupper(substr($c->lname, 0, 1)) }}
@@ -245,9 +245,9 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-5 py-4 text-gray-600">{{ $c->username }}</td>
-                                <td class="px-5 py-4 text-gray-600">{{ $c->email }}</td>
-                                <td class="px-5 py-4 text-center">
+                                <td class="px-3 py-3 sm:px-5 sm:py-4 text-gray-600">{{ $c->username }}</td>
+                                <td class="px-3 py-3 sm:px-5 sm:py-4 text-gray-600">{{ $c->email }}</td>
+                                <td class="px-3 py-3 sm:px-5 sm:py-4 text-center">
                                     @if($c->is_active)
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -260,9 +260,9 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-5 py-4 whitespace-nowrap text-gray-500">{{ $c->created_at?->format('M d, Y') }}</td>
-                                <td class="px-5 py-4 text-center">
-                                    <div class="inline-flex items-center gap-2">
+                                <td class="px-3 py-3 sm:px-5 sm:py-4 whitespace-nowrap text-gray-500">{{ $c->created_at?->format('M d, Y') }}</td>
+                                <td class="px-3 py-3 sm:px-5 sm:py-4 text-center">
+                                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
                                         <a href="{{ route('admin.customers.edit', $c) }}"
                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 transition">
                                             <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round"/></svg>

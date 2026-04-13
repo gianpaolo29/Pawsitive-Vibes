@@ -526,7 +526,7 @@
                         x-transition:leave="transition ease-in duration-100"
                         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                         x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                        class="absolute right-0 mt-2 w-80 origin-top-right rounded-2xl bg-white/95 dark:bg-gray-800/95 shadow-2xl ring-1 ring-black/5 backdrop-smooth z-50 overflow-hidden"
+                        class="absolute right-0 mt-2 w-72 sm:w-80 origin-top-right rounded-2xl bg-white/95 dark:bg-gray-800/95 shadow-2xl ring-1 ring-black/5 backdrop-smooth z-50 overflow-hidden"
                     >
                         {{-- Header --}}
                         <div class="px-4 py-3 border-b border-violet-200/30 dark:border-violet-700/30 flex items-center justify-between">
