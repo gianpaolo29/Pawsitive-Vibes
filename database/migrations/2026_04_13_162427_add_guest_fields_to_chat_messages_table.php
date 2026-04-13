@@ -12,10 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('chat_messages', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable()->change();
-            $table->string('session_id')->nullable()->index()->after('user_id');
-            $table->string('guest_name')->nullable()->after('session_id');
-            $table->string('guest_email')->nullable()->after('guest_name');
+            if (!Schema::hasColumn('chat_messages', 'session_id')) {
+                $table->string('session_id')->nullable()->index()->after('user_id');
+            }
+            if (!Schema::hasColumn('chat_messages', 'guest_name')) {
+                $table->string('guest_name')->nullable()->after('session_id');
+            }
+            if (!Schema::hasColumn('chat_messages', 'guest_email')) {
+                $table->string('guest_email')->nullable()->after('guest_name');
+            }
         });
     }
 

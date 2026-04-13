@@ -12,12 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('chat_messages', function (Blueprint $table) {
-            $table->boolean('is_delivered')->default(false)->after('is_read');
-            $table->timestamp('delivered_at')->nullable()->after('is_delivered');
-            $table->timestamp('read_at')->nullable()->after('delivered_at');
+            if (!Schema::hasColumn('chat_messages', 'is_delivered')) {
+                $table->boolean('is_delivered')->default(false)->after('is_read');
+            }
+            if (!Schema::hasColumn('chat_messages', 'delivered_at')) {
+                $table->timestamp('delivered_at')->nullable()->after('is_delivered');
+            }
+            if (!Schema::hasColumn('chat_messages', 'read_at')) {
+                $table->timestamp('read_at')->nullable()->after('delivered_at');
+            }
         });
 
         // Create typing indicators table
+        if (Schema::hasTable('chat_typing')) {
+            return;
+        }
         Schema::create('chat_typing', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
