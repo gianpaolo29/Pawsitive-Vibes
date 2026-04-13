@@ -395,4 +395,60 @@
         </script>
     @endpush
 
+    @if(session('welcome_user'))
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hour = new Date().getHours();
+        let greeting = 'Good evening';
+        let emoji = '🌙';
+        if (hour < 12) { greeting = 'Good morning'; emoji = '☀️'; }
+        else if (hour < 18) { greeting = 'Good afternoon'; emoji = '🌤️'; }
+
+        Swal.fire({
+            html: `
+                <div style="position:relative; padding:0;">
+                    <div style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 50%, #3730a3 100%); padding: 35px 30px 45px; border-radius: 16px 16px 0 0; margin: -1.5em -1.5em 0; position: relative; overflow: hidden;">
+                        <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(255,255,255,0.07); border-radius:50%;"></div>
+                        <div style="position:absolute; bottom:-25px; left:-10px; width:70px; height:70px; background:rgba(255,255,255,0.05); border-radius:50%;"></div>
+
+                        <div style="position:relative; z-index:1; text-align:center;">
+                            <div style="font-size:42px; margin-bottom:10px;">🛡️</div>
+                            <p style="color:rgba(255,255,255,0.7); font-size:12px; text-transform:uppercase; letter-spacing:3px; font-weight:600; margin-bottom:6px;">
+                                ${emoji} ${greeting}
+                            </p>
+                            <h2 style="font-size:26px; font-weight:800; color:#fff; margin:0;">
+                                {{ session('welcome_user') }}!
+                            </h2>
+                        </div>
+                    </div>
+                    <div style="padding: 20px 20px 10px; text-align:center;">
+                        <p style="color:#555; font-size:14px;">Welcome back to the <strong style="color:#4f46e5;">Admin Dashboard</strong></p>
+                    </div>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            timer: 5000,
+            timerProgressBar: true,
+            width: 400,
+            padding: 0,
+            background: '#fff',
+            backdrop: 'rgba(0,0,0,0.4)',
+            didOpen: (popup) => {
+                const closeBtn = popup.querySelector('.swal2-close');
+                if (closeBtn) {
+                    closeBtn.style.position = 'absolute';
+                    closeBtn.style.top = '10px';
+                    closeBtn.style.right = '10px';
+                    closeBtn.style.zIndex = '10';
+                    closeBtn.style.color = 'rgba(255,255,255,0.7)';
+                    closeBtn.style.fontSize = '28px';
+                }
+                const bar = popup.querySelector('.swal2-timer-progress-bar');
+                if (bar) bar.style.background = '#4f46e5';
+            },
+        });
+    });
+    </script>
+    @endif
 </x-admin-layout>

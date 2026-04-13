@@ -41,6 +41,8 @@ class GoogleController extends Controller
 
             Auth::guard('web')->login($user, true);
 
+            session()->flash('welcome_user', $user->fname ?? $user->username);
+
             return redirect()->intended(
                 $user->role === 'ADMIN' ? route('admin.dashboard') : route('welcome')
             );

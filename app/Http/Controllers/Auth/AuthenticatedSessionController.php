@@ -71,6 +71,8 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
+        session()->flash('welcome_user', $user->fname ?? $user->username);
+
         return redirect()->intended($user->role === 'ADMIN' ? route('admin.dashboard') : route('welcome'));
     }
 
