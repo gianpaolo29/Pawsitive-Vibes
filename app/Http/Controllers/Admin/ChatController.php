@@ -23,6 +23,14 @@ class ChatController extends Controller
             }])
             ->get()
             ->map(function ($customer) {
+                $last = $customer->chatMessages->first();
+                $preview = '';
+                $time = '';
+                if ($last) {
+                    $preview = ($last->sender_type === 'admin' ? 'You: ' : '') . \Illuminate\Support\Str::limit($last->message, 40);
+                    $time = $last->created_at->diffForHumans(short: true);
+                }
+
                 return [
                     'type' => 'user',
                     'id' => $customer->id,
@@ -30,8 +38,9 @@ class ChatController extends Controller
                     'email' => $customer->email,
                     'initials' => strtoupper(substr($customer->fname, 0, 1)) . strtoupper(substr($customer->lname, 0, 1)),
                     'unread_count' => $customer->unread_count,
-                    'last_message' => $customer->chatMessages->first(),
-                    'url' => route('admin.chat.show', $customer->id) . '?type=user',
+                    'last_preview' => $preview,
+                    'last_time' => $time,
+                    'last_at' => $last?->created_at,
                 ];
             });
 
@@ -52,6 +61,12 @@ class ChatController extends Controller
                     ->first();
 
                 $name = $guest->guest_name ?: 'Guest';
+                $preview = '';
+                $time = '';
+                if ($lastMessage) {
+                    $preview = ($lastMessage->sender_type === 'admin' ? 'You: ' : '') . \Illuminate\Support\Str::limit($lastMessage->message, 40);
+                    $time = $lastMessage->created_at->diffForHumans(short: true);
+                }
 
                 return [
                     'type' => 'guest',
@@ -60,13 +75,16 @@ class ChatController extends Controller
                     'email' => $guest->guest_email,
                     'initials' => strtoupper(substr($name, 0, 1)) . 'G',
                     'unread_count' => $unread,
-                    'last_message' => $lastMessage,
-                    'url' => route('admin.chat.show', 'guest') . '?type=guest&session=' . $guest->session_id,
+                    'last_preview' => $preview,
+                    'last_time' => $time,
+                    'last_at' => $lastMessage?->created_at,
                 ];
             });
 
         $conversations = $userConversations->concat($guestConversations)
-            ->sortByDesc('unread_count');
+            ->sortByDesc(fn ($c) => $c['unread_count'] > 0 ? 1 : 0)
+            ->sortByDesc('last_at')
+            ->values();
 
         return view('admin.chat.index', compact('conversations'));
     }

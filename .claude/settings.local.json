@@ -12,7 +12,16 @@
       "Bash(ls:*)",
       "Bash(xargs basename:*)",
       "Bash(grep -r \"MAIL_FROM\\\\|support\\\\|admin\" /c/Users/Windows/Herd/Pawsitive_Vibes/.env*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(xargs cat:*)",
+      "Bash(grep -n 'protected $fillable\\\\|protected $hidden\\\\|protected $casts\\\\|function ' C:/Users/Windows/Herd/Pawsitive_Vibes/app/Models/User.php)",
+      "Bash(php -l routes/web.php)",
+      "Bash(php -l bootstrap/app.php)",
+      "Bash(php -l app/Http/Controllers/Admin/AdminTwoFactorController.php)",
+      "Bash(php -l app/Http/Middleware/AdminTwoFactor.php)",
+      "Bash(php -l app/Http/Controllers/Auth/AuthenticatedSessionController.php)",
+      "Bash(find:*)",
+      "Bash(grep:*)"
     ]
   }
 }

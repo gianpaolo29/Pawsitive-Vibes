@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\LoginLog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -23,8 +25,26 @@ class AdminProfileController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        // Security monitoring quick stats
+        $suspiciousLogins = LoginLog::where('is_suspicious', true)
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+        $blockedAccounts = User::where('is_active', false)
+            ->whereNotNull('blocked_reason')
+            ->count();
+        $recentLogins = LoginLog::where('created_at', '>=', now()->subDays(7))->count();
+        $recentSuspiciousActivity = LoginLog::with('user')
+            ->where('is_suspicious', true)
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
         return view('admin.profile', [
             'user' => $user,
+            'suspiciousLogins' => $suspiciousLogins,
+            'blockedAccounts' => $blockedAccounts,
+            'recentLogins' => $recentLogins,
+            'recentSuspiciousActivity' => $recentSuspiciousActivity,
         ]);
     }
 

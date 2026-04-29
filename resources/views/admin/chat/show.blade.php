@@ -15,128 +15,133 @@
             : route('admin.chat.customerTyping', $user->id) . '?type=user';
     @endphp
 
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="adminChat()" x-init="init()">
-        <!-- Header -->
-        <div class="flex items-center gap-4 mb-6">
-            <a href="{{ route('admin.chat.index') }}" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <style>
+        .show-chat-layout {
+            height: calc(100vh - var(--header-h) - 2rem);
+        }
+        @media (min-width: 640px) {
+            .show-chat-layout { height: calc(100vh - var(--header-h) - 3rem); }
+        }
+        @media (min-width: 1024px) {
+            .show-chat-layout { height: calc(100vh - var(--header-h) - 4rem); }
+        }
+        .show-scroll::-webkit-scrollbar { width: 5px; }
+        .show-scroll::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.2); border-radius: 99px; }
+        .show-scroll::-webkit-scrollbar-track { background: transparent; }
+        .bubble-in  { border-radius: 18px 18px 18px 4px; }
+        .bubble-out { border-radius: 18px 18px 4px 18px; }
+        .typing-dot { animation: tBounce 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes tBounce {
+            0%,80%,100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+
+    <div class="show-chat-layout flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-gray-800 shadow-xl border border-gray-200/80 dark:border-gray-700 max-w-4xl"
+         x-data="adminChat()" x-init="init()">
+
+        {{-- Header --}}
+        <div class="px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3 shrink-0">
+            <a href="{{ route('admin.chat.index') }}"
+               class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition shrink-0">
+                <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
                 </svg>
             </a>
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-gradient-to-br {{ $isGuest ? 'from-amber-500 to-orange-600' : 'from-violet-500 to-purple-600' }} rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    {{ strtoupper(substr($user->fname, 0, 1)) }}{{ $isGuest ? 'G' : strtoupper(substr($user->lname, 0, 1)) }}
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold text-gray-800">
+
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 {{ $isGuest ? 'bg-gradient-to-br from-amber-500 to-orange-500' : 'bg-gradient-to-br from-violet-500 to-purple-600' }}">
+                {{ strtoupper(substr($user->fname, 0, 1)) }}{{ $isGuest ? 'G' : strtoupper(substr($user->lname, 0, 1)) }}
+            </div>
+
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-gray-800 dark:text-white truncate">
                         {{ $user->fname }} {{ $user->lname ?? '' }}
-                        @if($isGuest)
-                            <span class="text-xs font-normal text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full ml-1">Guest</span>
-                        @endif
-                    </h1>
-                    <p class="text-sm" :class="customerIsTyping ? 'text-green-500 font-medium' : 'text-gray-500'"
-                       x-text="customerIsTyping ? 'typing...' : '{{ $user->email }}'"></p>
+                    </h3>
+                    @if($isGuest)
+                        <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded-full shrink-0">Guest</span>
+                    @endif
+                </div>
+                <p class="text-xs mt-0.5 truncate"
+                   :class="customerIsTyping ? 'text-green-500 font-medium' : 'text-gray-400 dark:text-gray-500'"
+                   x-text="customerIsTyping ? 'typing...' : '{{ $user->email }}'"></p>
+            </div>
+        </div>
+
+        {{-- Messages --}}
+        <div x-ref="chatMessages" class="flex-1 overflow-y-auto show-scroll px-4 py-4 space-y-0.5 bg-gray-50 dark:bg-gray-900 min-h-0">
+            <template x-if="messages.length === 0">
+                <div class="flex items-center justify-center h-full">
+                    <p class="text-sm text-gray-400 dark:text-gray-500">No messages in this conversation yet.</p>
+                </div>
+            </template>
+
+            <template x-for="(msg, idx) in messages" :key="msg.id">
+                <div>
+                    <div class="flex mb-1.5" :class="msg.sender_type === 'admin' ? 'justify-end' : 'justify-start'">
+                        <div class="max-w-[75%] sm:max-w-[70%] lg:max-w-[60%]">
+                            <div class="px-3.5 py-2.5"
+                                :class="msg.sender_type === 'admin'
+                                    ? 'bubble-out bg-violet-500 text-white'
+                                    : 'bubble-in bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 shadow-sm border border-gray-100 dark:border-gray-700'">
+                                <p x-html="formatMsg(msg.message)" class="text-[13px] leading-relaxed break-words"></p>
+                            </div>
+                            <div class="flex items-center gap-1 mt-0.5 px-1"
+                                 :class="msg.sender_type === 'admin' ? 'justify-end' : 'justify-start'">
+                                <template x-if="msg.sender_type === 'admin' && idx === getLastAdminIdx()">
+                                    <div class="flex items-center gap-0.5">
+                                        <template x-if="msg.is_read">
+                                            <div class="flex items-center">
+                                                <svg class="w-3.5 h-3.5 text-violet-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                                <svg class="w-3.5 h-3.5 text-violet-500 -ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                            </div>
+                                        </template>
+                                        <template x-if="!msg.is_read">
+                                            <svg class="w-3.5 h-3.5 text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                        </template>
+                                    </div>
+                                </template>
+                                <span class="text-[10px] tabular-nums text-gray-400 dark:text-gray-500" x-text="formatTime(msg.created_at)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            {{-- Typing --}}
+            <div x-show="customerIsTyping" x-transition class="flex justify-start mb-1.5">
+                <div class="bubble-in bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 px-4 py-3">
+                    <div class="flex items-center gap-1.5">
+                        <span class="typing-dot w-2 h-2 bg-violet-400 rounded-full inline-block"></span>
+                        <span class="typing-dot w-2 h-2 bg-violet-400 rounded-full inline-block"></span>
+                        <span class="typing-dot w-2 h-2 bg-violet-400 rounded-full inline-block"></span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Chat Container -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" style="height: 600px;">
-            <!-- Messages -->
-            <div x-ref="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-3 bg-gray-50">
-                <template x-if="messages.length === 0">
-                    <div class="text-center py-12">
-                        <p class="text-gray-400">No messages in this conversation yet.</p>
-                    </div>
-                </template>
-
-                <template x-for="(msg, idx) in messages" :key="msg.id">
-                    <div>
-                        <div :class="msg.sender_type === 'admin' ? 'flex justify-end' : 'flex justify-start'">
-                            <div class="max-w-[65%]">
-                                <div :class="msg.sender_type === 'admin'
-                                    ? 'bg-gradient-to-br from-violet-600 to-purple-700 text-white rounded-2xl rounded-br-md'
-                                    : 'bg-white text-gray-800 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'"
-                                    class="px-4 py-3">
-                                    <p x-html="formatMessageAdmin(msg.message)" class="text-sm leading-relaxed"></p>
-                                    <p :class="msg.sender_type === 'admin' ? 'text-white/60' : 'text-gray-400'"
-                                       class="text-[10px] mt-1" x-text="formatTime(msg.created_at)"></p>
-                                </div>
-                                <!-- Delivered / Seen for admin messages -->
-                                <template x-if="msg.sender_type === 'admin' && idx === getLastAdminIndex()">
-                                    <div class="flex items-center justify-end gap-1 mt-0.5 pr-1">
-                                        <template x-if="msg.is_read">
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-3.5 h-3.5 text-violet-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                                </svg>
-                                                <svg class="w-3.5 h-3.5 text-violet-500 -ml-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                                </svg>
-                                                <span class="text-[10px] text-violet-500 font-medium">Seen</span>
-                                            </div>
-                                        </template>
-                                        <template x-if="!msg.is_read && msg.is_delivered">
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                                </svg>
-                                                <svg class="w-3.5 h-3.5 text-gray-400 -ml-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                                </svg>
-                                                <span class="text-[10px] text-gray-400 font-medium">Delivered</span>
-                                            </div>
-                                        </template>
-                                        <template x-if="!msg.is_read && !msg.is_delivered">
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-3.5 h-3.5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                                </svg>
-                                                <span class="text-[10px] text-gray-300 font-medium">Sent</span>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <!-- Customer typing indicator -->
-                <div x-show="customerIsTyping" class="flex justify-start">
-                    <div class="bg-white rounded-2xl rounded-bl-md shadow-sm border border-gray-100 px-4 py-3">
-                        <div class="flex items-center gap-2">
-                            <div class="flex gap-1">
-                                <span class="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></span>
-                                <span class="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></span>
-                                <span class="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style="animation-delay: 300ms;"></span>
-                            </div>
-                            <span class="text-xs text-gray-400">Customer is typing</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reply Input -->
-            <div class="p-4 bg-white border-t border-gray-100">
-                <form @submit.prevent="send()" class="flex items-center gap-3">
-                    <input x-model="newMessage"
-                           @input="emitTyping()"
-                           type="text"
-                           placeholder="Type your reply..."
-                           class="flex-1 px-5 py-3 bg-gray-100 rounded-full text-sm border-0 focus:ring-2 focus:ring-violet-400 focus:bg-white transition-all duration-200"
-                           maxlength="1000"
-                           :disabled="sending">
-                    <button type="submit"
-                            :disabled="!newMessage.trim() || sending"
-                            class="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-700 text-white rounded-full text-sm font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
-                        </svg>
-                        Send
-                    </button>
-                </form>
-            </div>
+        {{-- Input --}}
+        <div class="px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shrink-0">
+            <form @submit.prevent="send()" class="flex items-center gap-2">
+                <input x-model="newMessage"
+                       @input="emitTyping()"
+                       @keydown.enter.prevent="send()"
+                       type="text"
+                       placeholder="Message..."
+                       class="flex-1 px-4 py-2.5 text-sm bg-gray-100 dark:bg-gray-700 border-0 rounded-full focus:ring-2 focus:ring-violet-400 dark:focus:ring-violet-500 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                       maxlength="1000"
+                       :disabled="sending"
+                       autocomplete="off">
+                <button type="submit"
+                        :disabled="!newMessage.trim() || sending"
+                        class="w-9 h-9 rounded-full bg-violet-500 hover:bg-violet-600 text-white flex items-center justify-center transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0 shadow-md shadow-violet-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"/>
+                    </svg>
+                </button>
+            </form>
         </div>
     </div>
 
@@ -148,17 +153,17 @@
             sending: false,
             pollInterval: null,
             customerIsTyping: false,
-            typingTimeout: null,
+            typingThrottle: null,
 
             init() {
-                this.$nextTick(() => this.scrollToBottom());
+                this.$nextTick(() => this.scrollBottom());
                 this.pollInterval = setInterval(() => {
                     this.fetchMessages();
-                    this.checkCustomerTyping();
+                    this.checkTyping();
                 }, 3000);
             },
 
-            getLastAdminIndex() {
+            getLastAdminIdx() {
                 for (let i = this.messages.length - 1; i >= 0; i--) {
                     if (this.messages[i].sender_type === 'admin') return i;
                 }
@@ -167,17 +172,14 @@
 
             async fetchMessages() {
                 try {
-                    const res = await fetch(@json($messagesUrl), {
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (JSON.stringify(data.map(m => m.id)) !== JSON.stringify(this.messages.map(m => m.id))
-                            || JSON.stringify(data.map(m => m.is_read)) !== JSON.stringify(this.messages.map(m => m.is_read))
-                            || JSON.stringify(data.map(m => m.is_delivered)) !== JSON.stringify(this.messages.map(m => m.is_delivered))) {
-                            this.messages = data;
-                            this.$nextTick(() => this.scrollToBottom());
-                        }
+                    const res = await fetch(@json($messagesUrl), { headers: { 'Accept': 'application/json' } });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const oldSig = this.messages.map(m => m.id + ':' + m.is_read).join(',');
+                    const newSig = data.map(m => m.id + ':' + m.is_read).join(',');
+                    if (oldSig !== newSig) {
+                        this.messages = data;
+                        this.$nextTick(() => this.scrollBottom());
                     }
                 } catch (e) {}
             },
@@ -191,71 +193,53 @@
                 try {
                     const res = await fetch(@json($replyUrl), {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                         body: JSON.stringify({ message: msg })
                     });
                     if (res.ok) {
                         const newMsg = await res.json();
                         this.messages.push(newMsg);
-                        this.$nextTick(() => this.scrollToBottom());
+                        this.$nextTick(() => this.scrollBottom());
                     }
-                } catch (e) {
-                    this.newMessage = msg;
-                }
+                } catch (e) { this.newMessage = msg; }
                 this.sending = false;
             },
 
             async emitTyping() {
-                if (this.typingTimeout) return;
-                this.typingTimeout = setTimeout(() => { this.typingTimeout = null; }, 2000);
-
+                if (this.typingThrottle) return;
+                this.typingThrottle = setTimeout(() => { this.typingThrottle = null; }, 2000);
                 try {
                     await fetch(@json($typingUrl), {
                         method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
+                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
                     });
                 } catch (e) {}
             },
 
-            async checkCustomerTyping() {
+            async checkTyping() {
                 try {
-                    const res = await fetch(@json($customerTypingUrl), {
-                        headers: { 'Accept': 'application/json' }
-                    });
+                    const res = await fetch(@json($customerTypingUrl), { headers: { 'Accept': 'application/json' } });
                     if (res.ok) {
                         const data = await res.json();
                         this.customerIsTyping = data.typing;
-                        if (data.typing) {
-                            this.$nextTick(() => this.scrollToBottom());
-                        }
+                        if (data.typing) this.$nextTick(() => this.scrollBottom());
                     }
                 } catch (e) {}
             },
 
-            scrollToBottom() {
-                const container = this.$refs.chatMessages;
-                if (container) container.scrollTop = container.scrollHeight;
+            scrollBottom() {
+                const el = this.$refs.chatMessages;
+                if (el) el.scrollTop = el.scrollHeight;
             },
 
-            formatMessageAdmin(text) {
-                return text.replace(/\n/g, '<br>');
+            formatMsg(text) {
+                if (!text) return '';
+                return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
             },
 
-            formatTime(datetime) {
-                const d = new Date(datetime);
-                const now = new Date();
-                const isToday = d.toDateString() === now.toDateString();
-                if (isToday) {
-                    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                }
-                return d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            formatTime(dt) {
+                const d = new Date(dt);
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
         }
     }

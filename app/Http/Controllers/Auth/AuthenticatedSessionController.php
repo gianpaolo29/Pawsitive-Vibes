@@ -97,8 +97,11 @@ class AuthenticatedSessionController extends Controller
 
         session()->flash('welcome_user', $user->fname ?? $user->username);
 
-        // Admin always goes to dashboard, never follow intended URL
+        // Admin: check if 2FA is enabled, redirect to challenge first
         if ($user->role === 'ADMIN') {
+            if ($user->two_factor_confirmed_at) {
+                return redirect()->route('admin.two-factor.challenge');
+            }
             return redirect()->route('admin.dashboard');
         }
 
@@ -108,6 +111,8 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        $request->session()->forget('admin_2fa_verified');
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
