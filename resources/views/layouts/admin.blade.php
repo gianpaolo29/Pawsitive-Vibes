@@ -19,6 +19,11 @@
         ? $user->unreadNotifications()->count()
         : 0;
 
+    $unreadChatCount = \App\Models\ChatMessage::where('sender_type', 'customer')
+        ->where('is_read', false)->count();
+
+    $openTicketsCount = \App\Models\SupportTicket::whereIn('status', ['open', 'in_progress'])->count();
+
     // Get latest 7 notifications (read + unread)
     $recentNotifications = $user
         ? $user->notifications()->latest()->take(7)->get()
@@ -31,6 +36,8 @@
         'Customers'  => ['route' => 'admin/customers',  'icon' => 'M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM21 8.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0ZM8.624 21A12.3 12.3 0 0 1 3 19.234a6.375 6.375 0 0 1 11.964-3.07M15 19.234a9.5 9.5 0 0 0 7.5-.734 4.125 4.125 0 0 0-7.533-2.493'],
         'Analytics'  => ['route' => 'admin/analytics',  'icon' => 'M4.5 19.5h15M6 16.5V9m6 7.5V6m6 13.5V12'],
         'Donations'  => ['route' => 'admin/donations',  'icon' => 'M4.5 19.5h15M6 16.5V9m6 7.5V6m6 13.5V12'],
+        'Tickets'    => ['route' => 'admin/tickets',    'icon' => 'M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z'],
+        'Chat'       => ['route' => 'admin/chat',       'icon' => 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'],
     ];
 
     $order_group = [
@@ -117,12 +124,45 @@
             -webkit-backdrop-filter: blur(12px) saturate(180%);
         }
 
-        /* Transparent tooltip */
-        .tooltip-transparent {
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Premium tooltip */
+        .premium-tooltip {
+            position: absolute;
+            left: calc(100% + 14px);
+            top: 50%;
+            transform: translateY(-50%) scale(0.92);
+            padding: 8px 14px;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.92), rgba(139, 92, 246, 0.92));
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            border-radius: 10px;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 999;
+            box-shadow: 0 8px 24px rgba(109, 40, 217, 0.35), 0 2px 8px rgba(0,0,0,0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .premium-tooltip::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.92), rgba(126, 58, 242, 0.92));
+            border-left: 1px solid rgba(255, 255, 255, 0.18);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 2px;
+        }
+        .group:hover > .premium-tooltip {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
         }
 
         [x-cloak]{ display:none !important; }
@@ -206,12 +246,12 @@
         :class="sidebarCollapsed ? 'lg:w-[var(--sidebar-mini)]' : 'lg:w-[var(--sidebar-lg)]'"
     >
         <div class="px-3 pt-4 pb-2">
-            <div class="flex items-center gap-2 h-12 px-2">
-                <div class="relative">
-                    <img src="{{ asset('images/pawsitive-logo.jpg') }}" class="h-10 w-10 rounded-xl shadow-lg ring-2 ring-violet-300/50  smooth-animate" alt="Pawsitive Logo">
+            <div class="flex items-center h-12 smooth-animate" :class="sidebarCollapsed ? 'justify-center px-0' : 'gap-2 px-2'">
+                <div class="relative shrink-0">
+                    <img src="{{ asset('images/pawsitive-logo.jpg') }}" class="h-10 w-10 rounded-xl shadow-lg ring-2 ring-violet-300/50 smooth-animate" alt="Pawsitive Logo">
                     <div class="absolute -inset-1 bg-violet-400/20 rounded-xl blur-sm -z-10"></div>
                 </div>
-                <span class="font-[Pacifico] text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent  truncate smooth-animate"
+                <span class="font-[Pacifico] text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent truncate smooth-animate"
                     x-show="!sidebarCollapsed"
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 translate-x-3"
@@ -224,22 +264,33 @@
             @foreach($nav_items as $name => $item)
                 @php $nav = nav_active($item['route'].'*'); @endphp
                 <a href="{{ url($item['route']) }}"
-                   @mouseenter="if(sidebarCollapsed) { $el.setAttribute('data-tooltip', '{{ $name }}') }"
-                   @mouseleave="if(sidebarCollapsed) { $el.removeAttribute('data-tooltip') }"
-                   class="group relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm smooth-animate {{ $nav['link'] }}">
+                   class="group relative flex items-center rounded-xl py-3 text-sm smooth-animate {{ $nav['link'] }}"
+                   :class="sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3'">
                     <svg class="h-5 w-5 shrink-0 transition-all duration-200 {{ $nav['icon'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                         <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate font-medium">{{ $name }}</span>
 
-                    {{-- Transparent Tooltip for collapsed state --}}
-                    <template x-if="sidebarCollapsed">
-                        <div class="absolute left-full ml-3 px-3 py-2 text-xs font-medium text-white tooltip-transparent rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap"
-                             x-data="{ tooltip: '' }"
-                             x-init="$watch('sidebarCollapsed', (value) => { if(value) { $el.style.display = 'block'; } else { $el.style.display = 'none'; } })">
-                            {{ $name }}
-                        </div>
-                    </template>
+                    @if($name === 'Tickets' && $openTicketsCount > 0)
+                        <span x-show="!sidebarCollapsed" class="ml-auto inline-flex items-center justify-center w-5 h-5 bg-orange-500 text-white text-[10px] font-bold rounded-full animate-pulse">
+                            {{ $openTicketsCount > 9 ? '9+' : $openTicketsCount }}
+                        </span>
+                        <span x-show="sidebarCollapsed" class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 bg-orange-500 text-white text-[8px] font-bold rounded-full animate-pulse">
+                            {{ $openTicketsCount > 9 ? '9+' : $openTicketsCount }}
+                        </span>
+                    @endif
+
+                    @if($name === 'Chat' && $unreadChatCount > 0)
+                        <span x-show="!sidebarCollapsed" class="ml-auto inline-flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-pulse">
+                            {{ $unreadChatCount > 9 ? '9+' : $unreadChatCount }}
+                        </span>
+                        <span x-show="sidebarCollapsed" class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full animate-pulse">
+                            {{ $unreadChatCount > 9 ? '9+' : $unreadChatCount }}
+                        </span>
+                    @endif
+
+                    {{-- Premium Tooltip for collapsed state --}}
+                    <div x-show="sidebarCollapsed" class="premium-tooltip">{{ $name }}</div>
                 </a>
             @endforeach
 
@@ -266,13 +317,11 @@
                     {{-- Parent Toggle Button --}}
                     <button
                         @click="ordersOpen = !ordersOpen"
-                        @mouseenter="if(sidebarCollapsed) { $el.setAttribute('data-tooltip', '{{ $groupName }}') }"
-                        @mouseleave="if(sidebarCollapsed) { $el.removeAttribute('data-tooltip') }"
-                        class="group relative flex w-full items-center rounded-xl px-3 py-3 text-sm smooth-animate {{ $parentLinkClasses }}"
-                        :class="sidebarCollapsed ? 'justify-center' : 'justify-between'"
+                        class="group relative flex w-full items-center rounded-xl py-3 text-sm smooth-animate {{ $parentLinkClasses }}"
+                        :class="sidebarCollapsed ? 'justify-center px-0' : 'justify-between px-3'"
                         :aria-expanded="ordersOpen.toString()"
                     >
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center" :class="sidebarCollapsed ? '' : 'gap-3'">
                             <svg class="h-5 w-5 shrink-0 transition-all duration-200 {{ $parentIconClasses }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                                 <path d="{{ $group['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
@@ -283,12 +332,8 @@
                             <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
 
-                        {{-- Transparent Tooltip for collapsed state --}}
-                        <template x-if="sidebarCollapsed">
-                            <div class="absolute left-full ml-3 px-3 py-2 text-xs font-medium text-white tooltip-transparent rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap">
-                                {{ $groupName }}
-                            </div>
-                        </template>
+                        {{-- Premium Tooltip for collapsed state --}}
+                        <div x-show="sidebarCollapsed" class="premium-tooltip">{{ $groupName }}</div>
                     </button>
 
                     {{-- Collapsible Child Menu --}}
@@ -320,28 +365,24 @@
             @foreach($loyalty_items as $name => $item)
                 @php $nav = nav_active($item['route'].'*'); @endphp
                 <a href="{{ url($item['route']) }}"
-                   @mouseenter="if(sidebarCollapsed) { $el.setAttribute('data-tooltip', '{{ $name }}') }"
-                   @mouseleave="if(sidebarCollapsed) { $el.removeAttribute('data-tooltip') }"
-                   class="group relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm smooth-animate {{ $nav['link'] }}">
+                   class="group relative flex items-center rounded-xl py-3 text-sm smooth-animate {{ $nav['link'] }}"
+                   :class="sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3'">
                     <svg class="h-5 w-5 shrink-0 transition-all duration-200 {{ $nav['icon'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                         <path d="{{ $item['icon'] }}" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="truncate font-medium">{{ $name }}</span>
 
-                    {{-- Transparent Tooltip for collapsed state --}}
-                    <template x-if="sidebarCollapsed">
-                        <div class="absolute left-full ml-3 px-3 py-2 text-xs font-medium text-white tooltip-transparent rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap">
-                            {{ $name }}
-                        </div>
-                    </template>
+                    {{-- Premium Tooltip for collapsed state --}}
+                    <div x-show="sidebarCollapsed" class="premium-tooltip">{{ $name }}</div>
                 </a>
             @endforeach
         </nav>
 
         {{-- Sidebar Footer --}}
-        <div class="p-4 border-t border-violet-200/30 dark:border-violet-700/30 mt-auto">
-            <div class="flex items-center gap-3 px-2 py-2 rounded-xl bg-violet-50/50 dark:bg-violet-900/20 backdrop-blur-sm">
-                <div class="h-9 w-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+        <div class="border-t border-violet-200/30 dark:border-violet-700/30 mt-auto" :class="sidebarCollapsed ? 'p-2' : 'p-4'">
+            <div class="flex items-center rounded-xl bg-violet-50/50 dark:bg-violet-900/20 backdrop-blur-sm smooth-animate"
+                 :class="sidebarCollapsed ? 'justify-center p-2' : 'gap-3 px-2 py-2'">
+                <div class="h-9 w-9 shrink-0 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
                     {{ strtoupper(substr($user->name ?? 'A', 0, 1)) }}
                 </div>
                 <div x-show="!sidebarCollapsed" x-transition.opacity.duration.300 class="flex-1 min-w-0">

@@ -37,6 +37,7 @@
             </main>
         </div>
         @include('layouts.footer')
+        @include('components.chat-widget')
 
         @if(session('welcome_user'))
         <script>

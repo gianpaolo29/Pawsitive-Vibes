@@ -18,6 +18,12 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Admin\AdminTwoFactorController;
+use App\Http\Controllers\Admin\SecurityMonitoringController;
+use App\Http\Controllers\Customer\ChatController as CustomerChatController;
+use App\Http\Controllers\Admin\ChatController as AdminChatController;
+use App\Http\Controllers\SupportTicketController;
+use App\Http\Controllers\Admin\SupportTicketController as AdminSupportTicketController;
 
 
 
@@ -29,6 +35,14 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+
+// Support Tickets (public - for blocked users)
+Route::prefix('support')->name('support.')->group(function () {
+    Route::get('/ticket', [SupportTicketController::class, 'create'])->name('ticket.create');
+    Route::post('/ticket', [SupportTicketController::class, 'store'])->name('ticket.store');
+    Route::get('/ticket/success', [SupportTicketController::class, 'success'])->name('ticket.success');
+    Route::get('/ticket/track', [SupportTicketController::class, 'track'])->name('ticket.track');
+});
 
 
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
@@ -52,6 +66,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 
     Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
+    Route::get('/profile/login-activity', [ProfileController::class, 'loginActivity'])->name('profile.login-activity');
     Route::patch('/profile/security-questions', [ProfileController::class, 'updateSecurityQuestions'])->name('profile.security-questions.update');
     Route::get('/profile/two-factor/setup', [\App\Http\Controllers\Auth\TwoFactorController::class, 'setup'])->name('profile.two-factor.setup');
     Route::post('/profile/two-factor/confirm', [\App\Http\Controllers\Auth\TwoFactorController::class, 'confirmSetup'])->name('profile.two-factor.confirm');
@@ -66,12 +81,39 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
 });
 
 
+// Chat (accessible to both guests and logged-in users)
+Route::prefix('chat')->name('chat.')->group(function () {
+    Route::get('/messages', [CustomerChatController::class, 'index'])->name('messages');
+    Route::post('/send', [CustomerChatController::class, 'store'])->name('send');
+    Route::get('/unread', [CustomerChatController::class, 'unread'])->name('unread');
+    Route::post('/mark-read', [CustomerChatController::class, 'markRead'])->name('markRead');
+    Route::get('/suggestions', [CustomerChatController::class, 'suggestions'])->name('suggestions');
+    Route::post('/typing', [CustomerChatController::class, 'typing'])->name('typing');
+    Route::get('/admin-typing', [CustomerChatController::class, 'adminTyping'])->name('adminTyping');
+});
+
+// Admin 2FA challenge routes (auth required, but BEFORE the 2FA middleware)
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->group(function () {
+    Route::get('/two-factor/challenge', [AdminTwoFactorController::class, 'challenge'])->name('two-factor.challenge');
+    Route::post('/two-factor/verify', [AdminTwoFactorController::class, 'verify'])->name('two-factor.verify');
+});
+
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN', 'admin.2fa'])->group(function () {
     Route::get('/search/suggestions', [\App\Http\Controllers\Admin\SearchController::class, 'suggestions'])->name('search.suggestions');
     Route::get('/search/customers', [\App\Http\Controllers\Admin\SearchController::class, 'customerSuggestions'])->name('search.customers');
     Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile');
     Route::patch('/profile', [AdminProfileController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('password.update');
+
+    // Two-Factor Authentication management
+    Route::get('/two-factor/setup', [AdminTwoFactorController::class, 'setup'])->name('two-factor.setup');
+    Route::post('/two-factor/confirm', [AdminTwoFactorController::class, 'confirmSetup'])->name('two-factor.confirm');
+    Route::delete('/two-factor', [AdminTwoFactorController::class, 'disable'])->name('two-factor.disable');
+    Route::get('/two-factor/recovery-codes', [AdminTwoFactorController::class, 'recoveryCodes'])->name('two-factor.recovery-codes');
+    // Security Monitoring
+    Route::get('/security-monitoring', [SecurityMonitoringController::class, 'index'])->name('security-monitoring');
+    Route::get('/security-monitoring/export', [SecurityMonitoringController::class, 'exportReport'])->name('security-monitoring.export');
+
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
@@ -121,7 +163,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::get('/donations', [\App\Http\Controllers\Admin\DonationController::class, 'index'])->name('donations.index');
     Route::post('/donations/{donation}/verify', [\App\Http\Controllers\Admin\DonationController::class, 'verify'])->name('donations.verify');
 
+    // Support Tickets
+    Route::get('/tickets', [AdminSupportTicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/{ticket}', [AdminSupportTicketController::class, 'show'])->name('tickets.show');
+    Route::patch('/tickets/{ticket}/approve', [AdminSupportTicketController::class, 'approve'])->name('tickets.approve');
+    Route::patch('/tickets/{ticket}/reject', [AdminSupportTicketController::class, 'reject'])->name('tickets.reject');
+    Route::patch('/tickets/{ticket}/in-progress', [AdminSupportTicketController::class, 'markInProgress'])->name('tickets.markInProgress');
 
+    // Chat
+    Route::get('/chat', [AdminChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{id}', [AdminChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{id}/reply', [AdminChatController::class, 'reply'])->name('chat.reply');
+    Route::get('/chat/{id}/messages', [AdminChatController::class, 'messages'])->name('chat.messages');
+    Route::post('/chat/{id}/typing', [AdminChatController::class, 'typing'])->name('chat.typing');
+    Route::get('/chat/{id}/customer-typing', [AdminChatController::class, 'customerTyping'])->name('chat.customerTyping');
+    Route::get('/chat-unread-total', [AdminChatController::class, 'unreadTotal'])->name('chat.unreadTotal');
 });
 
 

@@ -225,12 +225,42 @@
 
             @if ($errors->has('email'))
                 @php $errorMsg = $errors->first('email'); @endphp
-                @if ($errorMsg === 'deactivated')
+                @if ($errorMsg === 'blocked_suspicious')
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Account Blocked',
+                        html: `
+                            <div style="text-align:center;">
+                                <div style="font-size:40px;margin-bottom:10px;">🚨</div>
+                                <p style="color:#444;margin-bottom:12px;">Your account has been <strong>temporarily blocked</strong> due to suspicious login activity.</p>
+                                <p style="color:#666;font-size:13px;">We detected logins from multiple different locations in a short period. For your security, the account is locked for <strong>24 hours</strong>.</p>
+                                <p style="color:#888;font-size:12px;margin-top:12px;">Need help? Submit a reactivation ticket.</p>
+                            </div>
+                        `,
+                        confirmButtonColor: '#8a2be2',
+                        confirmButtonText: 'Submit Ticket',
+                        showCancelButton: true,
+                        cancelButtonText: 'Close',
+                        cancelButtonColor: '#6b7280',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '{{ route("support.ticket.create") }}?email=' + document.getElementById('email')?.value;
+                        }
+                    });
+                @elseif ($errorMsg === 'deactivated')
                     Swal.fire({
                         icon: 'error',
                         title: 'Account Deactivated',
-                        html: 'Your account has been deactivated by an administrator.<br><br><small style="color:#666">Please contact support for assistance.</small>',
+                        html: 'Your account has been deactivated by an administrator.<br><br><small style="color:#666">Submit a ticket to request reactivation.</small>',
                         confirmButtonColor: '#8a2be2',
+                        confirmButtonText: 'Submit Ticket',
+                        showCancelButton: true,
+                        cancelButtonText: 'Close',
+                        cancelButtonColor: '#6b7280',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '{{ route("support.ticket.create") }}?email=' + document.getElementById('email')?.value;
+                        }
                     });
                 @elseif (str_starts_with($errorMsg, 'locked:'))
                     Swal.fire({

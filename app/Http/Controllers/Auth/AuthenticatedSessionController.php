@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\LoginSecurityService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,13 +56,38 @@ class AuthenticatedSessionController extends Controller
             return back()->withErrors(['email' => 'failed:' . $remaining])->onlyInput('email');
         }
 
-        // Check if account is deactivated
         $user = $request->user();
+
+        // Check if time-based block has expired
+        if (!$user->is_active && $user->blocked_until && $user->blocked_until->isPast()) {
+            $user->update([
+                'is_active' => true,
+                'blocked_reason' => null,
+                'blocked_until' => null,
+            ]);
+        }
+
+        // Check if account is deactivated
         if (!$user->is_active) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
+
+            $reason = $user->blocked_reason ?? '';
+            if (str_contains($reason, 'Suspicious')) {
+                return back()->withErrors(['email' => 'blocked_suspicious'])->onlyInput('email');
+            }
             return back()->withErrors(['email' => 'deactivated'])->onlyInput('email');
+        }
+
+        // Log the login and check for suspicious activity
+        $securityCheck = LoginSecurityService::logAndCheck($user, $request);
+
+        if ($securityCheck['blocked']) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return back()->withErrors(['email' => 'blocked_suspicious'])->onlyInput('email');
         }
 
         // Success — clear everything
@@ -71,8 +97,11 @@ class AuthenticatedSessionController extends Controller
 
         session()->flash('welcome_user', $user->fname ?? $user->username);
 
-        // Admin always goes to dashboard, never follow intended URL
+        // Admin: check if 2FA is enabled, redirect to challenge first
         if ($user->role === 'ADMIN') {
+            if ($user->two_factor_confirmed_at) {
+                return redirect()->route('admin.two-factor.challenge');
+            }
             return redirect()->route('admin.dashboard');
         }
 
@@ -82,6 +111,8 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        $request->session()->forget('admin_2fa_verified');
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

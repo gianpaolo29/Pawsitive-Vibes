@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('chat_messages', function (Blueprint $table) {
+            if (!Schema::hasColumn('chat_messages', 'session_id')) {
+                $table->string('session_id')->nullable()->index()->after('user_id');
+            }
+            if (!Schema::hasColumn('chat_messages', 'guest_name')) {
+                $table->string('guest_name')->nullable()->after('session_id');
+            }
+            if (!Schema::hasColumn('chat_messages', 'guest_email')) {
+                $table->string('guest_email')->nullable()->after('guest_name');
+            }
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('chat_messages', function (Blueprint $table) {
+            $table->dropColumn(['session_id', 'guest_name', 'guest_email']);
+        });
+    }
+};

@@ -78,6 +78,37 @@ class ProfileController extends Controller
     }
 
     /**
+     * Show login activity and suspicious activity tracking.
+     */
+    public function loginActivity()
+    {
+        $user = Auth::user();
+
+        if (! $user || strtoupper($user->role) !== 'CUSTOMER') {
+            abort(403, 'Unauthorized');
+        }
+
+        $loginLogs = $user->loginLogs()
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
+        // Stats
+        $totalLogins = $user->loginLogs()->count();
+        $suspiciousCount = $user->loginLogs()->where('is_suspicious', true)->count();
+        $uniqueIps = $user->loginLogs()->distinct('ip_address')->count('ip_address');
+        $lastLogin = $user->loginLogs()->orderByDesc('created_at')->first();
+
+        return view('customer.profile.login-activity', [
+            'user' => $user,
+            'loginLogs' => $loginLogs,
+            'totalLogins' => $totalLogins,
+            'suspiciousCount' => $suspiciousCount,
+            'uniqueIps' => $uniqueIps,
+            'lastLogin' => $lastLogin,
+        ]);
+    }
+
+    /**
      * Update security questions.
      */
     public function updateSecurityQuestions(Request $request)
