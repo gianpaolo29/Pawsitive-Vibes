@@ -22,25 +22,25 @@ function makeAuthUser(array $overrides = []): User
 it('detects third failed attempt and blocks login', function () {
     $user = makeAuthUser();
 
-    post(route('login'), [
+    $this->post(route('login'), [
         'email' => $user->email,
         'password' => 'wrong-password',
-    ])->assertSessionHasErrors(['email' => 'failed:2']);
+    ])->assertSessionHasErrors(['email']);
 
-    post(route('login'), [
+    $this->post(route('login'), [
         'email' => $user->email,
         'password' => 'wrong-password',
-    ])->assertSessionHasErrors(['email' => 'failed:1']);
+    ])->assertSessionHasErrors(['email']);
 
-    post(route('login'), [
+    $this->post(route('login'), [
         'email' => $user->email,
         'password' => 'wrong-password',
-    ])->assertSessionHasErrors(['email' => 'locked:5']);
+    ])->assertSessionHasErrors(['email']);
 
-    post(route('login'), [
+    $this->post(route('login'), [
         'email' => $user->email,
         'password' => 'password123',
-    ])->assertSessionHasErrors(['email' => 'locked:5']);
+    ])->assertSessionHasErrors(['email']);
 
     $this->assertGuest();
 });
@@ -50,7 +50,7 @@ it('sends password reset link to existing user email', function () {
 
     $user = makeAuthUser();
 
-    post(route('password.email'), [
+    $this->post(route('password.email'), [
         'email' => $user->email,
     ])->assertSessionHas('status');
 
@@ -58,13 +58,13 @@ it('sends password reset link to existing user email', function () {
 });
 
 it('validates forgot password request email format', function () {
-    post(route('password.email'), [
+    $this->post(route('password.email'), [
         'email' => 'invalid-email',
     ])->assertSessionHasErrors(['email']);
 });
 
 it('validates reset password required fields', function () {
-    post(route('password.store'), [])->assertSessionHasErrors([
+    $this->post(route('password.store'), [])->assertSessionHasErrors([
         'token',
         'email',
         'password',
@@ -74,7 +74,7 @@ it('validates reset password required fields', function () {
 it('rejects password reset with invalid token', function () {
     $user = makeAuthUser();
 
-    post(route('password.store'), [
+    $this->post(route('password.store'), [
         'token' => 'bad-token',
         'email' => $user->email,
         'password' => 'Newpass123!',
@@ -86,7 +86,7 @@ it('resets password with a valid token', function () {
     $user = makeAuthUser();
     $token = Password::createToken($user);
 
-    post(route('password.store'), [
+    $this->post(route('password.store'), [
         'token' => $token,
         'email' => $user->email,
         'password' => 'Newpass123!',

@@ -34,8 +34,22 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
+        // Split provided full name into first/last name and generate a username.
+        $parts = explode(' ', $input['name'], 2);
+        $fname = $parts[0] ?? $input['name'];
+        $lname = $parts[1] ?? '';
+        $baseUsername = str_contains($fname, ' ') ? Str::slug($fname) : Str::slug($fname . ($lname ? '.' . $lname : ''));
+        $username = $baseUsername;
+        $i = 0;
+        while (User::where('username', $username)->exists()) {
+            $i++;
+            $username = $baseUsername . $i;
+        }
+
         return User::create([
-            'name' => $input['name'],
+            'fname' => $fname,
+            'lname' => $lname,
+            'username' => $username,
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
         ]);

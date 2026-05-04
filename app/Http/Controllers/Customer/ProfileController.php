@@ -59,6 +59,8 @@ class ProfileController extends Controller
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
 
+        $oldEmail = $user->email;
+
         $updateData = [
             'fname'    => $validated['fname'],
             'lname'    => $validated['lname'],
@@ -71,6 +73,12 @@ class ProfileController extends Controller
         }
 
         $user->update($updateData);
+
+        // If the email address changed, clear verification timestamp
+        if ($validated['email'] !== $oldEmail) {
+            $user->email_verified_at = null;
+            $user->save();
+        }
 
         return redirect()
             ->route('customer.profile')
@@ -133,5 +141,31 @@ class ProfileController extends Controller
         return redirect()
             ->route('customer.profile')
             ->with('success', 'Security questions updated successfully.');
+    }
+
+    /**
+     * Delete the logged-in customer's account after password confirmation.
+     */
+    public function destroy(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user || strtoupper($user->role) !== 'CUSTOMER') {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'password' => ['required', 'string'],
+        ]);
+
+        if (! Hash::check($request->input('password'), $user->password)) {
+            return back()->withErrors(['password' => 'The provided password is incorrect.'], 'userDeletion');
+        }
+
+        Auth::logout();
+
+        $user->delete();
+
+        return redirect('/');
     }
 }
