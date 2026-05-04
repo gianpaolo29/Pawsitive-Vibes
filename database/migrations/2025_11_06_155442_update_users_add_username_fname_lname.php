@@ -65,9 +65,9 @@ return new class extends Migration
             $table->unique('username');
         });
 
-        DB::statement('ALTER TABLE users MODIFY fname VARCHAR(100) NOT NULL');
-        DB::statement('ALTER TABLE users MODIFY lname VARCHAR(100) NOT NULL');
-        DB::statement('ALTER TABLE users MODIFY username VARCHAR(100) NOT NULL');
+        // SQLite doesn't support MODIFY
+        
+        
 
 
         Schema::table('users', function (Blueprint $table) {
@@ -97,3 +97,4 @@ return new class extends Migration
         });
     }
 };
+
