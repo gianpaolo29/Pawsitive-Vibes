@@ -59,6 +59,8 @@ class ProfileController extends Controller
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
 
+        $oldEmail = $user->email;
+
         $updateData = [
             'fname'    => $validated['fname'],
             'lname'    => $validated['lname'],
@@ -71,6 +73,12 @@ class ProfileController extends Controller
         }
 
         $user->update($updateData);
+
+        // If the email address changed, clear verification timestamp
+        if ($validated['email'] !== $oldEmail) {
+            $user->email_verified_at = null;
+            $user->save();
+        }
 
         return redirect()
             ->route('customer.profile')
@@ -107,5 +115,6 @@ class ProfileController extends Controller
             'lastLogin' => $lastLogin,
         ]);
     }
+
 
 }

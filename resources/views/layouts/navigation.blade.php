@@ -13,7 +13,8 @@
 
         $iconClass = "h-6 w-6";
 
-        function navLink($url, $label, $iconSvg, $active, $class) {
+        if (! function_exists('navLink')) {
+            function navLink($url, $label, $iconSvg, $active, $class) {
             if (!Auth::check()) {
                 // Guest: auto redirect to login
                 return '
@@ -31,6 +32,7 @@
                     <span class="text-xs mt-1">'.$label.'</span>
                 </a>
             ';
+            };
         }
     @endphp
 

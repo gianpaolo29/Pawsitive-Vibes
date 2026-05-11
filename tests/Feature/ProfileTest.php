@@ -3,59 +3,64 @@
 use App\Models\User;
 
 test('profile page is displayed', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['role' => 'CUSTOMER']);
 
     $response = $this
         ->actingAs($user)
-        ->get('/profile');
+        ->get('/customer/profile');
 
     $response->assertOk();
 });
 
 test('profile information can be updated', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['role' => 'CUSTOMER']);
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile', [
-            'name' => 'Test User',
+        ->patch('/customer/profile', [
+            'fname' => 'Test',
+            'lname' => 'User',
+            'username' => 'testuser',
             'email' => 'test@example.com',
         ]);
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/profile');
+        ->assertRedirect('/customer/profile');
 
     $user->refresh();
 
-    $this->assertSame('Test User', $user->name);
+    $this->assertSame('Test', $user->fname);
+    $this->assertSame('User', $user->lname);
     $this->assertSame('test@example.com', $user->email);
     $this->assertNull($user->email_verified_at);
 });
 
 test('email verification status is unchanged when the email address is unchanged', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['role' => 'CUSTOMER']);
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile', [
-            'name' => 'Test User',
+        ->patch('/customer/profile', [
+            'fname' => 'Test',
+            'lname' => 'User',
+            'username' => $user->username,
             'email' => $user->email,
         ]);
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/profile');
+        ->assertRedirect('/customer/profile');
 
     $this->assertNotNull($user->refresh()->email_verified_at);
 });
 
 test('user can delete their account', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['role' => 'CUSTOMER']);
 
     $response = $this
         ->actingAs($user)
-        ->delete('/profile', [
+        ->delete('/customer/profile', [
             'password' => 'password',
         ]);
 
@@ -68,18 +73,18 @@ test('user can delete their account', function () {
 });
 
 test('correct password must be provided to delete account', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['role' => 'CUSTOMER']);
 
     $response = $this
         ->actingAs($user)
-        ->from('/profile')
-        ->delete('/profile', [
+        ->from('/customer/profile')
+        ->delete('/customer/profile', [
             'password' => 'wrong-password',
         ]);
 
     $response
         ->assertSessionHasErrorsIn('userDeletion', 'password')
-        ->assertRedirect('/profile');
+        ->assertRedirect('/customer/profile');
 
     $this->assertNotNull($user->fresh());
 });
