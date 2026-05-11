@@ -249,18 +249,18 @@ function chatWidget() {
         suggestions: [
             { text: 'How do I track my order?', icon: 'package' },
             { text: 'What are your payment methods?', icon: 'credit-card' },
-            { text: 'How long is shipping?', icon: 'truck' },
-            { text: 'Do you have a refund policy?', icon: 'refresh' },
-            { text: 'Where are you located?', icon: 'map-pin' },
+            { text: 'How do I buy products?', icon: 'truck' },
             { text: 'How can I donate?', icon: 'heart' },
+            { text: 'Any promotions available?', icon: 'refresh' },
+            { text: 'I need help with my account', icon: 'map-pin' },
             { text: 'My account is blocked', icon: 'ticket', action: 'ticket' },
         ],
 
         suggestionsCompact: [
             'Track order',
             'Payment methods',
-            'Shipping info',
-            'Refund policy',
+            'How to buy',
+            'Donate',
             'Submit a ticket',
         ],
 

@@ -156,23 +156,25 @@
 
                 <!-- Password -->
                 <div class="input-group" style="margin-bottom:16px">
+                <div style="position:relative">
                 <input type="password" id="password" name="password"
                         class="input-field @error('password') error @enderror"
-                        placeholder=" " required autocomplete="new-password">
+                        placeholder=" " required autocomplete="new-password" maxlength="16">
                 <label for="password" class="input-label">Password</label>
 
                 <!-- eye button -->
                 <button type="button" class="password-toggle" id="togglePassword">
                     <i class="far fa-eye"></i>
                 </button>
+                </div>
 
-                @error('password') 
+                @error('password')
                     <div class="error-message show">{{ $message }}</div>
                 @enderror
 
                 <div class="password-requirements">
                     <div class="requirement" id="length-req">
-                    <i class="far fa-circle"></i><span>Minimum 8 characters</span>
+                    <i class="far fa-circle"></i><span>8 - 16 characters (no spaces)</span>
                     </div>
                     <div class="requirement" id="uppercase-req">
                     <i class="far fa-circle"></i><span>Contains an uppercase letter</span>
@@ -185,6 +187,9 @@
                     </div>
                     <div class="requirement" id="symbol-req">
                     <i class="far fa-circle"></i><span>Contains a symbol</span>
+                    </div>
+                    <div class="requirement" id="nospace-req">
+                    <i class="far fa-circle"></i><span>No spaces allowed</span>
                     </div>
                     <div class="requirement" id="unique-req">
                     <i class="far fa-circle"></i><span>Not similar to your name or username</span>
@@ -199,17 +204,19 @@
 
                 <!-- Confirm Password -->
                 <div class="input-group">
+                <div style="position:relative">
                 <input type="password" id="confirmPassword" name="password_confirmation"
                         class="input-field @error('password_confirmation') error @enderror"
-                        placeholder=" " required autocomplete="new-password">
+                        placeholder=" " required autocomplete="new-password" maxlength="16">
                 <label for="confirmPassword" class="input-label">Confirm Password</label>
 
                 <!-- eye button -->
                 <button type="button" class="password-toggle" id="toggleConfirmPassword">
                     <i class="far fa-eye"></i>
                 </button>
+                </div>
 
-                @error('password_confirmation') 
+                @error('password_confirmation')
                     <div class="error-message show">{{ $message }}</div>
                 @enderror
 
@@ -265,6 +272,7 @@
         const lowercaseReq = document.getElementById('lowercase-req');
         const numberReq    = document.getElementById('number-req');
         const symbolReq    = document.getElementById('symbol-req');
+        const nospaceReq   = document.getElementById('nospace-req');
         const uniqueReq    = document.getElementById('unique-req');
         const strengthEl   = document.getElementById('password-strength');
         const confirmErr   = document.getElementById('confirm-password-error');
@@ -307,7 +315,9 @@
             const last  = (lastEl?.value || '').toLowerCase();
             const uname = (userEl?.value || '').toLowerCase();
 
-            const hasLen    = pwd.length >= 8;
+            const noSpaces  = !/\s/.test(pwd);
+            const stripped  = pwd.replace(/\s/g, '');
+            const hasLen    = stripped.length >= 8 && stripped.length <= 16;
             const hasUpper  = /[A-Z]/.test(pwd);
             const hasLower  = /[a-z]/.test(pwd);
             const hasNum    = /\d/.test(pwd);
@@ -323,11 +333,12 @@
             setReq(lowercaseReq, hasLower);
             setReq(numberReq, hasNum);
             setReq(symbolReq, hasSymbol);
+            setReq(nospaceReq, noSpaces);
             setReq(uniqueReq, !similar);
 
             if (!strengthEl) return;
 
-            const score = [hasLen, hasUpper, hasLower, hasNum, hasSymbol, !similar].filter(Boolean).length;
+            const score = [hasLen, hasUpper, hasLower, hasNum, hasSymbol, noSpaces, !similar].filter(Boolean).length;
 
             if (!pwd) {
             strengthEl.textContent = 'Please choose a stronger password.';
@@ -341,6 +352,11 @@
             } else {
             strengthEl.textContent = 'Strong password';
             strengthEl.className = 'password-strength strong';
+            }
+
+            // Strip spaces from password fields in real-time
+            if (pwd !== pwd.replace(/\s/g, '')) {
+            passEl.value = pwd.replace(/\s/g, '');
             }
 
             checkMatch();

@@ -17,7 +17,14 @@ class DonateController extends Controller
     {
         $products = Product::where('is_active', true)->where('stock', '>', 0)->get();
 
-        return view('customer.donate.show', compact('products'));
+        // Suggest the most affordable products (easy to donate)
+        $suggestedProducts = Product::where('is_active', true)
+            ->where('stock', '>', 0)
+            ->orderBy('price', 'asc')
+            ->take(6)
+            ->get();
+
+        return view('customer.donate.show', compact('products', 'suggestedProducts'));
     }
 
     public function store(Request $request)

@@ -8,7 +8,6 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\SecurityQuestionController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,21 +34,6 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 
-    // Security question recovery routes
-    Route::get('recovery-options', [SecurityQuestionController::class, 'showRecoveryOptions'])
-        ->name('recovery.options');
-
-    Route::get('security-questions', [SecurityQuestionController::class, 'showQuestions'])
-        ->name('security.questions');
-
-    Route::post('security-questions', [SecurityQuestionController::class, 'verify'])
-        ->name('security.verify');
-
-    Route::get('security-reset/{token}', [SecurityQuestionController::class, 'showResetForm'])
-        ->name('security.reset-password');
-
-    Route::post('security-reset', [SecurityQuestionController::class, 'resetPassword'])
-        ->name('security.reset-password.store');
 });
 
 Route::middleware('auth')->group(function () {

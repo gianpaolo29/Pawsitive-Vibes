@@ -19,7 +19,7 @@ class ChatController extends Controller
         ],
         'shipping' => [
             'keywords' => ['shipping', 'deliver', 'delivery', 'how long', 'ship', 'arrive', 'when will'],
-            'reply' => "We deliver within Metro Manila! Standard delivery takes 2-3 business days. For orders outside Metro Manila, it may take 5-7 business days. You'll receive a notification once your order is shipped.",
+            'reply' => "Once your order is confirmed and payment is verified, we'll process it right away. You can track your order status anytime in Profile > Transactions. For specific delivery concerns, feel free to message us!",
         ],
         'payment' => [
             'keywords' => ['payment', 'pay', 'gcash', 'cash', 'how to pay', 'payment method', 'cod'],
@@ -27,43 +27,47 @@ class ChatController extends Controller
         ],
         'refund' => [
             'keywords' => ['refund', 'return', 'exchange', 'cancel', 'money back', 'cancelled'],
-            'reply' => "For refunds and returns, please contact us with your order number and reason. We process refunds within 3-5 business days after approval. Items must be unused and in original packaging.",
-        ],
-        'hours' => [
-            'keywords' => ['hours', 'open', 'close', 'time', 'schedule', 'available', 'operating'],
-            'reply' => "Our online shop is available 24/7! For customer support, we're available Monday to Saturday, 9:00 AM - 6:00 PM. We'll respond to messages outside these hours on the next business day.",
-        ],
-        'location' => [
-            'keywords' => ['location', 'address', 'where', 'store', 'branch', 'visit', 'physical'],
-            'reply' => "We're located in Manila, Philippines. You can reach us at:\n- Email: support@pawsitivevibes.com\n- Phone: 0945-123-4567\n- Facebook: Pawsitive Vibes",
-        ],
-        'discount' => [
-            'keywords' => ['discount', 'promo', 'sale', 'coupon', 'voucher', 'offer', 'deal'],
-            'reply' => "Follow us on Facebook to stay updated on our latest promos and deals! We regularly offer discounts on selected pet products. Check our shop page for current offers.",
+            'reply' => "For refund, return, or cancellation concerns, please message us directly with your order number and we'll assist you. An admin will review your request and get back to you as soon as possible.",
         ],
         'product' => [
-            'keywords' => ['product', 'stock', 'available', 'price', 'how much', 'do you have', 'sell'],
-            'reply' => "You can browse all our available products on the Shop page. Use the filters to search by category or price range. If you're looking for a specific product, let us know and we'll check availability for you!",
+            'keywords' => ['product', 'stock', 'available', 'price', 'how much', 'do you have', 'sell', 'item', 'buy', 'purchase'],
+            'reply' => "You can browse all our available products on the Shop page. Use the search bar, filter by category, or sort by price to find what you need. If you're looking for something specific, let us know!",
+        ],
+        'cart' => [
+            'keywords' => ['cart', 'add to cart', 'checkout', 'bag'],
+            'reply' => "To purchase items, simply browse our Shop, click 'Add to Cart' on the products you want, then go to your Cart to review and checkout. You can pay via GCash or Cash on Delivery!",
+        ],
+        'favorite' => [
+            'keywords' => ['favorite', 'favourites', 'wishlist', 'save', 'liked'],
+            'reply' => "You can save products you love by clicking the heart icon on any product! View all your saved items anytime from the Favorites page.",
         ],
         'donate' => [
-            'keywords' => ['donate', 'donation', 'charity', 'help', 'rescue', 'shelter', 'stray'],
-            'reply' => "Thank you for your interest in donating! You can visit our Donate page to contribute. Your donations help support rescued and stray animals. Every little bit counts!",
+            'keywords' => ['donate', 'donation', 'charity', 'help', 'rescue', 'shelter', 'stray', 'contribute'],
+            'reply' => "Thank you for your interest in donating! You can visit our Donate page to contribute cash or products for rescued and stray animals. Every little bit counts!",
         ],
         'account' => [
-            'keywords' => ['account', 'register', 'sign up', 'login', 'password', 'forgot', 'reset'],
-            'reply' => "For account-related concerns:\n- Register: Click 'Register' on the top right\n- Forgot Password: Use the 'Forgot Password' link on the login page\n- Account Issues: Please share your registered email and we'll assist you.",
+            'keywords' => ['account', 'register', 'sign up', 'login', 'password', 'forgot', 'reset', 'profile'],
+            'reply' => "For account-related concerns:\n- Register: Click 'Sign Up' on the login page\n- Forgot Password: Use the 'Forgot Password' link on the login page\n- Update Profile: Go to your Profile page after logging in\n\nNeed more help? Just let us know!",
         ],
         'ticket' => [
             'keywords' => ['ticket', 'reactivate', 'blocked', 'deactivated', 'locked', 'suspended', 'unblock', 'activate'],
-            'reply' => "If your account has been deactivated or blocked, you can submit a reactivation ticket here:\n\n👉 Visit: /support/ticket\n\nYou'll need your registered email to submit a ticket. You can also track your ticket status anytime.",
+            'reply' => "If your account has been deactivated or blocked, you can submit a reactivation ticket here:\n\n/support/ticket\n\nYou'll need your registered email to submit a ticket. You can also track your ticket status anytime.",
+        ],
+        'promo' => [
+            'keywords' => ['discount', 'promo', 'sale', 'coupon', 'voucher', 'offer', 'deal', 'promotion'],
+            'reply' => "Check our Shop page for the latest promotions and deals on selected pet products! We regularly update our offers so keep an eye out.",
         ],
         'greeting' => [
-            'keywords' => ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'sup', 'yo'],
-            'reply' => "Hi there! Welcome to Pawsitive Vibes! How can we help you today? You can ask about orders, shipping, payments, or anything pet-related!",
+            'keywords' => ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'sup', 'yo', 'magandang'],
+            'reply' => "Hi there! Welcome to Pawsitive Vibes! How can we help you today? You can ask about our products, orders, payments, donations, or anything else!",
         ],
         'thanks' => [
             'keywords' => ['thank', 'thanks', 'thank you', 'salamat', 'appreciate'],
             'reply' => "You're welcome! If you have any other questions, feel free to ask. Happy shopping and give your fur babies a treat from us!",
+        ],
+        'fallback_help' => [
+            'keywords' => ['help', 'assist', 'support', 'question', 'how', 'what can'],
+            'reply' => "Here's what I can help you with:\n- Browse products on our Shop page\n- Track orders in Profile > Transactions\n- Payment methods (GCash & COD)\n- Donations for rescued animals\n- Account or login issues\n- Submit a support ticket\n\nJust ask about any of these!",
         ],
     ];
 
@@ -150,10 +154,10 @@ class ChatController extends Controller
         $suggestions = [
             ['text' => 'How do I track my order?', 'icon' => 'package'],
             ['text' => 'What are your payment methods?', 'icon' => 'credit-card'],
-            ['text' => 'How long is shipping?', 'icon' => 'truck'],
-            ['text' => 'Do you have a refund policy?', 'icon' => 'refresh'],
-            ['text' => 'Where are you located?', 'icon' => 'map-pin'],
+            ['text' => 'How do I buy products?', 'icon' => 'truck'],
             ['text' => 'How can I donate?', 'icon' => 'heart'],
+            ['text' => 'Any promotions available?', 'icon' => 'refresh'],
+            ['text' => 'I need help with my account', 'icon' => 'map-pin'],
             ['text' => 'My account is blocked/deactivated', 'icon' => 'ticket'],
         ];
 

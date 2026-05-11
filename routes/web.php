@@ -67,7 +67,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER
     Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
     Route::get('/profile/login-activity', [ProfileController::class, 'loginActivity'])->name('profile.login-activity');
-    Route::patch('/profile/security-questions', [ProfileController::class, 'updateSecurityQuestions'])->name('profile.security-questions.update');
     Route::get('/profile/two-factor/setup', [\App\Http\Controllers\Auth\TwoFactorController::class, 'setup'])->name('profile.two-factor.setup');
     Route::post('/profile/two-factor/confirm', [\App\Http\Controllers\Auth\TwoFactorController::class, 'confirmSetup'])->name('profile.two-factor.confirm');
     Route::delete('/profile/two-factor', [\App\Http\Controllers\Auth\TwoFactorController::class, 'disable'])->name('profile.two-factor.disable');

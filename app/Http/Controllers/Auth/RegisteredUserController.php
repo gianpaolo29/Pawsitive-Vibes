@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
             'last_name'  => ['required','string','max:100'],
             'username'   => ['required','string','max:50','unique:users,username'],
             'email'      => ['required','string','lowercase','email','max:255','unique:users,email'],
-            'password'   => ['required','confirmed', Rules\Password::defaults()],
+            'password'   => ['required','confirmed','max:16','regex:/^\S+$/', Rules\Password::defaults()],
         ]);
 
         $user = \App\Models\User::create([
