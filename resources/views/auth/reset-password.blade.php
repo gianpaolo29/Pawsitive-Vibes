@@ -539,6 +539,7 @@
                         required
                         autofocus
                         autocomplete="new-password"
+                        maxlength="16"
                     >
                     <label for="password" class="input-label">New Password</label>
                     <button type="button" class="password-toggle" onclick="togglePassword('password', this)" aria-label="Toggle password visibility">
@@ -550,7 +551,7 @@
 
                     <div class="password-requirements">
                         <div class="requirement" id="length-req">
-                            <i class="far fa-circle"></i><span>Minimum 8 characters</span>
+                            <i class="far fa-circle"></i><span>8 - 16 characters (no spaces)</span>
                         </div>
                         <div class="requirement" id="uppercase-req">
                             <i class="far fa-circle"></i><span>Contains an uppercase letter</span>
@@ -563,6 +564,9 @@
                         </div>
                         <div class="requirement" id="symbol-req">
                             <i class="far fa-circle"></i><span>Contains a symbol</span>
+                        </div>
+                        <div class="requirement" id="nospace-req">
+                            <i class="far fa-circle"></i><span>No spaces allowed</span>
                         </div>
                     </div>
 
@@ -580,6 +584,7 @@
                         placeholder=" "
                         required
                         autocomplete="new-password"
+                        maxlength="16"
                     >
                     <label for="password_confirmation" class="input-label">Confirm Password</label>
                     <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation', this)" aria-label="Toggle password visibility">
@@ -622,6 +627,7 @@
             const lowercaseReq = document.getElementById('lowercase-req');
             const numberReq = document.getElementById('number-req');
             const symbolReq = document.getElementById('symbol-req');
+            const nospaceReq = document.getElementById('nospace-req');
             const strengthEl = document.getElementById('password-strength');
             const confirmErr = document.getElementById('confirm-password-error');
             const form = passEl ? passEl.closest('form') : null;
@@ -637,7 +643,9 @@
             function evaluatePassword() {
                 const pwd = passEl ? passEl.value : '';
 
-                const hasLen = pwd.length >= 8;
+                const noSpaces = !/\s/.test(pwd);
+                const stripped = pwd.replace(/\s/g, '');
+                const hasLen = stripped.length >= 8 && stripped.length <= 16;
                 const hasUpper = /[A-Z]/.test(pwd);
                 const hasLower = /[a-z]/.test(pwd);
                 const hasNum = /\d/.test(pwd);
@@ -648,23 +656,29 @@
                 setReq(lowercaseReq, hasLower);
                 setReq(numberReq, hasNum);
                 setReq(symbolReq, hasSymbol);
+                setReq(nospaceReq, noSpaces);
 
                 if (!strengthEl) return;
 
-                const score = [hasLen, hasUpper, hasLower, hasNum, hasSymbol].filter(Boolean).length;
+                const score = [hasLen, hasUpper, hasLower, hasNum, hasSymbol, noSpaces].filter(Boolean).length;
 
                 if (!pwd) {
                     strengthEl.textContent = 'Please choose a strong password.';
                     strengthEl.className = 'password-strength';
-                } else if (score <= 2) {
+                } else if (score <= 3) {
                     strengthEl.textContent = 'Weak password';
                     strengthEl.className = 'password-strength weak';
-                } else if (score <= 4) {
+                } else if (score <= 5) {
                     strengthEl.textContent = 'Medium password';
                     strengthEl.className = 'password-strength medium';
                 } else {
                     strengthEl.textContent = 'Strong password';
                     strengthEl.className = 'password-strength strong';
+                }
+
+                // Strip spaces from password in real-time
+                if (pwd !== pwd.replace(/\s/g, '')) {
+                    passEl.value = pwd.replace(/\s/g, '');
                 }
 
                 checkMatch();

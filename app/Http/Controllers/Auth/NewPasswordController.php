@@ -33,8 +33,17 @@ class NewPasswordController extends Controller
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', 'max:16', 'regex:/^\S+$/', Rules\Password::defaults()],
+        ], [
+            'password.regex' => 'The password must not contain spaces.',
         ]);
+
+        // Check that the new password is not the same as the old password
+        $user = User::where('email', $request->email)->first();
+        if ($user && Hash::check($request->password, $user->password)) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['password' => 'The new password cannot be the same as your old password.']);
+        }
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
