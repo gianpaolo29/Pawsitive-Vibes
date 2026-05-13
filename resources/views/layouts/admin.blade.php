@@ -857,5 +857,6 @@
     </main>
 
 </div>
+<x-session-timeout />
 </body>
 </html>

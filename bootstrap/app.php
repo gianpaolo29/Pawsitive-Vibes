@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         'role' => \App\Http\Middleware\EnsureUserHasRole::class,
         'admin.2fa' => \App\Http\Middleware\AdminTwoFactor::class,
         'customer.2fa' => \App\Http\Middleware\CustomerTwoFactor::class,
+        'session.timeout' => \App\Http\Middleware\SessionTimeout::class,
     ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

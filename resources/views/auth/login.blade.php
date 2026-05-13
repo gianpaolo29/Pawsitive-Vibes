@@ -12,6 +12,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
@@ -109,6 +110,8 @@
         input[type="password"]::-ms-reveal{display:none!important}
         /* error text */
         .field-error{color:#c0392b;font-size:.85rem;margin-top:.5rem}
+        .captcha-wrapper{display:flex;justify-content:center;margin-bottom:20px;opacity:0;animation:fadeIn .8s ease .9s forwards}
+        .captcha-error{color:#c0392b;font-size:.85rem;text-align:center;margin-top:-12px;margin-bottom:12px}
     </style>
 </head>
 <body>
@@ -190,6 +193,13 @@
                     @endif
                 </div>
 
+                <div class="captcha-wrapper">
+                    <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+                </div>
+                @error('g-recaptcha-response')
+                    <p class="captcha-error">{{ $message }}</p>
+                @enderror
+
                 <button type="submit" class="login-btn">Login</button>
             </form>
 
@@ -223,9 +233,25 @@
             const passwordInput = document.getElementById('password');
             const petIcons = document.querySelectorAll('.pet-icon');
 
+            @if ($errors->has('g-recaptcha-response'))
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'CAPTCHA Required',
+                    text: '{{ $errors->first("g-recaptcha-response") }}',
+                    confirmButtonColor: '#8a2be2',
+                });
+            @endif
+
             @if ($errors->has('email'))
                 @php $errorMsg = $errors->first('email'); @endphp
-                @if ($errorMsg === 'blocked_suspicious')
+                @if ($errorMsg === 'session_expired')
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Session Expired',
+                        html: 'Your session has expired due to <b>15 minutes</b> of inactivity.<br><br><small style="color:#666">Please log in again to continue.</small>',
+                        confirmButtonColor: '#8a2be2',
+                    });
+                @elseif ($errorMsg === 'blocked_suspicious')
                     Swal.fire({
                         icon: 'error',
                         title: 'Account Blocked',

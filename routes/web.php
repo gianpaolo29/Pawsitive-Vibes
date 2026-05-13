@@ -45,13 +45,19 @@ Route::prefix('support')->name('support.')->group(function () {
 });
 
 
+// Session keep-alive (pinged by idle warning to refresh session)
+Route::post('/session-keep-alive', function () {
+    session(['last_activity_time' => time()]);
+    return response()->json(['status' => 'ok']);
+})->middleware('auth')->name('session.keep-alive');
+
 // Customer 2FA challenge routes (auth required, but BEFORE the 2FA middleware)
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
     Route::get('/two-factor/challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
     Route::post('/two-factor/verify', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])->name('two-factor.verify');
 });
 
-Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER', 'customer.2fa'])->group(function () {
+Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER', 'customer.2fa', 'session.timeout'])->group(function () {
     Route::get('/shop', [ShopController::class, 'index'])->name('shop');
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorite');
@@ -104,7 +110,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN'])->grou
     Route::post('/two-factor/verify', [AdminTwoFactorController::class, 'verify'])->name('two-factor.verify');
 });
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN', 'admin.2fa'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:ADMIN', 'admin.2fa', 'session.timeout'])->group(function () {
     Route::get('/search/suggestions', [\App\Http\Controllers\Admin\SearchController::class, 'suggestions'])->name('search.suggestions');
     Route::get('/search/customers', [\App\Http\Controllers\Admin\SearchController::class, 'customerSuggestions'])->name('search.customers');
     Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile');

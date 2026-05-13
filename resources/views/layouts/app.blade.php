@@ -103,5 +103,6 @@
         });
         </script>
         @endif
+    <x-session-timeout />
     </body>
 </html>
