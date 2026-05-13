@@ -91,7 +91,7 @@ class ShopController extends Controller
         }
 
         $cartItemCount = Auth::check()
-            ? Cart::where('user_id', Auth::id())->first()?->items()->sum('quantity') ?? 0
+            ? Cart::where('user_id', Auth::id())->first()?->items()->count() ?? 0
             : 0;
 
         $favoritedProductIds = Auth::check()

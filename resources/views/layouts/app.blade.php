@@ -37,7 +37,9 @@
             </main>
         </div>
         @include('layouts.footer')
-        @include('components.chat-widget')
+        @if(!request()->routeIs('customer.shop'))
+            @include('components.chat-widget')
+        @endif
 
         @if(session('welcome_user'))
         <script>

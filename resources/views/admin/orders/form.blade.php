@@ -55,7 +55,7 @@
                     unit_price: Number(p?.price || 0),
                     quantity: 1,
                     unit: p?.unit || 'unit',
-                    image_url: p?.image_url || '{{ asset('images/placeholder-product.png') }}',
+                    image_url: p?.image_url ? (p.image_url.startsWith('http') ? p.image_url : '/storage/' + p.image_url) : '{{ asset('images/placeholder-product.png') }}',
                     max_qty: maxStock,
                 });
 
@@ -389,7 +389,7 @@
                         <template x-for="p in filteredProducts" :key="p.id">
                             <div class="flex items-center justify-between border border-gray-200 rounded-xl p-3 bg-white hover:shadow-md transition ease-in-out duration-150">
                                 <div class="flex items-center gap-3 w-4/5">
-                                    <img :src="p?.image_url || '{{ asset('images/placeholder-product.png') }}'"
+                                    <img :src="p?.image_url ? (p.image_url.startsWith('http') ? p.image_url : '/storage/' + p.image_url) : '{{ asset('images/placeholder-product.png') }}'"
                                          class="w-14 h-14 rounded-lg object-cover flex-shrink-0" alt="">
                                     <div class="min-w-0">
                                         <div class="font-medium text-gray-900 truncate" x-text="p?.name || 'Unknown Product'"></div>

@@ -15,7 +15,7 @@ class WelcomeController extends Controller
 
         $featuredProducts = Product::where('is_active', 1)
             ->orderBy('created_at', 'desc')
-            ->take(6)
+            ->take(4)
             ->get();
 
         $products = Product::where('is_active', 1)

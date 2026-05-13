@@ -51,6 +51,9 @@ class FavoriteController extends Controller
         if ($existing) {
             $existing->delete();
 
+            if (request()->wantsJson()) {
+                return response()->json(['favorited' => false, 'message' => 'Removed from favorites.']);
+            }
             return back()->with('success', 'Removed from favorites.');
         }
 
@@ -59,6 +62,9 @@ class FavoriteController extends Controller
             'product_id' => $product->id,
         ]);
 
+        if (request()->wantsJson()) {
+            return response()->json(['favorited' => true, 'message' => 'Added to favorites.']);
+        }
         return back()->with('success', 'Added to favorites.');
     }
 }

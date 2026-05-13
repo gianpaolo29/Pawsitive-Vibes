@@ -54,28 +54,23 @@
 {{-- ============================= --}}
         {{-- 3. CATEGORIES (Colorful & Interactive) --}}
         {{-- ============================= --}}
-        <section class="py-16 md:py-24 relative z-10">
-            
+        <section class="py-10 md:py-14 relative z-10">
+
             {{-- Header --}}
-            <div class="custom-container text-center mb-12" data-aos="fade-down">
-                <span class="text-purple-600 font-extrabold tracking-widest uppercase text-xs bg-purple-100 px-4 py-2 rounded-full mb-4 inline-block shadow-sm">
+            <div class="custom-container text-center mb-8" data-aos="fade-down">
+                <span class="text-purple-600 font-extrabold tracking-widest uppercase text-xs bg-purple-100 px-3 py-1.5 rounded-full mb-3 inline-block shadow-sm">
                     Collections
                 </span>
-                <h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
                     Browse by <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">Category</span>
                 </h2>
             </div>
 
             {{-- Grid Container --}}
             <div class="custom-container">
-                <div class="flex flex-wrap justify-center gap-4 md:gap-8">
-                    
+                <div class="flex flex-wrap justify-center gap-3 md:gap-5">
+
                     @foreach($categories as $index => $cat)
-                        {{-- 
-                           COLOR LOGIC: 
-                           Cycles through 6 different color themes based on the loop index ($index).
-                           This ensures your grid looks colorful without you manually setting colors for each one.
-                        --}}
                         @php
                             $themes = [
                                 ['bg' => 'bg-orange-50', 'text' => 'text-orange-500', 'border' => 'border-orange-100', 'icon_bg' => 'bg-orange-100', 'hover_border' => 'hover:border-orange-300'],
@@ -85,31 +80,26 @@
                                 ['bg' => 'bg-purple-50', 'text' => 'text-purple-500', 'border' => 'border-purple-100', 'icon_bg' => 'bg-purple-100', 'hover_border' => 'hover:border-purple-300'],
                                 ['bg' => 'bg-yellow-50', 'text' => 'text-yellow-600', 'border' => 'border-yellow-100', 'icon_bg' => 'bg-yellow-100', 'hover_border' => 'hover:border-yellow-300'],
                             ];
-                            $theme = $themes[$index % 6]; // Cycle through the 6 themes
+                            $theme = $themes[$index % 6];
                         @endphp
 
-                        {{-- THE CARD --}}
-                        <a href="{{ route('customer.shop', ['category' => $cat->id]) }}" 
-                           class="tilt-card group relative w-36 md:w-48 h-40 md:h-52 {{ $theme['bg'] }} rounded-[2rem] border-2 {{ $theme['border'] }} {{ $theme['hover_border'] }} flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl cursor-pointer overflow-hidden"
-                           data-aos="zoom-in" 
+                        <a href="{{ route('customer.shop', ['category' => $cat->id]) }}"
+                           class="tilt-card group relative w-28 md:w-36 h-32 md:h-40 {{ $theme['bg'] }} rounded-2xl border-2 {{ $theme['border'] }} {{ $theme['hover_border'] }} flex flex-col items-center justify-center transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl cursor-pointer overflow-hidden"
+                           data-aos="zoom-in"
                            data-aos-delay="{{ $index * 50 }}">
-                            
-                            {{-- Background Decoration (Faint Circle) --}}
-                            <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full {{ $theme['icon_bg'] }} opacity-50 transition-transform duration-500 group-hover:scale-150"></div>
 
-                            {{-- Icon --}}
-                            <div class="relative z-10 w-14 h-14 md:w-16 md:h-16 rounded-full {{ $theme['icon_bg'] }} flex items-center justify-center mb-3 shadow-inner group-hover:scale-110 transition-transform duration-300">
-                                <i class="{{ $cat->icon ?? 'fas fa-paw' }} text-2xl md:text-3xl {{ $theme['text'] }}"></i>
+                            <div class="absolute -top-8 -right-8 w-20 h-20 rounded-full {{ $theme['icon_bg'] }} opacity-50 transition-transform duration-500 group-hover:scale-150"></div>
+
+                            <div class="relative z-10 w-11 h-11 md:w-12 md:h-12 rounded-full {{ $theme['icon_bg'] }} flex items-center justify-center mb-2 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                                <i class="{{ $cat->icon ?? 'fas fa-paw' }} text-lg md:text-xl {{ $theme['text'] }}"></i>
                             </div>
 
-                            {{-- Name --}}
-                            <h3 class="relative z-10 font-bold text-gray-800 text-sm md:text-base text-center px-2 group-hover:text-gray-900">
+                            <h3 class="relative z-10 font-bold text-gray-800 text-xs md:text-sm text-center px-2 group-hover:text-gray-900">
                                 {{ $cat->name }}
                             </h3>
 
-                            {{-- Hover Arrow (Slides up) --}}
-                            <div class="absolute bottom-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                <i class="fas fa-chevron-right {{ $theme['text'] }} text-xs"></i>
+                            <div class="absolute bottom-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                <i class="fas fa-chevron-right {{ $theme['text'] }} text-[0.6rem]"></i>
                             </div>
                         </a>
 
@@ -118,28 +108,27 @@
             </div>
         </section>
 
-        <!-- FEATURED PRODUCTS (3D Cards) -->
-        <section class="py-16 bg-gray-50">
+        <!-- FEATURED PRODUCTS -->
+        <section class="py-10 md:py-14 bg-gray-50">
             <div class="custom-container">
-                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800" data-aos="fade-up">Best Sellers</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    @foreach($featuredProducts as $index => $p)
-                        <div class="tilt-card bg-white p-4 rounded-3xl shadow-lg border border-gray-100 relative group overflow-hidden"
-                             data-aos="zoom-in" 
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-800" data-aos="fade-up">Best Sellers</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+                    @foreach($featuredProducts->take(4) as $index => $p)
+                        <div class="tilt-card bg-white p-3 rounded-2xl shadow-md border border-gray-100 relative group overflow-hidden"
+                             data-aos="zoom-in"
                              data-aos-delay="{{ $index * 100 }}">
-                            
-                            <!-- Image Area -->
-                            <div class="h-48 bg-gray-100 rounded-2xl mb-4 flex items-center justify-center overflow-hidden">
+
+                            <div class="h-36 md:h-40 bg-gray-100 rounded-xl mb-3 flex items-center justify-center overflow-hidden">
                                 @if($p->image_url)
-                                    <img src="{{ str_starts_with($p->image_url, 'http') ? $p->image_url : asset('storage/' . $p->image_url) }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                                    <img src="{{ str_starts_with($p->image_url, 'http') ? $p->image_url : asset('storage/' . $p->image_url) }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" loading="lazy">
                                 @else
-                                    <i class="{{ $p->icon ?? 'fas fa-paw' }} text-5xl text-gray-300"></i>
+                                    <i class="{{ $p->icon ?? 'fas fa-paw' }} text-4xl text-gray-300"></i>
                                 @endif
                             </div>
 
-                            <h3 class="font-bold text-lg text-gray-900 mb-1">{{ $p->name }}</h3>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-xl font-bold text-purple-600">₱{{ number_format($p->price, 2) }}</span>
+                            <h3 class="font-bold text-sm text-gray-900 mb-1 line-clamp-1">{{ $p->name }}</h3>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-base md:text-lg font-bold text-purple-600">₱{{ number_format($p->price, 2) }}</span>
                             </div>
                         </div>
                     @endforeach

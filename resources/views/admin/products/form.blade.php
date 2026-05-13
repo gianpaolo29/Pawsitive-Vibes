@@ -16,7 +16,9 @@
 </div>
 
     @php
-        $existingImageUrl = $product->exists && $product->image_url ? Storage::url($product->image_url) : null;
+        $existingImageUrl = $product->exists && $product->image_url
+            ? (str_starts_with($product->image_url, 'http') ? $product->image_url : Storage::url($product->image_url))
+            : null;
     @endphp
 
     

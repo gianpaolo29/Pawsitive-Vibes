@@ -96,6 +96,14 @@ class CartController extends Controller
             $item->save();
         }
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Product added to cart.',
+                'cartCount' => $cart->items()->count(),
+            ]);
+        }
+
         return back()->with('success', 'Product added to cart.');
     }
 
