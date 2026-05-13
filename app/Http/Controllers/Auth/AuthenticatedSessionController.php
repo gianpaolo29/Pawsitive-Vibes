@@ -7,7 +7,6 @@ use App\Services\LoginSecurityService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -22,21 +21,7 @@ class AuthenticatedSessionController extends Controller
         $credentials = $request->validate([
             'email' => ['required','string','email'],
             'password' => ['required','string'],
-            'g-recaptcha-response' => ['required'],
-        ], [
-            'g-recaptcha-response.required' => 'Please complete the CAPTCHA verification.',
         ]);
-
-        // Verify reCAPTCHA with Google
-        $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => config('services.recaptcha.secret_key'),
-            'response' => $request->input('g-recaptcha-response'),
-            'remoteip' => $request->ip(),
-        ]);
-
-        if (! $recaptchaResponse->json('success')) {
-            return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA verification failed. Please try again.'])->onlyInput('email');
-        }
 
         $attemptKey = 'login-count:' . $request->ip() . '|' . $credentials['email'];
         $lockKey    = 'login-locked:' . $request->ip() . '|' . $credentials['email'];
