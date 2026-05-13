@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('product_name')->nullable()->change();
             $table->string('unit')->nullable()->change();
             $table->string('unit_price')->nullable()->change();
-                        $table->string('sub-total')->nullable()->change();
+            $table->string('line_total')->nullable()->change();
 
 
 

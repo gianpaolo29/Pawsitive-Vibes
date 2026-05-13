@@ -204,6 +204,21 @@
                 </div>
             </div>
 
+            <!-- Profanity Warning -->
+            <div x-show="profanityWarning" x-cloak
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="mx-3 mt-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2">
+                <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                </svg>
+                <span x-text="profanityWarning" class="text-xs text-red-600"></span>
+            </div>
+
             <!-- Input Area -->
             <div class="p-3 bg-white border-t border-gray-100">
                 <form @submit.prevent="send()" class="flex items-center gap-2">
@@ -245,6 +260,7 @@ function chatWidget() {
         guestEmail: '',
         guestErrors: { name: '', email: '' },
         showSuggestionsAfter: true,
+        profanityWarning: '',
 
         suggestions: [
             { text: 'How do I track my order?', icon: 'package' },
@@ -354,6 +370,7 @@ function chatWidget() {
         async send() {
             if (!this.newMessage.trim() || this.sending) return;
             this.sending = true;
+            this.profanityWarning = '';
             const msg = this.newMessage;
             this.newMessage = '';
 
@@ -373,6 +390,18 @@ function chatWidget() {
                     },
                     body: JSON.stringify(body)
                 });
+
+                if (res.status === 422) {
+                    const errorData = await res.json();
+                    if (errorData.error === 'profanity') {
+                        this.profanityWarning = errorData.message;
+                        this.newMessage = '';
+                        setTimeout(() => { this.profanityWarning = ''; }, 5000);
+                        this.sending = false;
+                        return;
+                    }
+                }
+
                 if (res.ok) {
                     const data = await res.json();
                     this.messages.push(data.message);
