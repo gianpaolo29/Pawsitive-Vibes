@@ -14,13 +14,18 @@ class TransactionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create dummy customer accounts
+        // Create 10 dummy customer accounts
         $customers = [
             ['fname' => 'Maria', 'lname' => 'Santos', 'username' => 'maria.santos', 'email' => 'maria.santos@example.com'],
             ['fname' => 'Juan', 'lname' => 'Dela Cruz', 'username' => 'juan.delacruz', 'email' => 'juan.delacruz@example.com'],
             ['fname' => 'Ana', 'lname' => 'Reyes', 'username' => 'ana.reyes', 'email' => 'ana.reyes@example.com'],
             ['fname' => 'Carlos', 'lname' => 'Garcia', 'username' => 'carlos.garcia', 'email' => 'carlos.garcia@example.com'],
             ['fname' => 'Sofia', 'lname' => 'Lopez', 'username' => 'sofia.lopez', 'email' => 'sofia.lopez@example.com'],
+            ['fname' => 'Miguel', 'lname' => 'Ramos', 'username' => 'miguel.ramos', 'email' => 'miguel.ramos@example.com'],
+            ['fname' => 'Isabella', 'lname' => 'Torres', 'username' => 'isabella.torres', 'email' => 'isabella.torres@example.com'],
+            ['fname' => 'Rafael', 'lname' => 'Mendoza', 'username' => 'rafael.mendoza', 'email' => 'rafael.mendoza@example.com'],
+            ['fname' => 'Camille', 'lname' => 'Villanueva', 'username' => 'camille.villanueva', 'email' => 'camille.villanueva@example.com'],
+            ['fname' => 'Diego', 'lname' => 'Aquino', 'username' => 'diego.aquino', 'email' => 'diego.aquino@example.com'],
         ];
 
         $userModels = [];
@@ -46,11 +51,13 @@ class TransactionSeeder extends Seeder
 
         $statuses = ['pending', 'paid', 'cancelled'];
         $methods = ['cash', 'gcash'];
-        $orderNumber = 1;
+        // Start order numbers after any existing ones
+        $lastOrder = Transaction::orderByDesc('id')->first();
+        $orderNumber = $lastOrder ? ((int) str_replace('ORD-', '', $lastOrder->order_number)) + 1 : 1;
 
         foreach ($userModels as $user) {
-            // Each customer gets 2-4 transactions
-            $transactionCount = rand(2, 4);
+            // Each customer gets exactly 5 transactions
+            $transactionCount = 5;
 
             for ($i = 0; $i < $transactionCount; $i++) {
                 $status = $statuses[array_rand($statuses)];
