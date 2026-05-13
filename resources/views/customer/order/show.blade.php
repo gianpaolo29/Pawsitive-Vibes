@@ -75,7 +75,7 @@
                                     <div class="flex-shrink-0">
                                         <div class="w-14 h-14 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                                             @if($product && $product->image_url)
-                                                <img src="{{ asset('storage/' . $product->image_url) }}"
+                                                <img src="{{ str_starts_with($product->image_url, 'http') ? $product->image_url : asset('storage/' . $product->image_url) }}"
                                                      alt="{{ $product->name }}"
                                                      class="w-full h-full object-cover">
                                             @else

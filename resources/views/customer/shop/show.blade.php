@@ -136,7 +136,7 @@
                                             @click="openProductModal(@js($product))">
                                         
                                         @if($product->image_url)
-                                            <img src="{{ asset('storage/' . $product->image_url) }}"
+                                            <img src="{{ str_starts_with($product->image_url, 'http') ? $product->image_url : asset('storage/' . $product->image_url) }}"
                                                 class="product-image group-hover:scale-105 smooth-transition"
                                                 alt="{{ $product->name }}">
                                         @else
@@ -292,7 +292,7 @@
                                 <button @click="productModalOpen = false" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"><svg class="w-6 h-6" stroke="currentColor" fill="none"><path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
                             </div>
                             <div class="p-6">
-                                <img :src="'/storage/' + selectedProduct.image_url" class="modal-image rounded-lg">
+                                <img :src="selectedProduct.image_url.startsWith('http') ? selectedProduct.image_url : '/storage/' + selectedProduct.image_url" class="modal-image rounded-lg">
                                 <div class="mt-6 space-y-4">
                                     <div><h4 class="font-medium text-gray-900 dark:text-white">Description</h4><p class="text-gray-600 dark:text-gray-400" x-text="selectedProduct.description || 'No description available'"></p></div>
                                     <div class="grid grid-cols-2 gap-4">

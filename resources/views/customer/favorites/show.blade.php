@@ -100,7 +100,7 @@
                                  @click="openProductModal(@js($product))">
 
                                 @if($product->image_url)
-                                    <img src="{{ asset('storage/' . $product->image_url) }}"
+                                    <img src="{{ str_starts_with($product->image_url, 'http') ? $product->image_url : asset('storage/' . $product->image_url) }}"
                                          class="product-image group-hover:scale-105 smooth-transition"
                                          alt="{{ $product->name }}">
                                 @else
@@ -251,7 +251,7 @@
                             </div>
 
                             <div class="p-6">
-                                <img :src="'/storage/' + selectedProduct.image_url"
+                                <img :src="selectedProduct.image_url.startsWith('http') ? selectedProduct.image_url : '/storage/' + selectedProduct.image_url"
                                      class="modal-image rounded-lg">
 
                                 <div class="mt-6 space-y-4">

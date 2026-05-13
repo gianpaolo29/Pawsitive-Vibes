@@ -131,7 +131,7 @@
                             <!-- Image Area -->
                             <div class="h-48 bg-gray-100 rounded-2xl mb-4 flex items-center justify-center overflow-hidden">
                                 @if($p->image_url)
-                                    <img src="{{ asset('storage/' . $p->image_url) }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                                    <img src="{{ str_starts_with($p->image_url, 'http') ? $p->image_url : asset('storage/' . $p->image_url) }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
                                 @else
                                     <i class="{{ $p->icon ?? 'fas fa-paw' }} text-5xl text-gray-300"></i>
                                 @endif

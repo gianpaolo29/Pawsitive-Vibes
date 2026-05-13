@@ -87,7 +87,7 @@
                                 <div class="flex-shrink-0 pt-1">
                                     <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border border-gray-200 dark:border-gray-600">
                                         @if($product->image_url)
-                                            <img src="{{ asset('storage/' . $product->image_url) }}"
+                                            <img src="{{ str_starts_with($product->image_url, 'http') ? $product->image_url : asset('storage/' . $product->image_url) }}"
                                                  alt="{{ $product->name }}"
                                                  class="product-image-list">
                                         @else
@@ -450,7 +450,7 @@
                                 </button>
                             </div>
                             <div class="p-6">
-                                <img :src="'/storage/' + selectedProduct.image_url" class="modal-image rounded-lg">
+                                <img :src="selectedProduct.image_url.startsWith('http') ? selectedProduct.image_url : '/storage/' + selectedProduct.image_url" class="modal-image rounded-lg">
                                 <div class="mt-6 space-y-4">
                                     <div>
                                         <h4 class="font-medium text-gray-900 dark:text-white">Description</h4>
