@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\LoginSecurityService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -41,9 +42,24 @@ class GoogleController extends Controller
 
             Auth::guard('web')->login($user, true);
 
+            // Log the login and check for suspicious activity
+            $securityCheck = LoginSecurityService::logAndCheck($user, request());
+
+            if ($securityCheck['blocked']) {
+                Auth::logout();
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
+                return redirect()->route('login')->withErrors([
+                    'email' => 'blocked_suspicious',
+                ]);
+            }
+
             session()->flash('welcome_user', $user->fname ?? $user->username);
 
             if ($user->role === 'ADMIN') {
+                if ($user->two_factor_confirmed_at) {
+                    return redirect()->route('admin.two-factor.challenge');
+                }
                 return redirect()->route('admin.dashboard');
             }
 
