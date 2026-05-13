@@ -56,6 +56,7 @@ class ProfileController extends Controller
                 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
+            'current_password' => ['required_with:password', 'nullable', 'current_password'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
 

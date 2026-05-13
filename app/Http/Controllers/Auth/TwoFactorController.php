@@ -4,9 +4,60 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use PragmaRX\Google2FA\Google2FA;
 
 class TwoFactorController extends Controller
 {
+    /**
+     * Show the 2FA challenge page for customers.
+     */
+    public function challenge(Request $request)
+    {
+        $user = $request->user();
+
+        if (! $user || ! $user->two_factor_confirmed_at) {
+            return redirect()->route('welcome');
+        }
+
+        if (session('customer_2fa_verified')) {
+            return redirect()->route('welcome');
+        }
+
+        return view('auth.two-factor-challenge');
+    }
+
+    /**
+     * Verify the 2FA code for customers.
+     */
+    public function verify(Request $request)
+    {
+        $request->validate(['code' => 'required|string']);
+
+        $user = $request->user();
+        $google2fa = app(Google2FA::class);
+        $secret = decrypt($user->two_factor_secret);
+
+        // Try TOTP code first
+        if ($google2fa->verifyKey($secret, $request->code)) {
+            session(['customer_2fa_verified' => true]);
+            return redirect()->intended(route('welcome'));
+        }
+
+        // Try recovery code
+        $recoveryCodes = json_decode(decrypt($user->two_factor_recovery_codes), true) ?? [];
+        if (in_array($request->code, $recoveryCodes, true)) {
+            $remaining = array_values(array_diff($recoveryCodes, [$request->code]));
+            $user->forceFill([
+                'two_factor_recovery_codes' => encrypt(json_encode($remaining)),
+            ])->save();
+
+            session(['customer_2fa_verified' => true]);
+            return redirect()->intended(route('welcome'));
+        }
+
+        return back()->withErrors(['code' => 'invalid']);
+    }
+
     /**
      * Show 2FA setup page with QR code.
      */

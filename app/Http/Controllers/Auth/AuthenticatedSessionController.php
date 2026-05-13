@@ -105,6 +105,11 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        // Customer: check if 2FA is enabled, redirect to challenge first
+        if ($user->two_factor_confirmed_at) {
+            return redirect()->route('customer.two-factor.challenge');
+        }
+
         return redirect()->intended(route('welcome'));
     }
 
@@ -112,6 +117,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $request->session()->forget('admin_2fa_verified');
+        $request->session()->forget('customer_2fa_verified');
 
         Auth::guard('web')->logout();
 

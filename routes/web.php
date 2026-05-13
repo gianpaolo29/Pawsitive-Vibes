@@ -45,7 +45,13 @@ Route::prefix('support')->name('support.')->group(function () {
 });
 
 
+// Customer 2FA challenge routes (auth required, but BEFORE the 2FA middleware)
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER'])->group(function () {
+    Route::get('/two-factor/challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
+    Route::post('/two-factor/verify', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])->name('two-factor.verify');
+});
+
+Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:CUSTOMER', 'customer.2fa'])->group(function () {
     Route::get('/shop', [ShopController::class, 'index'])->name('shop');
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorite');

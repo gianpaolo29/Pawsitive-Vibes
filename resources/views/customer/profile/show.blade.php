@@ -177,7 +177,24 @@
                             </p>
 
 
-                            {{-- Password --}}
+                            {{-- Current Password --}}
+                            <div class="mb-4">
+                                <label for="current_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Current Password
+                                </label>
+                                <input
+                                    type="password"
+                                    id="current_password"
+                                    name="current_password"
+                                    class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('current_password') border-red-500 @enderror"
+                                    autocomplete="current-password"
+                                >
+                                @error('current_password')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- New Password --}}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

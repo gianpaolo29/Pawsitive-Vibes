@@ -63,6 +63,11 @@ class GoogleController extends Controller
                 return redirect()->route('admin.dashboard');
             }
 
+            // Customer: check if 2FA is enabled
+            if ($user->two_factor_confirmed_at) {
+                return redirect()->route('customer.two-factor.challenge');
+            }
+
             return redirect()->intended(route('welcome'));
         } catch (\Throwable $e) {
             report($e);
